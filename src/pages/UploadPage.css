@@ -1,0 +1,13 @@
+.upload-page-background {
+  flex: 1;
+  background-image: url('/public/uploadFon.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  min-height: 100vh; /* ← чтобы фон заполнял всю высоту экрана */
+}

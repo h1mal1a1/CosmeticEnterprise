@@ -1,0 +1,85 @@
+/*Стиль моего контента*/
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  /*height: 110vh; /* ← без этого дочерние элементы не смогут использовать % */
+  width: 100vw;
+}
+
+/*Верхняя панель*/
+.top-nav {
+  /*height: 10%;/*высота верхней панели*/
+  background-color: white;
+  display: flex;
+  flex-wrap: nowrap;/* запрещаем перенос */
+  overflow-x: auto; /* на случай узкого экрана — можно прокручивать */
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 0px 20px;
+  padding-left: 20%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  /* min-height: 2%; */
+}
+
+.nav-link,
+.brand-title {
+  white-space: nowrap;
+  color: black;
+  /* margin-top: 25px; */
+  /* Не задаём margin/padding, чтобы не нарушать baseline */
+}
+
+.top-nav .nav-link {
+  font-size: 1.4rem;/*размер шрифта*/
+  color: black;
+  font-weight: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.top-nav .brand-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: black;
+  margin-top: -2px;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  color: #646cff;
+}
+
+/*
+height: calc(100vh/7); vh - высота вьюпорта(окна браузера). Заполнение по вертикали
+width: 100%; Указывает, что блок должен занимать 100% ширины своего родителя
+margin: 0; Нулевые отступы со всех сторон. Чтобы блоки прилегали друг к другу и к краям экрана, без зазоров.
+display: flex; Делает элемент гибким контейнером (flexbox). Чтобы использовать следующие два свойства: align-items и justify-content.
+align-items: center; Выравнивает дочерние элементы по вертикальной оси внутри flex-контейнера. Чтобы надпись была по центру по высоте.
+justify-content: center; Чтобы надпись была по центру по ширине.
+font-size: 1.3rem; единица размера шрифта, привязанная к базовому размеру шрифта браузера (обычно 16px).
+font-weight: bold; Делает шрифт жирным. Чтобы названия разделов выглядели чётко и контрастно.
+color: white; Задаёт цвет текста.
+text-shadow: 0 1px 2px rgba(0,0,0,0.5); добавляет тень к тексту. Чтобы текст лучше читался на фоне, особенно если фон содержит узоры, градиенты или яркие цвета.
+padding - внутренний отступ. Работает внутри самого элемента. Добавляет пространство между содержимым элементам и его границей(border).
+gap - расстояние между дочерними элементами. Работает только внутри flex-контейнера или grid-контейнера. Задает единый зазор между соседними дочерними элементами.
+Не влияет на отступы от родителя к первому/последнему элементу - только между элементами.
+.top-nav .nav-item - выбрать все элементы с классом nav-item, которые находятся внутри элемента с классом top-nav. Если между ними бы пробела не было бы, 
+то выбирался класс у которого одновременно два класса top-nav и nav-item.
+  text-decoration: none; - Убирает декоративное подчёркивание текста, которое браузер применяет по умолчанию к ссылкам
+  cursor: pointer; - Меняет курсор мыши на «руку» (указатель) при наведении на элемент.
+*/
