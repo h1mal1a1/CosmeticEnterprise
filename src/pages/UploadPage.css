@@ -11,3 +11,35 @@
   text-align: center;
   min-height: 100vh; /* ← чтобы фон заполнял всю высоту экрана */
 }
+
+.buttons {
+  margin: 0.5%; 
+  /* display: table-column;
+  flex-direction: column; */
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.status-uploaded {
+  background-color: #04771f; /* светло-зелёный */
+  color: #000000;
+  
+}
+
+.status-error {
+  background-color: #f10115; /* светло-красный */
+  color: #000000;
+}
+
+.status-pending {
+  background-color: #f8c10b; /* светло-жёлтый */
+  color: #000000;
+}
+
+.status-copy {
+  background-color: #2e02f1;
+  color: #000000;
+}
