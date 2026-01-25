@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { getFreeSpace } from '../utils/getFreeSpace';
-import { formatFileSize } from '../utils/formatFileSize';
 
 export function useFreeSpace() {
     const [data, setData] = useState<number | null>(null);
