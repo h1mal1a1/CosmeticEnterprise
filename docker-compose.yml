@@ -1,0 +1,6 @@
+﻿services:
+  cosmeticenterpriseback:
+    image: cosmeticenterpriseback
+    build:
+      context: .
+      dockerfile: Dockerfile
