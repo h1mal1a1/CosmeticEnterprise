@@ -1,7 +1,10 @@
-﻿using CosmeticEnterpriseBack.DTO.Auth;
+﻿using CosmeticEnterpriseBack.Configuration;
+using CosmeticEnterpriseBack.DTO.Auth;
 using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace CosmeticEnterpriseBack.Controllers;
 
@@ -13,10 +16,15 @@ namespace CosmeticEnterpriseBack.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IAuthCookieService _authCookieService;
+    private readonly ICurrentUserSerivce _currentUser;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IAuthCookieService authCookieService, 
+        ICurrentUserSerivce currentUser)
     {
         _authService = authService;
+        _authCookieService = authCookieService;
+        _currentUser = currentUser;
     }
     /// <summary>
     /// Регистрирует пользователя
@@ -40,27 +48,51 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var response = await _authService.LoginAsync(request);
-        return Ok(response);
+        var authResponse = await _authService.LoginAsync(request);
+        _authCookieService.AppendAuthCookies(Response, authResponse); 
+        return Ok(new { message = "Login successful" });
     }
 
+    /// <summary>
+    /// Выполняет обвновление токенов
+    /// </summary>
+    /// <returns></returns>
     [HttpPost("refresh")]
     [AllowAnonymous]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken()
     {
-        var response = await _authService.RefreshAsync(request);
-        return Ok(response);
+        var refreshToken = Request.Cookies[AuthCookieNames.RefreshToken];
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return Unauthorized();
+        
+        var authResponse = await _authService.RefreshAsync(refreshToken);
+        _authCookieService.AppendAuthCookies(Response, authResponse);
+        return Ok(new {message = "Tokens refreshed"});
     }
 
+    /// <summary>
+    /// Позволяет пользователю стать не авторизированным 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("logout")]
+    [Authorize]
+    public IActionResult Logout()
+    {
+        _authCookieService.DeleteAuthCookies(Response);
+        return Ok(new { message = "Logout successful" });
+    }
+    
+    /// <summary>
+    /// Позволяет получить id, username и role пользователя
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetMe()
     {
-        var idUserClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrWhiteSpace(idUserClaim) || !long.TryParse(idUserClaim, out var idUser))
+        if(!_currentUser.IdUser.HasValue)
             return Unauthorized();
-        var response = await _authService.GetMeAsync(idUser);
+        var response = await _authService.GetMeAsync(_currentUser.IdUser.Value);
         return Ok(response);
     }
-
 }

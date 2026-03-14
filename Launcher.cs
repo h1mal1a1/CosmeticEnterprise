@@ -2,6 +2,7 @@
 using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +36,16 @@ public static class Launcher
 
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
+                };
+                options.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Cookies[AuthCookieNames.AccessToken];
+                        if (!string.IsNullOrWhiteSpace(accessToken))
+                            context.Token = accessToken;
+                        return Task.CompletedTask;
+                    }
                 };
             });
         builder.Services.AddAuthorization();
@@ -73,7 +84,6 @@ public static class Launcher
             });
         });
     }
-    
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -87,6 +97,9 @@ public static class Launcher
         builder.Services.AddControllers();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUserSerivce, CurrentUserService>();
         AddJwt(builder);
         var app = builder.Build();
 

@@ -1,10 +1,9 @@
-﻿using CosmeticEnterpriseBack.Configuration;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.DTO.Auth;
 using CosmeticEnterpriseBack.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 
@@ -13,12 +12,10 @@ public class AuthService : IAuthService
     private readonly AppDbContext _dbContext;
     private readonly ITokenService _tokenService;
     private readonly PasswordHasher<User> _passwordHasher = new();
-    private readonly JwtSettings _jwtSettings;
-    public AuthService(AppDbContext dbContext, ITokenService tokenService, IOptions<JwtSettings> jwtOptions)
+    public AuthService(AppDbContext dbContext, ITokenService tokenService)
     {
         _tokenService = tokenService;
         _dbContext = dbContext;
-        _jwtSettings = jwtOptions.Value;
     }
     
     public async Task RegisterAsync(RegisterRequest request)
@@ -43,7 +40,8 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == request.Username);
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(x => x.Username == request.Username);
         if (user == null)
             throw new Exception("Invalid username or password");
         if (!user.IsActive)
@@ -55,20 +53,8 @@ public class AuthService : IAuthService
             throw new Exception("Invalid username or password");
 
         var accessToken = _tokenService.GenerateAccessToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken();
-        var refreshTokenHash = _tokenService.ComputeSha256Hash(refreshToken);
-
-        var refreshTokenEntity = new UserRefreshToken()
-        {
-            IdUser = user.IdUser,
-            RefreshTokenHash = refreshTokenHash,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays),
-            CreatedAtUtc = DateTime.UtcNow,
-            IsRevoked = false
-        };
-
-        _dbContext.UserRefreshTokens.Add(refreshTokenEntity);
-        await _dbContext.SaveChangesAsync();
+        var refreshToken = _tokenService.GenerateRefreshToken(user);
+        
         return new AuthResponse
         {
             AccessToken = accessToken,
@@ -76,38 +62,28 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponse> RefreshAsync(RefreshTokenRequest request)
+    public async Task<AuthResponse> RefreshAsync(string refreshToken)
     {
-        var refreshTokenHash = _tokenService.ComputeSha256Hash(request.RefreshToken);
-        var existingRefreshToken = await _dbContext.UserRefreshTokens
-            .FirstOrDefaultAsync(x => x.RefreshTokenHash == refreshTokenHash);
-        if (existingRefreshToken == null)
-            throw new Exception("Refresh token is invalid");
-        if(existingRefreshToken.IsRevoked)
-            throw new Exception("Refresh token is expired");
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.IdUser == existingRefreshToken.IdUser);
+        var principal = _tokenService.GetPrincipalFromToken(refreshToken, validateLifetime: true);
+        if (principal == null)
+            throw new Exception("Invalid refresh token");
+        var tokenType = principal.FindFirst("token_type")?.Value;
+        if(tokenType != "refresh")
+            throw new Exception("Invalid token type");
+        var idUserClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(idUserClaim) || !long.TryParse(idUserClaim, out var idUser))
+            throw new Exception("Invalid refresh token payload");
+        
+        
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(x => x.IdUser == idUser);
         if (user == null)
             throw new Exception("User not found");
         if(!user.IsActive)
             throw new Exception("User is inactive");
-        existingRefreshToken.IsRevoked = true;
-        existingRefreshToken.RevokedAtUtc = DateTime.UtcNow;
-
+        
         var newAccessToken = _tokenService.GenerateAccessToken(user);
-        var newRefreshToken = _tokenService.GenerateRefreshToken();
-        var newRefreshTokenHash = _tokenService.ComputeSha256Hash(newRefreshToken);
-
-        var newRefreshTokenEntity = new UserRefreshToken
-        {
-            IdUser = user.IdUser,
-            RefreshTokenHash = newRefreshTokenHash,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays),
-            CreatedAtUtc = DateTime.UtcNow,
-            IsRevoked = false
-        };
-
-        _dbContext.UserRefreshTokens.Add(newRefreshTokenEntity);
-        await _dbContext.SaveChangesAsync();
+        var newRefreshToken = _tokenService.GenerateRefreshToken(user);
 
         return new AuthResponse
         {
@@ -118,7 +94,8 @@ public class AuthService : IAuthService
 
     public async Task<MeResponse> GetMeAsync(long idUser)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.IdUser == idUser);
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(x => x.IdUser == idUser);
         if (user == null)
             throw new Exception("User not found");
         return new MeResponse
