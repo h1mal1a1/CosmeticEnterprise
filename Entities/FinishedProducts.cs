@@ -1,11 +1,14 @@
-﻿namespace CosmeticEnterpriseBack.Entities;
+﻿using CosmeticEnterpriseBack.Base;
+
+namespace CosmeticEnterpriseBack.Entities;
 
 /// <summary>
 /// Готовая продукция
 /// </summary>
-public class FinishedProducts
+public class FinishedProducts : IEntity<long>
 {
     public long Id { get; set; }
+    public string Name { get; set; }
     public List<OrderItems> OrderItemsList { get; set; }
     public Recipes Recipe { get; set; }
     public ProductCategories ProductCategories { get; set; }

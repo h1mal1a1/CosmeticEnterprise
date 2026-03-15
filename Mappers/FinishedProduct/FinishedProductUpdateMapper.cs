@@ -1,0 +1,13 @@
+﻿using CosmeticEnterpriseBack.DTO.FinishedProduct;
+using CosmeticEnterpriseBack.Interfaces;
+
+namespace CosmeticEnterpriseBack.Mappers.FinishedProduct;
+
+public class FinishedProductUpdateMapper :
+    IUpdateMapper<Entities.FinishedProducts, UpdateFinishedProductRequest>
+{
+    public void Map(UpdateFinishedProductRequest req, Entities.FinishedProducts entity)
+    {
+        entity.Name = req.Name.Trim();
+    }
+}

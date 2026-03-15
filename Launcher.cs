@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.Data;
+using CosmeticEnterpriseBack.Extensions;
+using CosmeticEnterpriseBack.Middleware;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -100,6 +102,8 @@ public static class Launcher
         builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserSerivce, CurrentUserService>();
+        builder.Services.AddScoped<DbContext, AppDbContext>();
+        builder.Services.AddCrudServices();
         AddJwt(builder);
         var app = builder.Build();
 
@@ -109,6 +113,7 @@ public static class Launcher
             app.UseSwaggerUI();
         }
 
+        app.UseExceptionHandlingMiddleware();
         app.UseHttpsRedirection();
         app.MapControllers();
         app.UseAuthentication();

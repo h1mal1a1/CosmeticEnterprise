@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.DTO.Auth;
 using CosmeticEnterpriseBack.Entities;
+using CosmeticEnterpriseBack.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
@@ -23,7 +24,7 @@ public class AuthService : IAuthService
         var existingUser = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.Username == request.Username);
         if (existingUser != null)
-            throw new Exception("User already exists");
+            throw new ConflictException("User already exists");
         var user = new User
         {
             Username = request.Username,
@@ -43,14 +44,14 @@ public class AuthService : IAuthService
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.Username == request.Username);
         if (user == null)
-            throw new Exception("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
         if (!user.IsActive)
-            throw new Exception("User is inactive");
+            throw new UnauthorizedException("User is inactive");
         var passwordVerificationResult =
             _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
         
         if(passwordVerificationResult == PasswordVerificationResult.Failed)
-            throw new Exception("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
 
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken(user);
@@ -66,21 +67,21 @@ public class AuthService : IAuthService
     {
         var principal = _tokenService.GetPrincipalFromToken(refreshToken, validateLifetime: true);
         if (principal == null)
-            throw new Exception("Invalid refresh token");
+            throw new UnauthorizedException("Invalid refresh token");
         var tokenType = principal.FindFirst("token_type")?.Value;
         if(tokenType != "refresh")
-            throw new Exception("Invalid token type");
+            throw new UnauthorizedException("Invalid token type");
         var idUserClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrWhiteSpace(idUserClaim) || !long.TryParse(idUserClaim, out var idUser))
-            throw new Exception("Invalid refresh token payload");
+            throw new UnauthorizedException("Invalid refresh token payload");
         
         
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.IdUser == idUser);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User not found");
         if(!user.IsActive)
-            throw new Exception("User is inactive");
+            throw new UnauthorizedException("User is inactive");
         
         var newAccessToken = _tokenService.GenerateAccessToken(user);
         var newRefreshToken = _tokenService.GenerateRefreshToken(user);
@@ -97,7 +98,7 @@ public class AuthService : IAuthService
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.IdUser == idUser);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User not found");
         return new MeResponse
         {
             IdUser = user.IdUser,
