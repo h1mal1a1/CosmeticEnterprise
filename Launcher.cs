@@ -2,6 +2,7 @@
 using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.Extensions;
+using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Middleware;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.CurrentUser;
@@ -101,7 +102,7 @@ public static class Launcher
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<ICurrentUserSerivce, CurrentUserService>();
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<DbContext, AppDbContext>();
         builder.Services.AddCrudServices();
         AddJwt(builder);
@@ -115,9 +116,11 @@ public static class Launcher
 
         app.UseExceptionHandlingMiddleware();
         app.UseHttpsRedirection();
-        app.MapControllers();
+        
         app.UseAuthentication();
         app.UseAuthorization();
+        
+        app.MapControllers();
         app.Run();
     }
 }

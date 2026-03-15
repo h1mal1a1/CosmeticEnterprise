@@ -1,5 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.DTO.Auth;
+using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authorization;
@@ -17,10 +18,10 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IAuthCookieService _authCookieService;
-    private readonly ICurrentUserSerivce _currentUser;
+    private readonly ICurrentUserService _currentUser;
 
     public AuthController(IAuthService authService, IAuthCookieService authCookieService, 
-        ICurrentUserSerivce currentUser)
+        ICurrentUserService currentUser)
     {
         _authService = authService;
         _authCookieService = authCookieService;
@@ -90,9 +91,9 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetMe()
     {
-        if(!_currentUser.IdUser.HasValue)
+        if(!_currentUser.UserId.HasValue)
             return Unauthorized();
-        var response = await _authService.GetMeAsync(_currentUser.IdUser.Value);
+        var response = await _authService.GetMeAsync(_currentUser.UserId.Value);
         return Ok(response);
     }
 }
