@@ -1,13 +1,20 @@
 ﻿using CosmeticEnterpriseBack.DTO.FinishedProduct;
+using CosmeticEnterpriseBack.Entities;
 using CosmeticEnterpriseBack.Interfaces;
 
 namespace CosmeticEnterpriseBack.Mappers.FinishedProduct;
 
 public class FinishedProductCreateMapper :
-    ICreateMapper<Entities.FinishedProducts, CreateFinishedProductRequest>
+    ICreateMapper<FinishedProducts, CreateFinishedProductRequest>
 {
-    public Entities.FinishedProducts Map(CreateFinishedProductRequest request)
+    public FinishedProducts Map(CreateFinishedProductRequest request)
     {
-        return new Entities.FinishedProducts() { Name = request.Name.Trim() };
+        return new FinishedProducts
+        {
+            Name = request.Name.Trim(),
+            IdRecipe = request.IdRecipe,
+            IdProductCategory = request.IdProductCategory,
+            IdUnitsOfMeasurement = request.IdUnitsOfMeasurement
+        };
     }
 }

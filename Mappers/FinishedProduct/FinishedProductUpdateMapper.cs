@@ -9,5 +9,8 @@ public class FinishedProductUpdateMapper :
     public void Map(UpdateFinishedProductRequest req, Entities.FinishedProducts entity)
     {
         entity.Name = req.Name.Trim();
+        entity.IdRecipe = req.IdRecipe;
+        entity.IdProductCategory = req.IdProductCategory;
+        entity.IdUnitsOfMeasurement = req.IdUnitsOfMeasurement;
     }
 }

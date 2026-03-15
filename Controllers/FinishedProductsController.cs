@@ -1,6 +1,5 @@
 ﻿using CosmeticEnterpriseBack.DTO.FinishedProduct;
 using CosmeticEnterpriseBack.Interfaces;
-using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CosmeticEnterpriseBack.Controllers;
@@ -23,7 +22,7 @@ public class FinishedProductsController : ControllerBase
     public async Task<FinishedProductResponse> Create(CreateFinishedProductRequest req,
         CancellationToken cancellationToken) => await _crud.CreateAsync(req, cancellationToken);
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:long}")]
     public async Task<ActionResult<FinishedProductResponse>> Update(long id, UpdateFinishedProductRequest request,
         CancellationToken cancellationToken)
     {
@@ -31,7 +30,7 @@ public class FinishedProductsController : ControllerBase
         return result is null ? NotFound() : result;
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:long}")]
     public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
         var deleted = await _crud.DeleteAsync(id, cancellationToken);
@@ -42,7 +41,7 @@ public class FinishedProductsController : ControllerBase
     public async Task<ActionResult<IReadOnlyCollection<FinishedProductResponse>>> GetAll(
         CancellationToken cancellationToken) => Ok(await _crud.GetAllAsync(cancellationToken));
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public async Task<ActionResult<FinishedProductResponse>> GetById(long id, CancellationToken cancellationToken)
     {
         var result = await _crud.GetByIdAsync(id, cancellationToken);

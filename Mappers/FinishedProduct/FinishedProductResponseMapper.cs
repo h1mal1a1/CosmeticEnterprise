@@ -11,7 +11,10 @@ public class FinishedProductResponseMapper :
         return new FinishedProductResponse
         {
             Id = entity.Id,
-            Name = entity.Name
+            Name = entity.Name,
+            IdRecipe = entity.IdRecipe,
+            IdProductCategory = entity.IdProductCategory,
+            IdUnitsOfMeasurement = entity.IdUnitsOfMeasurement
         };
     }
 }
