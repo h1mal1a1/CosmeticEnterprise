@@ -6,6 +6,8 @@
 public class OrderItems
 {
     public long Id { get; set; }
-    public Orders Order { get; set; }
-    public FinishedProducts FinishedProducts { get; set; }
+    public Orders Order { get; set; } = null!;
+    public long IdOrder { get; set; }
+    public FinishedProducts FinishedProducts { get; set; } = null!;
+    public long IdFinishedProduct { get; set; }
 }

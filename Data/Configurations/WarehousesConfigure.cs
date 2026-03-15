@@ -10,6 +10,5 @@ public class WarehousesConfigure : IEntityTypeConfiguration<Warehouses>
     {
         builder.ToTable("warehouses");
         builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
     }
 }

@@ -10,6 +10,5 @@ public class ProductCategoriesConfigure : IEntityTypeConfiguration<ProductCatego
     {
         builder.ToTable("product_categories");
         builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
     }
 }

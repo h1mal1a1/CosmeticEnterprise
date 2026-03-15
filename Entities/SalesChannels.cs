@@ -6,6 +6,6 @@
 public class SalesChannels
 {
     public long Id { get; set; }
-    public string Name { get; set; }
-    public List<Orders> LstOrders { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public List<Orders> OrdersList { get; set; } = [];
 }

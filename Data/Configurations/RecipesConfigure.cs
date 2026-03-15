@@ -10,6 +10,5 @@ public class RecipesConfigure : IEntityTypeConfiguration<Recipes>
     {
         builder.ToTable("recipes");
         builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
     }
 }

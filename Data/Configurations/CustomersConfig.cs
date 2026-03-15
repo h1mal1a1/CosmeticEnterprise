@@ -10,11 +10,11 @@ public class CustomersConfig : IEntityTypeConfiguration<Customers>
     {
         builder.ToTable("customers");
         builder.HasKey(c=>c.Id);
-        builder.Property(p => p.Id).HasColumnName("Id").UseIdentityColumn().ValueGeneratedOnAdd();
-        builder.Property(p => p.Name).HasColumnName("Name").HasMaxLength(100);
+        builder.Property(p => p.Id).HasColumnName("id").UseIdentityColumn().ValueGeneratedOnAdd();
+        builder.Property(p => p.Name).HasColumnName("name").HasMaxLength(100);
 
         builder.HasIndex(i => i.Id);
         builder.HasIndex(i => i.Name).IsUnique();
-        builder.HasMany(c => c.LstOrders).WithOne(o => o.Customer);
+        builder.HasMany(c => c.OrdersList).WithOne(o => o.Customer);
     }
 }

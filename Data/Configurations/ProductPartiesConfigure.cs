@@ -9,8 +9,13 @@ public class ProductPartiesConfigure : IEntityTypeConfiguration<ProductParties>
     public void Configure(EntityTypeBuilder<ProductParties> builder)
     {
         builder.ToTable("product_parties");
-        builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
-        builder.HasOne(f => f.FinishedProducts).WithMany(f => f.ProductPartiesList);
+        builder.HasKey(x => x.Id);
+        
+        builder.Property(x => x.IdFinishedProduct)
+            .HasColumnName("id_finished_product");
+        
+        builder.HasOne(x => x.FinishedProducts)
+            .WithMany(x => x.ProductPartiesList)
+            .HasForeignKey(x=>x.IdFinishedProduct);
     }
 }

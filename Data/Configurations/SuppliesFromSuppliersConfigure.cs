@@ -9,8 +9,14 @@ public class SuppliesFromSuppliersConfigure : IEntityTypeConfiguration<SuppliesF
     public void Configure(EntityTypeBuilder<SuppliesFromSuppliers> builder)
     {
         builder.ToTable("supplies_from_suppliers");
-        builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
-        builder.HasOne(f => f.Supplier).WithMany(f => f.SuppliesFromSuppliersList);
+        
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.IdSupplier)
+            .HasColumnName("id_supplier");
+
+        builder.HasOne(x => x.Supplier)
+            .WithMany(x => x.SuppliesFromSuppliersList)
+            .HasForeignKey(x => x.IdSupplier);
     }
 }

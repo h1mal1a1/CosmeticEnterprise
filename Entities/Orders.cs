@@ -6,11 +6,12 @@
 public class Orders
 {
     public long Id { get; set; }
-    public long IdCustomers { get; set; }
-    public long IdSalesChannels { get; set; }
-    public long IdOrderStatuses{ get; set; }
-    public Customers? Customer { get; set; }
-    public SalesChannels? SalesChannel{ get; set; }
-    public OrderStatuses? OrderStatus{ get; set; }
-    public List<OrderItems>? LstOrderItems { get; set; }
+
+    public Customers Customer { get; set; } = null!;
+    public long IdCustomer { get; set; }
+    public SalesChannels SalesChannel { get; set; } = null!;
+    public long IdSalesChannel { get; set; }
+    public OrderStatuses OrderStatus { get; set; } = null!;
+    public long IdOrderStatus { get; set; }
+    public List<OrderItems> OrderItemsList { get; set; } = [];
 }

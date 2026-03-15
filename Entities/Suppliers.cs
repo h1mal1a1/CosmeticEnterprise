@@ -5,5 +5,5 @@
 public class Suppliers
 {
     public long Id { get; set; }
-    public List<SuppliesFromSuppliers> SuppliesFromSuppliersList { get; set; }
+    public List<SuppliesFromSuppliers> SuppliesFromSuppliersList { get; set; } = [];
 }

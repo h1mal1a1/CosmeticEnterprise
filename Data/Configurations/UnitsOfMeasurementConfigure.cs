@@ -10,6 +10,5 @@ public class UnitsOfMeasurementConfigure : IEntityTypeConfiguration<UnitsOfMeasu
     {
         builder.ToTable("units_of_measurement");
         builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
     }
 }

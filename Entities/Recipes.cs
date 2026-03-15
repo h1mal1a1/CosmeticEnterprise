@@ -6,5 +6,5 @@
 public class Recipes
 {
     public long Id { get; set; }
-    public List<FinishedProducts> FinishedProductsList { get; set; }
+    public List<FinishedProducts> FinishedProductsList { get; set; } = [];
 }

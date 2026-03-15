@@ -9,26 +9,31 @@ public class OrderConfig : IEntityTypeConfiguration<Orders>
     public void Configure(EntityTypeBuilder<Orders> builder)
     {
         builder.ToTable("orders");
-        builder.HasKey(c=>c.Id);
-        builder.Property(p => p.IdCustomers).HasColumnName("IdCustomers");
-        builder.Property(p => p.IdSalesChannels).HasColumnName("IdSalesChannels");
-        builder.Property(p => p.IdOrderStatuses).HasColumnName("IdOrderStatuses");
-            
-        builder.HasOne(o=>o.Customer)
-            .WithMany(c => c.LstOrders)
-            .HasForeignKey(o => o.IdCustomers)
-            .HasPrincipalKey(c=>c.Id)
+        
+        builder.HasKey(x => x.Id);
+        
+        builder.Property(x => x.IdCustomer)
+            .HasColumnName("id_customer");
+        
+        builder.Property(x => x.IdSalesChannel)
+            .HasColumnName("id_sales_channel");
+        
+        builder.Property(x => x.IdOrderStatus)
+            .HasColumnName("id_order_status");
+
+        builder.HasOne(x => x.Customer)
+            .WithMany(x => x.OrdersList)
+            .HasForeignKey(x => x.IdCustomer)
             .IsRequired();
-        builder.HasOne(o=>o.SalesChannel)
-            .WithMany(c => c.LstOrders)
-            .HasForeignKey(o => o.IdSalesChannels)
-            .HasPrincipalKey(c=>c.Id)
+        
+        builder.HasOne(x => x.SalesChannel)
+            .WithMany(x => x.OrdersList)
+            .HasForeignKey(x => x.IdSalesChannel)
             .IsRequired();
-        builder.HasOne(o=>o.OrderStatus)
-            .WithMany(c => c.LstOrders)
-            .HasForeignKey(o => o.IdOrderStatuses)
-            .HasPrincipalKey(c=>c.Id)
+        
+        builder.HasOne(x => x.OrderStatus)
+            .WithMany(x => x.OrdersList)
+            .HasForeignKey(x => x.IdOrderStatus)
             .IsRequired();
-        builder.HasMany(o  => o.LstOrderItems).WithOne(oi => oi.Order);
     }
 }

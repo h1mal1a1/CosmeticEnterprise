@@ -10,6 +10,5 @@ public class SuppliersConfigure : IEntityTypeConfiguration<Suppliers>
     {
         builder.ToTable("suppliers");
         builder.HasKey(f => f.Id);
-        builder.Property(f => f.Id).HasColumnName("Id");
     }
 }
