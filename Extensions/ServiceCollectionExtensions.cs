@@ -19,11 +19,18 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<IResponseMapper<FinishedProducts, FinishedProductResponse>, FinishedProductResponseMapper>();
 
-        services.AddScoped<
-            ICrudService<FinishedProductResponse, CreateFinishedProductRequest, UpdateFinishedProductRequest, long>,
-            CrudService<FinishedProducts, long, CreateFinishedProductRequest, UpdateFinishedProductRequest,
-                FinishedProductResponse>>();
+        services
+            .AddCrud<FinishedProducts, FinishedProductResponse, CreateFinishedProductRequest,
+                UpdateFinishedProductRequest, long>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddCrud<TEntity, TResponse, TCreateRequest, TUpdateRequest, TKey>(
+        this IServiceCollection services) where TEntity : class
+    {
+        services.AddScoped<ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>,
+            CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TResponse>>();
         return services;
     }
 }
