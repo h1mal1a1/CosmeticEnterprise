@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,13 +17,13 @@ public class TokenService : ITokenService
     
     public string GenerateAccessToken(User user)
     {
+        var roleEnum = RoleMapper.MapToEnum(user.RoleName);
+        var roleClaimValue = RoleMapper.MapToClaimValue(roleEnum);
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.IdUser.ToString()),
-            new(JwtRegisteredClaimNames.UniqueName, user.Username),
             new(ClaimTypes.NameIdentifier, user.IdUser.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.RoleName),
+            new(ClaimTypes.Role, roleClaimValue),
             new("token_type", "access")
         };
         return GenerateJwtToken(claims, DateTime.UtcNow.AddMinutes(_jwtSettings.AccessTokenLifetimeMinutes));
@@ -57,7 +56,10 @@ public class TokenService : ITokenService
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
 
             ValidateLifetime = validateLifetime,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+            
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.Name
         };
 
         try

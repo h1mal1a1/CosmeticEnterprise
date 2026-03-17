@@ -4,6 +4,7 @@ using CosmeticEnterpriseBack.Entities;
 using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Mappers.FinishedProduct;
 using CosmeticEnterpriseBack.Readers;
+using CosmeticEnterpriseBack.Services.Crud;
 
 namespace CosmeticEnterpriseBack.Extensions;
 
@@ -19,18 +20,8 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<IResponseMapper<FinishedProducts, FinishedProductResponse>, FinishedProductResponseMapper>();
 
-        services
-            .AddCrud<FinishedProducts, FinishedProductResponse, CreateFinishedProductRequest,
-                UpdateFinishedProductRequest, long>();
+        services.AddScoped<ICrudServiceFactory, CrudServiceFactory>();
 
-        return services;
-    }
-
-    public static IServiceCollection AddCrud<TEntity, TResponse, TCreateRequest, TUpdateRequest, TKey>(
-        this IServiceCollection services) where TEntity : class
-    {
-        services.AddScoped<ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>,
-            CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TResponse>>();
         return services;
     }
 }

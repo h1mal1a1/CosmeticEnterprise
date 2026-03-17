@@ -1,10 +1,12 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.Extensions;
 using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Middleware;
 using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Services.Crud;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -38,12 +40,15 @@ public static class Launcher
                         Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
 
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+                    RoleClaimType = ClaimTypes.Role,
+                    NameClaimType = ClaimTypes.Name
                 };
                 options.Events = new JwtBearerEvents()
                 {
                     OnMessageReceived = context =>
                     {
+                        if (!string.IsNullOrWhiteSpace(context.Token)) return Task.CompletedTask;
                         var accessToken = context.Request.Cookies[AuthCookieNames.AccessToken];
                         if (!string.IsNullOrWhiteSpace(accessToken))
                             context.Token = accessToken;
@@ -104,6 +109,7 @@ public static class Launcher
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<DbContext, AppDbContext>();
+        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
         builder.Services.AddCrudServices();
         AddJwt(builder);
         var app = builder.Build();
