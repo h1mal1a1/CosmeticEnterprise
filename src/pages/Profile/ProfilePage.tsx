@@ -1,7 +1,7 @@
-import './ProductsPage.css'
+import './ProfilePage.css'
 import { useRef, useState } from 'react'
-import { formatFileSize } from '../utils/formatFileSize'
-import { uploadFile } from '../utils/api';
+import { formatFileSize } from '../../utils/file/formatFileSize'
+import { uploadFile } from '../../utils/api/api';
 
 export default function ProfilePage() {
     const inputFileRef = useRef<HTMLInputElement>(null);
@@ -31,7 +31,12 @@ export default function ProfilePage() {
         setSuccessMessage(false);
         setErrorMessage(null);
         try {
-            await uploadFile(Date.now(), selectedFile.name, selectedFile);
+            await uploadFile(Date.now(), { 
+              name: selectedFile.name, 
+              file: selectedFile,
+              size: selectedFile.size,
+              status: 'ожидает'
+            });
             setSuccessMessage(true);
         } catch (error) {
           if (error instanceof Error) {
