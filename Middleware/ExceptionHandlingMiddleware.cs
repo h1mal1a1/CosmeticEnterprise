@@ -23,7 +23,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhadled exception occured");
+            _logger.LogError(ex, "Unhandled exception occured");
             await HandleExceptionAsync(httpContext, ex);
         }
     }
@@ -34,6 +34,7 @@ public class ExceptionHandlingMiddleware
         {
             BadRequestException => (int)HttpStatusCode.BadRequest,
             UnauthorizedException => (int)HttpStatusCode.Unauthorized,
+            ForbiddenException => (int)HttpStatusCode.Forbidden,
             NotFoundException => (int)HttpStatusCode.NotFound,
             ConflictException => (int)HttpStatusCode.Conflict,
             _ => (int)HttpStatusCode.InternalServerError

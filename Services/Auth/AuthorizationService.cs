@@ -22,6 +22,6 @@ public class AuthorizationService : IAuthorizationService
     public void EnsureAccess(ResourceType resource, CrudAction action)
     {
         if (!HasAccess(resource, action))
-            throw new UnauthorizedAccessException($"Access denied. Resourse: {resource}, action: {action}");
+            throw new ForbiddenException($"Access denied. Resource: {resource}, action: {action}");
     }
 }

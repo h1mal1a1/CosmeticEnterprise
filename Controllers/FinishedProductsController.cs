@@ -3,10 +3,13 @@ using CosmeticEnterpriseBack.Controllers.Base;
 using CosmeticEnterpriseBack.DTO.FinishedProduct;
 using CosmeticEnterpriseBack.Entities;
 using CosmeticEnterpriseBack.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CosmeticEnterpriseBack.Controllers;
 
+[ApiController]
+[Authorize]
 [Route("api/finished-products")]
 public class FinishedProductsController :
     CrudController<
