@@ -31,4 +31,11 @@ public abstract class CrudController<TResponse, TCreateRequest, TUpdateRequest, 
         var result = await _crud.GetByIdAsync(id, cancellationToken);
         return result == null ? NotFound() : Ok(result);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(TKey id, CancellationToken cancellationToken)
+    {
+        var deleted = await _crud.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    } 
 }
