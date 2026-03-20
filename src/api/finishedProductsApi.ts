@@ -5,50 +5,39 @@ import type {
     UpdateFinishedProductRequest,
 } from '../types/finishedProduct';
 
-export function getProducts(token?: string): Promise<FinishedProduct[]> {
-    return apiRequest<FinishedProduct[]>('/api/finished-products', {
-        token,
-    });
+export function getFinishedProducts(): Promise<FinishedProduct[]> {
+    return apiRequest<FinishedProduct[]>('/api/finished-products');
 }
 
-export function getProductById(
+export function getFinishedProductById(
     id: number,
-    token?: string
 ): Promise<FinishedProduct> {
-    return apiRequest<FinishedProduct>(`/api/finished-products/${id}`, {
-        token,
-    });
+    return apiRequest<FinishedProduct>(`/api/finished-products/${id}`);
 }
 
-export function createProduct(
+export function createFinishedProduct(
     request: CreateFinishedProductRequest,
-    token?: string
 ): Promise<FinishedProduct> {
     return apiRequest<FinishedProduct>('/api/finished-products', {
         method: 'POST',
-        body: request,
-        token,
+        body: request
     });
 }
 
-export function updateProduct(
+export function updateFinishedProduct(
     id: number,
     request: UpdateFinishedProductRequest,
-    token?: string
 ): Promise<FinishedProduct> {
     return apiRequest<FinishedProduct>(`/api/finished-products/${id}`, {
         method: 'PUT',
-        body: request,
-        token,
+        body: request
     });
 }
 
-export function deleteProduct(
+export function deleteFinishedProduct(
     id: number,
-    token?: string
 ): Promise<void> {
     return apiRequest<void>(`/api/finished-products/${id}`, {
-        method: 'DELETE',
-        token,
+        method: 'DELETE'
     });
 }

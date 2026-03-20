@@ -63,3 +63,10 @@
 .admin-card-button:hover {
   background: #333;
 }
+
+.admin-user-block {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

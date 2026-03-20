@@ -9,6 +9,8 @@ import AboutPage from './pages/About/AboutPage';
 import ContactsPage from './pages/Contacts/ContactsPage';
 import UploadPage from './pages/Upload/UploadPage'
 import AdminPage from './pages/Admin/AdminPage';
+import LoginPage from './pages/Login/LoginPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Link to="/contacts" className='nav-link'>Контакты</Link>
           <Link to="/admin" className='nav-link'>Админка</Link>
           <Link to="/upload" className='nav-link'>Загрузить файлы</Link>
+          <Link to="/login" className='nav-link'>Войти</Link>
         </nav>
         <main className="main-content">
           <Routes>
@@ -37,6 +40,15 @@ function App() {
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/upload" element={<UploadPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </main>
       </div>

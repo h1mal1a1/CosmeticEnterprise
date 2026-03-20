@@ -1,19 +1,23 @@
 export type FinishedProduct = {
-    id_finished_product: number;
+    id: number;
     name: string;
-    description?: string;
-    price?: number;
+    idRecipe: number;
+    idProductCategory: number;
+    idUnitsOfMeasurement: number;
 };
 
 export type CreateFinishedProductRequest = {
     name: string;
-    description?: string;
-    price?: number;
+    idRecipe: number;
+    idProductCategory: number;
+    idUnitsOfMeasurement: number;
 };
 
+
 export type UpdateFinishedProductRequest = {
-    name?: string;
-    description?: string;
-    price?: number;
+    name: string;
+    idRecipe: number;
+    idProductCategory: number;
+    idUnitsOfMeasurement: number;
 };
 
