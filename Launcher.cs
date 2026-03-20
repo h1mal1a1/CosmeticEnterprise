@@ -103,6 +103,17 @@ public static class Launcher
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("DefaultConnectionString")));
         builder.Services.AddControllers();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("FrontendCorsPolicy", policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:5173")
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
@@ -122,7 +133,7 @@ public static class Launcher
 
         app.UseExceptionHandlingMiddleware();
         app.UseHttpsRedirection();
-        
+        app.UseCors("FrontendCorsPolicy");
         app.UseAuthentication();
         app.UseAuthorization();
         
