@@ -101,14 +101,14 @@ public static class Launcher
         
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
-                builder.Configuration.GetConnectionString("DefaultConnectionString")));
+                builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddControllers();
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("FrontendCorsPolicy", policy =>
             {
                 policy
-                    .WithOrigins("http://localhost:5173")
+                    .WithOrigins("https://localhost:5173")
                     .AllowCredentials()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -125,6 +125,7 @@ public static class Launcher
         AddJwt(builder);
         var app = builder.Build();
 
+        app.ApplyMigrations();
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

@@ -14,15 +14,15 @@ public class AuthCookieService : IAuthCookieService
         var accessCookieOptions = new CookieOptions()
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.AccessTokenLifetimeMinutes)
         };
         var refreshCookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays)
         };
         
@@ -35,8 +35,8 @@ public class AuthCookieService : IAuthCookieService
         var deleteCookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax
+            Secure = true,
+            SameSite = SameSiteMode.None
         };
         response.Cookies.Delete(AuthCookieNames.AccessToken, deleteCookieOptions);
         response.Cookies.Delete(AuthCookieNames.RefreshToken, deleteCookieOptions);
