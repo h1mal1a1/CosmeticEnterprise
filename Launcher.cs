@@ -92,7 +92,7 @@ public static class Launcher
             });
         });
     }
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         
@@ -126,6 +126,7 @@ public static class Launcher
         var app = builder.Build();
 
         app.ApplyMigrations();
+        await app.ApplySeedDataAsync();
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

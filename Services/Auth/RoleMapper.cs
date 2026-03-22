@@ -8,6 +8,7 @@ public static class RoleMapper
     {
         if (string.IsNullOrWhiteSpace(role))
             throw new ArgumentException("Role is empty");
+        
         return role.Trim().ToLowerInvariant() switch
         {
             "admin" => UserRole.Admin,
@@ -15,18 +16,6 @@ public static class RoleMapper
             "warehousemanager" => UserRole.WarehouseManager,
             "user" => UserRole.User,
             _ => throw new ArgumentOutOfRangeException(nameof(role), $"Unknown role: {role}")
-        };
-    }
-
-    public static string MapToClaimValue(UserRole role)
-    {
-        return role switch
-        {
-            UserRole.Admin => "Admin",
-            UserRole.Manager => "Manager",
-            UserRole.WarehouseManager => "WarehouseManager",
-            UserRole.User => "User",
-            _ => throw new ArgumentOutOfRangeException(nameof(role), $"Unknown role: {role}", null)
         };
     }
 }

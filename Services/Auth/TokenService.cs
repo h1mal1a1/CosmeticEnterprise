@@ -17,13 +17,11 @@ public class TokenService : ITokenService
     
     public string GenerateAccessToken(User user)
     {
-        var roleEnum = RoleMapper.MapToEnum(user.RoleName);
-        var roleClaimValue = RoleMapper.MapToClaimValue(roleEnum);
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.IdUser.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, roleClaimValue),
+            new(ClaimTypes.Role, user.RoleName.ToString()),
             new("token_type", "access")
         };
         return GenerateJwtToken(claims, DateTime.UtcNow.AddMinutes(_jwtSettings.AccessTokenLifetimeMinutes));

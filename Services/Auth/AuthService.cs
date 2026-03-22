@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using CosmeticEnterpriseBack.Authorization;
 using Microsoft.AspNetCore.Identity;
 using CosmeticEnterpriseBack.Data;
 using CosmeticEnterpriseBack.DTO.Auth;
@@ -31,7 +32,7 @@ public class AuthService : IAuthService
             Email = request.Email,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow,
-            RoleName = "User",
+            RoleName = UserRole.User,
             IsActive = true
         };
         user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
@@ -103,7 +104,7 @@ public class AuthService : IAuthService
         {
             IdUser = user.IdUser,
             Username = user.Username,
-            RoleName = user.RoleName
+            RoleName = user.RoleName.ToString()
         };
     }
 }

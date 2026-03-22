@@ -7,6 +7,8 @@
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=cosmetic_db;Username=postgres;Password=postgres
+      ADMIN_USERNAME: admin1
+      ADMIN_PASSWORD: Aadmin123
     depends_on:
       db:
         condition: service_healthy
@@ -19,7 +21,7 @@
     environment:
       POSTGRES_DB: cosmetic_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postgres 
     ports:
       - "5435:5432"
     volumes:
@@ -49,8 +51,10 @@
       - frontend
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
     networks:
       - app-network
 

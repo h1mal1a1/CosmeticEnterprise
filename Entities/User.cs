@@ -1,4 +1,6 @@
-﻿namespace CosmeticEnterpriseBack.Entities;
+﻿using CosmeticEnterpriseBack.Authorization;
+
+namespace CosmeticEnterpriseBack.Entities;
 
 /// <summary>
 /// Пользователи
@@ -13,7 +15,7 @@ public class User
 
     public string PasswordHash { get; set; } = null!;
 
-    public string RoleName { get; set; } = "User";
+    public UserRole RoleName { get; set; } = UserRole.User;
 
     public bool IsActive { get; set; } = true;
 
