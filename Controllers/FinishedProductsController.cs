@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CosmeticEnterpriseBack.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/finished-products")]
 public class FinishedProductsController :
     CrudController<

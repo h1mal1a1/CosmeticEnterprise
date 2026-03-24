@@ -13,7 +13,8 @@ public class AuthorizationService : IAuthorizationService
     public bool HasAccess(ResourceType resource, CrudAction crudAction)
     {
         if (!_currentUserService.IsAuthenticated)
-            return false;
+            return IsPublicRead(resource, crudAction);
+            
         if (_currentUserService.Role is null)
             return false;
         return RolePermissionMatrix.HasAccess(_currentUserService.Role.Value, resource, crudAction);
@@ -23,5 +24,11 @@ public class AuthorizationService : IAuthorizationService
     {
         if (!HasAccess(resource, action))
             throw new ForbiddenException($"Access denied. Resource: {resource}, action: {action}");
+    }
+
+    private static bool IsPublicRead(ResourceType resource, CrudAction action)
+    {
+        if (action != CrudAction.Read) return false;
+        return resource is ResourceType.ProductCategory or ResourceType.FinishedProduct;
     }
 }

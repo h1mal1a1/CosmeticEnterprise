@@ -9,6 +9,11 @@ public class ProductCategoriesConfigure : IEntityTypeConfiguration<ProductCatego
     public void Configure(EntityTypeBuilder<ProductCategories> builder)
     {
         builder.ToTable("product_categories");
+        
         builder.HasKey(f => f.Id);
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(200);
     }
 }

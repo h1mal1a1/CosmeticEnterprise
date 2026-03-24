@@ -31,21 +31,4 @@ public class AppDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optBuilder)
-    // {
-    //     string notInDockComp =
-    //         "Host=localhost;Port=5434;Database=cosmeticenterprise;Username=postgres;Password=postgres;";
-    //     //string inDockComp = "Host=pg;Port=5432;Database=postgres;Username=postgres;Password=example;";
-    //     optBuilder.UseNpgsql(notInDockComp);
-    //     // options => options.EnableRetryOnFailure(
-    //     //     maxRetryCount: 5,
-    //     //     maxRetryDelay: TimeSpan.FromSeconds(10),
-    //     //     errorCodesToAdd: null));
-    //     optBuilder.UseLoggerFactory(LoggerFactory.Create(builder =>
-    //         builder.AddConsole().AddFilter(level => level >= LogLevel.Information)));
-    //     //optBuilder.UseLoggerFactory(Logger)
-    //     //optBuilder.LogTo(Console.WriteLine);
-    //
-    // }
 }
