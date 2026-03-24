@@ -1,85 +1,193 @@
-/*Стиль моего контента*/
-
 * {
   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1a1d24;
 }
 
 .page-container {
-  display: flex;
-  flex-direction: column;
-  /*height: 110vh; /* ← без этого дочерние элементы не смогут использовать % */
-  width: 100vw;
+  min-height: 100vh;
 }
 
-/*Верхняя панель*/
+/* ===== NAVBAR ===== */
+
 .top-nav {
-  /*height: 10%;/*высота верхней панели*/
-  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   display: flex;
-  flex-wrap: nowrap;/* запрещаем перенос */
-  overflow-x: auto; /* на случай узкого экрана — можно прокручивать */
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 20px;
-  padding: 0px 20px;
-  padding-left: 20%;
-  padding-top: 0.5%;
-  padding-bottom: 0.5%;
-  /* min-height: 2%; */
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  min-height: 78px;
+  padding: 0 36px;
+
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(10px);
 }
 
-.nav-link,
 .brand-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #0f172a;
   white-space: nowrap;
-  color: black;
-  /* margin-top: 25px; */
-  /* Не задаём margin/padding, чтобы не нарушать baseline */
+  user-select: none;
 }
 
-.top-nav .nav-link {
-  font-size: 1.4rem;/*размер шрифта*/
-  color: black;
-  font-weight: normal;
-  white-space: nowrap;
+/* ===== LINKS CONTAINER ===== */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 24px;
+}
+
+/* ===== BASE LINK ===== */
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+
   text-decoration: none;
-  cursor: pointer;
+  color: #253046;
+  font-size: 17px;
+  font-weight: 500;
+
+  transition: color 0.2s ease, transform 0.15s ease, background 0.2s ease;
 }
 
-.top-nav .brand-title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: black;
-  margin-top: -2px;
+.nav-link:hover {
+  color: #111827;
+  transform: translateY(-1px);
 }
+
+/* underline animation */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 5px;
+  width: 100%;
+  height: 2px;
+  background: #111827;
+
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* ===== BUTTON STYLE (login/profile) ===== */
+
+.nav-link--button {
+  padding: 0 16px;
+  border-radius: 10px;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.nav-link--button:hover {
+  color: #ffffff;
+  background: #1f2937;
+}
+
+.nav-link--button::after {
+  display: none;
+}
+
+/* ===== ADMIN ACCENT ===== */
+
+.nav-link--accent {
+  color: #7c2d12;
+  font-weight: 600;
+}
+
+.nav-link--accent::after {
+  background: #7c2d12;
+}
+
+/* ===== MAIN CONTENT ===== */
 
 .main-content {
-  flex: 1;
+  padding: 32px 36px;
 }
 
-.nav-link.active {
-  font-weight: bold;
-  color: #646cff;
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1100px) {
+  .top-nav {
+    padding: 18px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 18px;
+  }
+
+  .brand-title {
+    font-size: 28px;
+  }
+
+  .nav-link {
+    font-size: 16px;
+  }
+
+  .main-content {
+    padding: 24px;
+  }
 }
 
-/*
-height: calc(100vh/7); vh - высота вьюпорта(окна браузера). Заполнение по вертикали
-width: 100%; Указывает, что блок должен занимать 100% ширины своего родителя
-margin: 0; Нулевые отступы со всех сторон. Чтобы блоки прилегали друг к другу и к краям экрана, без зазоров.
-display: flex; Делает элемент гибким контейнером (flexbox). Чтобы использовать следующие два свойства: align-items и justify-content.
-align-items: center; Выравнивает дочерние элементы по вертикальной оси внутри flex-контейнера. Чтобы надпись была по центру по высоте.
-justify-content: center; Чтобы надпись была по центру по ширине.
-font-size: 1.3rem; единица размера шрифта, привязанная к базовому размеру шрифта браузера (обычно 16px).
-font-weight: bold; Делает шрифт жирным. Чтобы названия разделов выглядели чётко и контрастно.
-color: white; Задаёт цвет текста.
-text-shadow: 0 1px 2px rgba(0,0,0,0.5); добавляет тень к тексту. Чтобы текст лучше читался на фоне, особенно если фон содержит узоры, градиенты или яркие цвета.
-padding - внутренний отступ. Работает внутри самого элемента. Добавляет пространство между содержимым элементам и его границей(border).
-gap - расстояние между дочерними элементами. Работает только внутри flex-контейнера или grid-контейнера. Задает единый зазор между соседними дочерними элементами.
-Не влияет на отступы от родителя к первому/последнему элементу - только между элементами.
-.top-nav .nav-item - выбрать все элементы с классом nav-item, которые находятся внутри элемента с классом top-nav. Если между ними бы пробела не было бы, 
-то выбирался класс у которого одновременно два класса top-nav и nav-item.
-  text-decoration: none; - Убирает декоративное подчёркивание текста, которое браузер применяет по умолчанию к ссылкам
-  cursor: pointer; - Меняет курсор мыши на «руку» (указатель) при наведении на элемент.
-*/
+@media (max-width: 700px) {
+  .top-nav {
+    padding: 16px;
+  }
+
+  .brand-title {
+    font-size: 24px;
+  }
+
+  .nav-links {
+    gap: 12px 16px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+    height: 36px;
+  }
+
+  .nav-link--button {
+    padding: 0 12px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}

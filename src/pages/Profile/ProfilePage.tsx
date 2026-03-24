@@ -1,95 +1,42 @@
-import './ProfilePage.css'
-import { useRef, useState } from 'react'
-import { formatFileSize } from '../../utils/file/formatFileSize'
-import { uploadFile } from '../../utils/api/api';
+import './ProfilePage.css';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../components/auth/AuthProvider';
 
 export default function ProfilePage() {
-    const inputFileRef = useRef<HTMLInputElement>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-    
+  async function handleLogout() {
+    await logout();
+    navigate('/', { replace: true });
+  }
 
-    const handleButtonClick = () => {
-        if(inputFileRef.current) {
-            inputFileRef.current.click()
-        }
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0] || null;
-        setSelectedFile(file);
-        setErrorMessage(null);
-        setSuccessMessage(false);
-    };
-
-    const handleUpload = async () => {
-        if (!selectedFile) return;
-        setIsUploading(true);
-        setSuccessMessage(false);
-        setErrorMessage(null);
-        try {
-            await uploadFile(Date.now(), { 
-              name: selectedFile.name, 
-              file: selectedFile,
-              size: selectedFile.size,
-              status: 'ожидает'
-            });
-            setSuccessMessage(true);
-        } catch (error) {
-          if (error instanceof Error) {
-            setErrorMessage(error.message);
-          } else {
-            setErrorMessage('Неизвестная ошибка');
-          }
-        } finally {
-            setIsUploading(false);
-        }
-    }
   return (
-  <div>
-    <h1>Страница личного кабинета</h1>
+    <div className="profile-page">
+      <div className="profile-card">
+        <div className="profile-card__header">
+          <h1>Личный кабинет</h1>
+          <p>Информация о текущем пользователе</p>
+        </div>
 
-    <div className='file-controls'>
-      <button onClick={handleButtonClick}>
-        {selectedFile? selectedFile.name : 'Выбрать файл'}
-      </button>
+        <div className="profile-card__content">
+          <div className="profile-field">
+            <span className="profile-field__label">Имя пользователя</span>
+            <span className="profile-field__value">
+              {user?.username ?? 'Неизвестно'}
+            </span>
+          </div>
 
-      {selectedFile && (
-        <>
-          <input 
-            type='text'
-            value={formatFileSize(selectedFile.size)}
-            readOnly
-            className='file-size-input'/>
-          <button onClick={handleUpload} disabled={isUploading}>
-            {isUploading ? 'Загрузка...' : 'Отправить на сервер'}
-          </button>
-        </>
-      )}
+          <div className="profile-field">
+            <span className="profile-field__label">Почта</span>
+            <span className="profile-field__value">Не указана</span>
+          </div>
+        </div>
+
+        <button className="profile-logout-button" onClick={handleLogout}>
+          Выйти
+        </button>
+      </div>
     </div>
-    
-      {successMessage && (
-        <p style={{ color: 'green', marginTop: '10px' }}>
-          ✅ Файл успешно загружен!
-        </p>
-      )}
-
-      {/* Показываем ошибку */}
-      {errorMessage && (
-        <p style={{ color: 'red', marginTop: '10px', whiteSpace: 'pre-wrap' }}>
-          ❌ Ошибка: {errorMessage}
-        </p>
-      )}
-
-    <input 
-      type='file'
-      ref={inputFileRef}
-      onChange={handleFileChange}
-      style={{display: 'none'}}
-    />
-  </div>
   );
 }
