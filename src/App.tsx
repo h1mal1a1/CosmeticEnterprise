@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import './App.css';
 import HomePage from './pages/Home/HomePage';
 import CategoriesPage from './pages/Categories/CategoriesPage';
@@ -9,11 +10,26 @@ import AdminPage from './pages/Admin/AdminPage';
 import LoginPage from './pages/Login/LoginPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './components/auth/AuthProvider';
+import { getCategories, type Category } from './api/categoriesApi';
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const isAdmin = user?.roleName?.toLowerCase() === 'admin';
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Не удалось загрузить категории для меню', error);
+      }
+    }
+
+    void loadCategories();
+  }, []);
 
   return (
     <div className="page-container">
@@ -21,10 +37,51 @@ function AppContent() {
         <div className="brand-title">VALMÉRIS</div>
 
         <div className="nav-links">
-          <Link to="/" className="nav-link">Главная</Link>
-          <Link to="/categories" className="nav-link">Категории</Link>
-          <Link to="/products" className="nav-link">Продукция</Link>
-          <Link to="/about" className="nav-link">О нас</Link>
+          <Link to="/" className="nav-link">
+            Главная
+          </Link>
+
+          <div className="nav-dropdown">
+            <Link to="/categories" className="nav-link nav-link--dropdown">
+              Категории
+              <span className="nav-dropdown__arrow">⌄</span>
+            </Link>
+
+            <div className="nav-dropdown__menu">
+              {categories.length > 0 ? (
+                <>
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/products?categoryId=${category.id}`}
+                      className="nav-dropdown__item"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+
+                  <Link
+                    to="/categories"
+                    className="nav-dropdown__item nav-dropdown__item--all"
+                  >
+                    Смотреть все
+                  </Link>
+                </>
+              ) : (
+                <div className="nav-dropdown__item nav-dropdown__item--empty">
+                  Загрузка...
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Link to="/products" className="nav-link">
+            Продукция
+          </Link>
+
+          <Link to="/about" className="nav-link">
+            О нас
+          </Link>
 
           {isAuthenticated && isAdmin && (
             <Link to="/admin" className="nav-link nav-link--accent">
