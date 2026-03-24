@@ -82,9 +82,6 @@ export default function ProductsPage() {
           {filteredProducts.map((product) => (
             <div key={product.id} className="product-card">
               <div className="product-card__body">
-                <div className="product-card__meta">
-                  Категория ID: {product.idProductCategory}
-                </div>
                 <h2 className="product-card__title">{product.name}</h2>
               </div>
             </div>

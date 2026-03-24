@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getCategories, type Category } from '../../api/categoriesApi';
 import './CategoriesPage.css';
 
@@ -20,7 +21,7 @@ export default function CategoriesPage() {
       }
     }
 
-    loadCategories();
+    void loadCategories();
   }, []);
 
   if (isLoading) {
@@ -45,14 +46,18 @@ export default function CategoriesPage() {
       ) : (
         <div className="categories-grid">
           {categories.map((category) => (
-            <div key={category.id} className="category-card">
+            <Link
+              key={category.id}
+              to={`/products?categoryId=${category.id}`}
+              className="category-card"
+            >
               <div className="category-card__content">
                 <h2 className="category-card__title">{category.name}</h2>
                 <p className="category-card__text">
                   Перейти к подборке товаров этой категории
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
