@@ -26,6 +26,8 @@ public class AppDbContext : DbContext
     public DbSet<Suppliers> Suppliers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+    
+    public DbSet<FinishedProductImages> FinishedProductImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

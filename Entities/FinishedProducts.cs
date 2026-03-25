@@ -18,4 +18,5 @@ public class FinishedProducts : IEntity<long>
     public List<LeftoversInWarehouses> LeftoversInWarehousesList { get; set; } = [];
     public long IdUnitsOfMeasurement { get; set; }
     public UnitsOfMeasurement UnitsOfMeasurement { get; set; } = null!;
+    public ICollection<FinishedProductImages> Images { get; set; } = [];
 }
