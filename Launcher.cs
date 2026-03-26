@@ -8,10 +8,13 @@ using CosmeticEnterpriseBack.Middleware;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.Crud;
 using CosmeticEnterpriseBack.Services.CurrentUser;
+using CosmeticEnterpriseBack.Services.FinishedProductImages;
+using CosmeticEnterpriseBack.Services.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Minio;
 
 namespace CosmeticEnterpriseBack;
 
@@ -92,6 +95,24 @@ public static class Launcher
             });
         });
     }
+
+    private static void AddMinio(WebApplicationBuilder builder)
+    {
+        var objectStorageSection = builder.Configuration.GetSection("ObjectStorage");
+        builder.Services.Configure<ObjectStorageSettings>(objectStorageSection);
+
+        var objectStorageSettings = objectStorageSection.Get<ObjectStorageSettings>()
+                                    ?? throw new Exception("ObjectStorage settings not found");
+
+        builder.Services.AddSingleton<IMinioClient>(_ =>
+            new MinioClient()
+                .WithEndpoint(objectStorageSettings.Endpoint)
+                .WithCredentials(objectStorageSettings.AccessKey, objectStorageSettings.SecretKey)
+                .WithSSL(objectStorageSettings.UseSsl)
+                .Build());
+
+        builder.Services.AddScoped<IObjectStorageService, MinioObjectStorageService>();
+    }
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -121,8 +142,10 @@ public static class Launcher
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<DbContext, AppDbContext>();
         builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();
         builder.Services.AddCrudServices();
         AddJwt(builder);
+        AddMinio(builder);
         var app = builder.Build();
 
         app.ApplyMigrations();

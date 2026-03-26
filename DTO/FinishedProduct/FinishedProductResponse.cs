@@ -1,4 +1,6 @@
-﻿namespace CosmeticEnterpriseBack.DTO.FinishedProduct;
+﻿using CosmeticEnterpriseBack.DTO.FinishedProductImages;
+
+namespace CosmeticEnterpriseBack.DTO.FinishedProduct;
 
 public class FinishedProductResponse
 {
@@ -7,4 +9,5 @@ public class FinishedProductResponse
     public long IdRecipe { get; set; }
     public long IdProductCategory { get; set; }
     public long IdUnitsOfMeasurement { get; set; }
+    public List<FinishedProductImageResponse> Images { get; set; } = [];
 }

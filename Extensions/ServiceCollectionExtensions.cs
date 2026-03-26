@@ -14,6 +14,8 @@ public static class ServiceCollectionExtensions
 {
     private static void AddFP(this IServiceCollection services)
     {
+        services.AddScoped<IEntityReader<FinishedProducts, long>, FinishedProductsReader>();
+        
         services
             .AddScoped<ICreateMapper<FinishedProducts, CreateFinishedProductRequest>, FinishedProductCreateMapper>();
         services
