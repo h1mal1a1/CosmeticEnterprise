@@ -11,6 +11,8 @@ import LoginPage from './pages/Login/LoginPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './components/auth/AuthProvider';
 import { getCategories, type Category } from './api/categoriesApi';
+import ProductDetailsPage from './pages/ProductDetails/ProductDetailsPage';
+import AppBreadcrumbs from './components/navigation/AppBreadcrumbs';
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -34,7 +36,9 @@ function AppContent() {
   return (
     <div className="page-container">
       <nav className="top-nav">
-        <div className="brand-title">VALMÉRIS</div>
+        <Link to="/" className="brand-title">
+          VALMÉRIS
+        </Link>
 
         <div className="nav-links">
           <Link to="/" className="nav-link">
@@ -101,11 +105,14 @@ function AppContent() {
         </div>
       </nav>
 
+      <AppBreadcrumbs />
+
       <main className="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductDetailsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/login" element={<LoginPage />} />
 

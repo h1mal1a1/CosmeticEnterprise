@@ -51,6 +51,7 @@ export default function CategoriesPage() {
               to={`/products?categoryId=${category.id}`}
               className="category-card"
             >
+              <div className="category-card__overlay" />
               <div className="category-card__content">
                 <h2 className="category-card__title">{category.name}</h2>
                 <p className="category-card__text">
