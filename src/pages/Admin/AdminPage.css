@@ -1,5 +1,5 @@
 .admin-page {
-  padding: 40px 80px;
+  padding: 32px 32px;
 }
 
 .admin-page__header {
@@ -19,7 +19,7 @@
 
 .admin-layout {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 24px;
 }
 

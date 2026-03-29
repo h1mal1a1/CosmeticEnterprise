@@ -6,13 +6,15 @@ import CategoriesPage from './pages/Categories/CategoriesPage';
 import ProductsPage from './pages/Products/ProductsPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import AboutPage from './pages/About/AboutPage';
-import AdminPage from './pages/Admin/AdminPage';
 import LoginPage from './pages/Login/LoginPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuth } from './components/auth/AuthProvider';
 import { getCategories, type Category } from './api/categoriesApi';
 import ProductDetailsPage from './pages/ProductDetails/ProductDetailsPage';
 import AppBreadcrumbs from './components/navigation/AppBreadcrumbs';
+import AdminLayout from './pages/Admin/AdminLayout';
+import AdminCategoriesPage from './pages/Admin/AdminCategoriesPage';
+import AdminFinishedProductsPage from './pages/Admin/AdminFinishedProductsPage';
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -24,9 +26,10 @@ function AppContent() {
     async function loadCategories() {
       try {
         const data = await getCategories();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Не удалось загрузить категории для меню', error);
+        setCategories([]);
       }
     }
 
@@ -88,7 +91,7 @@ function AppContent() {
           </Link>
 
           {isAuthenticated && isAdmin && (
-            <Link to="/admin" className="nav-link nav-link--accent">
+            <Link to="/admin/categories" className="nav-link nav-link--accent">
               Панель управления
             </Link>
           )}
@@ -129,10 +132,17 @@ function AppContent() {
             path="/admin"
             element={
               <ProtectedRoute>
-                {isAdmin ? <AdminPage /> : <Navigate to="/" replace />}
+                {isAdmin ? <AdminLayout /> : <Navigate to="/" replace />}
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<Navigate to="categories" replace />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
+            <Route
+              path="finished-products"
+              element={<AdminFinishedProductsPage />}
+            />
+          </Route>
         </Routes>
       </main>
     </div>
