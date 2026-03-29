@@ -1,10 +1,15 @@
 ﻿using CosmeticEnterpriseBack.Base;
 using CosmeticEnterpriseBack.DTO.FinishedProduct;
 using CosmeticEnterpriseBack.DTO.ProductCategory;
+using CosmeticEnterpriseBack.DTO.Recipe;
+using CosmeticEnterpriseBack.DTO.UnitOfMeasurement;
 using CosmeticEnterpriseBack.Entities;
 using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Mappers.FinishedProduct;
 using CosmeticEnterpriseBack.Mappers.ProductCategory;
+using CosmeticEnterpriseBack.Mappers.Recipe;
+using CosmeticEnterpriseBack.Mappers.UnitOfMeasurement;
+using CosmeticEnterpriseBack.Mappers.UnitsOfMeasurement;
 using CosmeticEnterpriseBack.Readers;
 using CosmeticEnterpriseBack.Services.Crud;
 
@@ -33,12 +38,35 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<IResponseMapper<ProductCategories, ProductCategoryResponse>, ProductCategoryResponseMapper>();
     }
+
+    private static void AddRecipes(this IServiceCollection services)
+    {
+        services.AddScoped<ICreateMapper<Recipes, CreateRecipeRequest>, RecipeCreateMapper>();
+        services.AddScoped<IUpdateMapper<Recipes, UpdateRecipeRequest>, RecipeUpdateMapper>();
+        services.AddScoped<IResponseMapper<Recipes, RecipeResponse>, RecipeResponseMapper>();
+    }
+
+    private static void AddUnitsOfMeasurement(this IServiceCollection services)
+    {
+        services
+            .AddScoped<ICreateMapper<UnitsOfMeasurement, CreateUnitOfMeasurementRequest>,
+                UnitOfMeasurementCreateMapper>();
+        services
+            .AddScoped<IUpdateMapper<UnitsOfMeasurement, UpdateUnitOfMeasurementRequest>,
+                UnitOfMeasurementUpdateMapper>();
+        services
+            .AddScoped<IResponseMapper<UnitsOfMeasurement, UnitOfMeasurementResponse>,
+                UnitOfMeasurementResponseMapper>();
+    }
+
     public static IServiceCollection AddCrudServices(this IServiceCollection services)
     {
         services.AddScoped(typeof(IEntityReader<,>), typeof(EntityReader<,>));
         
         AddFP(services);
         AddPC(services);
+        AddRecipes(services);
+        AddUnitsOfMeasurement(services);
         
         services.AddScoped<ICrudServiceFactory, CrudServiceFactory>();
 

@@ -52,8 +52,8 @@ public static class SeedExtensions
 
         dbContext.ProductCategories.AddRange(creamCategory, shampooCategory);
 
-        var recipe = new Recipes();
-        var unit = new UnitsOfMeasurement();
+        var recipe = new Recipes() { Name = "Базовая рецептура" };
+        var unit = new UnitsOfMeasurement() { Name = "шт" };
 
         dbContext.Recipes.Add(recipe);
         dbContext.UnitsOfMeasurements.Add(unit);

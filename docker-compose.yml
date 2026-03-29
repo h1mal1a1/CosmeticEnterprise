@@ -9,7 +9,6 @@
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=cosmetic_db;Username=postgres;Password=postgres
       ADMIN_USERNAME: admin1
       ADMIN_PASSWORD: Aadmin123
-
       ObjectStorage__Endpoint: minio:9000
       ObjectStorage__PublicBaseUrl: https://valmeris/storage
       ObjectStorage__AccessKey: minioadmin
@@ -20,7 +19,9 @@
       db:
         condition: service_healthy
       minio:
-        condition: service_started
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     networks:
       - app-network
 
@@ -56,6 +57,27 @@
       - "9001:9001"
     volumes:
       - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - app-network
+
+  minio-init:
+    image: quay.io/minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
+      mc mb --ignore-existing local/product-images &&
+      mc anonymous set download local/product-images
+      "
     networks:
       - app-network
 
@@ -73,6 +95,7 @@
     depends_on:
       - backend
       - frontend
+      - minio
     ports:
       - "80:80"
       - "443:443"

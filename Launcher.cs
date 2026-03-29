@@ -61,6 +61,7 @@ public static class Launcher
             });
         builder.Services.AddAuthorization();
     }
+
     private static void AddSwagger(WebApplicationBuilder builder)
     {
         builder.Services.AddSwaggerGen(options =>
@@ -68,7 +69,7 @@ public static class Launcher
             var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
             options.IncludeXmlComments(xmlPath);
-            
+
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -78,7 +79,7 @@ public static class Launcher
                 In = ParameterLocation.Header,
                 Description = "Введите JWT токен"
             });
-            
+
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -99,11 +100,25 @@ public static class Launcher
     private static void AddMinio(WebApplicationBuilder builder)
     {
         var objectStorageSection = builder.Configuration.GetSection("ObjectStorage");
-        builder.Services.Configure<ObjectStorageSettings>(objectStorageSection);
-
+        if (!objectStorageSection.Exists())
+        {
+            builder.Services.AddScoped<IObjectStorageService, NoOpObjectStorageService>();
+            return;
+        }
+        
         var objectStorageSettings = objectStorageSection.Get<ObjectStorageSettings>()
                                     ?? throw new Exception("ObjectStorage settings not found");
+        if (string.IsNullOrWhiteSpace(objectStorageSettings.Endpoint) ||
+            string.IsNullOrWhiteSpace(objectStorageSettings.AccessKey) ||
+            string.IsNullOrWhiteSpace(objectStorageSettings.SecretKey) ||
+            string.IsNullOrWhiteSpace(objectStorageSettings.BucketName))
+        {
+            builder.Services.AddScoped<IObjectStorageService, NoOpObjectStorageService>();
+            return;
+        }
 
+
+        builder.Services.Configure<ObjectStorageSettings>(objectStorageSection);
         builder.Services.AddSingleton<IMinioClient>(_ =>
             new MinioClient()
                 .WithEndpoint(objectStorageSettings.Endpoint)
@@ -113,13 +128,14 @@ public static class Launcher
 
         builder.Services.AddScoped<IObjectStorageService, MinioObjectStorageService>();
     }
+
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Services.AddEndpointsApiExplorer();
         AddSwagger(builder);
-        
+
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -161,7 +177,7 @@ public static class Launcher
         app.UseCors("FrontendCorsPolicy");
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.MapControllers();
         app.Run();
     }
