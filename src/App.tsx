@@ -1,26 +1,29 @@
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import './App.css';
-import HomePage from './pages/Home/HomePage';
-import CategoriesPage from './pages/Categories/CategoriesPage';
-import ProductsPage from './pages/Products/ProductsPage';
-import ProfilePage from './pages/Profile/ProfilePage';
-import AboutPage from './pages/About/AboutPage';
-import LoginPage from './pages/Login/LoginPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import { useAuth } from './components/auth/AuthProvider';
-import { getCategories, type Category } from './api/categoriesApi';
-import ProductDetailsPage from './pages/ProductDetails/ProductDetailsPage';
-import AppBreadcrumbs from './components/navigation/AppBreadcrumbs';
-import AdminLayout from './pages/Admin/AdminLayout';
-import AdminCategoriesPage from './pages/Admin/AdminCategoriesPage';
-import AdminFinishedProductsPage from './pages/Admin/AdminFinishedProductsPage';
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "./App.css";
+import HomePage from "./pages/Home/HomePage";
+import CategoriesPage from "./pages/Categories/CategoriesPage";
+import ProductsPage from "./pages/Products/ProductsPage";
+import ProfilePage from "./pages/Profile/ProfilePage";
+import AboutPage from "./pages/About/AboutPage";
+import LoginPage from "./pages/Login/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { useAuth } from "./components/auth/AuthProvider";
+import { getCategories, type Category } from "./api/categoriesApi";
+import ProductDetailsPage from "./pages/ProductDetails/ProductDetailsPage";
+import AppBreadcrumbs from "./components/navigation/AppBreadcrumbs";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminCategoriesPage from "./pages/Admin/AdminCategoriesPage";
+import AdminFinishedProductsPage from "./pages/Admin/AdminFinishedProductsPage";
+import AdminRecipesPage from "./pages/Admin/AdminRecipesPage";
+import AdminUnitsOfMeasurementPage from "./pages/Admin/AdminUnitsOfMeasurementPage";
+import AdminFinishedProductImagesPage from "./pages/Admin/AdminFinishedProductImagesPage";
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const isAdmin = user?.roleName?.toLowerCase() === 'admin';
+  const isAdmin = user?.roleName?.toLowerCase() === "admin";
 
   useEffect(() => {
     async function loadCategories() {
@@ -28,7 +31,7 @@ function AppContent() {
         const data = await getCategories();
         setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Не удалось загрузить категории для меню', error);
+        console.error("Не удалось загрузить категории для меню", error);
         setCategories([]);
       }
     }
@@ -138,9 +141,18 @@ function AppContent() {
           >
             <Route index element={<Navigate to="categories" replace />} />
             <Route path="categories" element={<AdminCategoriesPage />} />
+            <Route path="recipes" element={<AdminRecipesPage />} />
+            <Route
+              path="units-of-measurement"
+              element={<AdminUnitsOfMeasurementPage />}
+            />
             <Route
               path="finished-products"
               element={<AdminFinishedProductsPage />}
+            />
+            <Route
+              path="finished-products/:id/images"
+              element={<AdminFinishedProductImagesPage />}
             />
           </Route>
         </Routes>

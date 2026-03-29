@@ -1,100 +1,100 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
-  createCategory,
-  deleteCategory,
-  getCategories,
-  updateCategory,
-  type Category,
-} from '../../api/categoriesApi';
-import './AdminDictionaryPage.css';
+  createUnitOfMeasurement,
+  deleteUnitOfMeasurement,
+  getUnitsOfMeasurement,
+  updateUnitOfMeasurement,
+  type UnitOfMeasurement,
+} from "../../api/unitsOfMeasurementApi";
+import "./AdminDictionaryPage.css";
 
-export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
+export default function AdminUnitsOfMeasurementPage() {
+  const [units, setUnits] = useState<UnitOfMeasurement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const [createName, setCreateName] = useState('');
+  const [error, setError] = useState<string>("");
+  const [createName, setCreateName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingName, setEditingName] = useState('');
+  const [editingName, setEditingName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  async function loadCategories() {
+  async function loadUnits() {
     try {
       setLoading(true);
-      setError('');
-      const data = await getCategories();
-      setCategories(data);
+      setError("");
+      const data = await getUnitsOfMeasurement();
+      setUnits(data);
     } catch (err) {
       console.error(err);
-      setError('Не удалось загрузить категории.');
+      setError("Не удалось загрузить единицы измерения.");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    void loadCategories();
+    void loadUnits();
   }, []);
 
   async function handleCreate() {
     const name = createName.trim();
 
     if (!name) {
-      setError('Введите название категории.');
+      setError("Введите название единицы измерения.");
       return;
     }
 
     try {
       setIsCreating(true);
-      setError('');
-      const created = await createCategory({ name });
-      setCategories((prev) => [...prev, created]);
-      setCreateName('');
+      setError("");
+      const created = await createUnitOfMeasurement({ name });
+      setUnits((prev) => [...prev, created]);
+      setCreateName("");
     } catch (err) {
       console.error(err);
-      setError('Не удалось создать категорию.');
+      setError("Не удалось создать единицу измерения.");
     } finally {
       setIsCreating(false);
     }
   }
 
-  function handleStartEdit(category: Category) {
-    setEditingId(category.id);
-    setEditingName(category.name);
-    setError('');
+  function handleStartEdit(unit: UnitOfMeasurement) {
+    setEditingId(unit.id);
+    setEditingName(unit.name);
+    setError("");
   }
 
   function handleCancelEdit() {
     setEditingId(null);
-    setEditingName('');
+    setEditingName("");
   }
 
   async function handleSaveEdit(id: number) {
     const name = editingName.trim();
 
     if (!name) {
-      setError('Название категории не может быть пустым.');
+      setError("Название единицы измерения не может быть пустым.");
       return;
     }
 
     try {
       setIsSaving(true);
-      setError('');
-      await updateCategory(id, { name });
+      setError("");
+      await updateUnitOfMeasurement(id, { name });
 
-      setCategories((prev) =>
-        prev.map((category) =>
-          category.id === id ? { ...category, name } : category,
+      setUnits((prev) =>
+        prev.map((unit) =>
+          unit.id === id ? { ...unit, name } : unit,
         ),
       );
 
       setEditingId(null);
-      setEditingName('');
+      setEditingName("");
     } catch (err) {
       console.error(err);
-      setError('Не удалось обновить категорию.');
+      setError("Не удалось обновить единицу измерения.");
     } finally {
       setIsSaving(false);
     }
@@ -102,7 +102,7 @@ export default function AdminCategoriesPage() {
 
   async function handleDelete(id: number) {
     const isConfirmed = window.confirm(
-      'Удалить категорию? Это действие нельзя отменить.',
+      "Удалить единицу измерения? Это действие нельзя отменить.",
     );
 
     if (!isConfirmed) {
@@ -111,12 +111,12 @@ export default function AdminCategoriesPage() {
 
     try {
       setDeletingId(id);
-      setError('');
-      await deleteCategory(id);
-      setCategories((prev) => prev.filter((category) => category.id !== id));
+      setError("");
+      await deleteUnitOfMeasurement(id);
+      setUnits((prev) => prev.filter((unit) => unit.id !== id));
     } catch (err) {
       console.error(err);
-      setError('Не удалось удалить категорию.');
+      setError("Не удалось удалить единицу измерения. Возможно, она уже используется.");
     } finally {
       setDeletingId(null);
     }
@@ -125,8 +125,8 @@ export default function AdminCategoriesPage() {
   return (
     <div className="admin-dictionary-page">
       <div className="admin-dictionary-page__header">
-        <h1>Категории</h1>
-        <p>Управление категориями товаров.</p>
+        <h1>Единицы измерения</h1>
+        <p>Управление справочником единиц измерения.</p>
       </div>
 
       <div className="admin-dictionary-page__create">
@@ -134,7 +134,7 @@ export default function AdminCategoriesPage() {
           type="text"
           value={createName}
           onChange={(event) => setCreateName(event.target.value)}
-          placeholder="Введите название категории"
+          placeholder="Введите единицу измерения"
           className="admin-dictionary-page__input"
           disabled={isCreating}
         />
@@ -144,7 +144,7 @@ export default function AdminCategoriesPage() {
           className="admin-dictionary-page__primary-button"
           disabled={isCreating}
         >
-          {isCreating ? 'Добавление...' : 'Добавить'}
+          {isCreating ? "Добавление..." : "Добавить"}
         </button>
       </div>
 
@@ -152,8 +152,8 @@ export default function AdminCategoriesPage() {
 
       {loading ? (
         <div className="admin-dictionary-page__state">Загрузка...</div>
-      ) : categories.length === 0 ? (
-        <div className="admin-dictionary-page__state">Список категорий пуст.</div>
+      ) : units.length === 0 ? (
+        <div className="admin-dictionary-page__state">Список единиц измерения пуст.</div>
       ) : (
         <div className="admin-dictionary-page__table-wrapper">
           <table className="admin-dictionary-page__table">
@@ -165,13 +165,13 @@ export default function AdminCategoriesPage() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => {
-                const isEditing = editingId === category.id;
-                const isDeleting = deletingId === category.id;
+              {units.map((unit) => {
+                const isEditing = editingId === unit.id;
+                const isDeleting = deletingId === unit.id;
 
                 return (
-                  <tr key={category.id}>
-                    <td>{category.id}</td>
+                  <tr key={unit.id}>
+                    <td>{unit.id}</td>
                     <td>
                       {isEditing ? (
                         <input
@@ -182,7 +182,7 @@ export default function AdminCategoriesPage() {
                           disabled={isSaving}
                         />
                       ) : (
-                        category.name
+                        unit.name
                       )}
                     </td>
                     <td>
@@ -191,11 +191,11 @@ export default function AdminCategoriesPage() {
                           <>
                             <button
                               type="button"
-                              onClick={() => void handleSaveEdit(category.id)}
+                              onClick={() => void handleSaveEdit(unit.id)}
                               className="admin-dictionary-page__primary-button"
                               disabled={isSaving}
                             >
-                              {isSaving ? 'Сохранение...' : 'Сохранить'}
+                              {isSaving ? "Сохранение..." : "Сохранить"}
                             </button>
                             <button
                               type="button"
@@ -210,7 +210,7 @@ export default function AdminCategoriesPage() {
                           <>
                             <button
                               type="button"
-                              onClick={() => handleStartEdit(category)}
+                              onClick={() => handleStartEdit(unit)}
                               className="admin-dictionary-page__secondary-button"
                               disabled={deletingId !== null}
                             >
@@ -218,11 +218,11 @@ export default function AdminCategoriesPage() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => void handleDelete(category.id)}
+                              onClick={() => void handleDelete(unit.id)}
                               className="admin-dictionary-page__danger-button"
                               disabled={isDeleting}
                             >
-                              {isDeleting ? 'Удаление...' : 'Удалить'}
+                              {isDeleting ? "Удаление..." : "Удалить"}
                             </button>
                           </>
                         )}

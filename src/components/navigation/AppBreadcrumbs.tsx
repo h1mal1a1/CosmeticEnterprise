@@ -1,89 +1,66 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import './AppBreadcrumbs.css';
-
-type BreadcrumbItem = {
-  label: string;
-  path: string;
-};
 
 const routeLabels: Record<string, string> = {
   categories: 'Категории',
   products: 'Продукция',
   about: 'О нас',
-  login: 'Вход',
   profile: 'Личный кабинет',
+  login: 'Вход',
   admin: 'Панель управления',
+  recipes: 'Рецептуры',
+  'units-of-measurement': 'Единицы измерения',
+  'finished-products': 'Готовая продукция',
+  images: 'Изображения',
 };
 
-function isNumericSegment(value: string): boolean {
+function isNumericSegment(value: string) {
   return /^\d+$/.test(value);
-}
-
-function buildBreadcrumbs(pathname: string): BreadcrumbItem[] {
-  const segments = pathname.split('/').filter(Boolean);
-
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Главная', path: '/' },
-  ];
-
-  let currentPath = '';
-
-  for (let index = 0; index < segments.length; index++) {
-    const segment = segments[index];
-    currentPath += `/${segment}`;
-
-    let label = routeLabels[segment] ?? decodeURIComponent(segment);
-
-    if (segments[index - 1] === 'products' && isNumericSegment(segment)) {
-      label = 'Карточка товара';
-    }
-
-    breadcrumbs.push({
-      label,
-      path: currentPath,
-    });
-  }
-
-  return breadcrumbs;
 }
 
 export default function AppBreadcrumbs() {
   const location = useLocation();
+  const params = useParams();
 
-  if (location.pathname === '/') {
+  const pathnames = location.pathname.split('/').filter(Boolean);
+
+  if (pathnames.length === 0) {
     return null;
   }
 
-  const breadcrumbs = buildBreadcrumbs(location.pathname);
-
   return (
-    <nav className="app-breadcrumbs" aria-label="breadcrumb">
-      <ol className="app-breadcrumbs__list">
-        {breadcrumbs.map((item, index) => {
-          const isLast = index === breadcrumbs.length - 1;
+    <div className="breadcrumbs">
+      <Link to="/" className="breadcrumbs__link">
+        Главная
+      </Link>
 
-          return (
-            <li
-              key={item.path}
-              className={`app-breadcrumbs__item ${isLast ? 'app-breadcrumbs__item--current' : ''}`}
-            >
-              {isLast ? (
-                <span>{item.label}</span>
-              ) : (
-                <Link to={item.path} className="app-breadcrumbs__link">
-                  {item.label}
-                </Link>
-              )}
+      {pathnames.map((segment, index) => {
+        const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+        const isLast = index === pathnames.length - 1;
 
-              {!isLast && (
-                <span className="app-breadcrumbs__separator" aria-hidden="true">
-                  /
-                </span>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
+        if (isNumericSegment(segment)) {
+          return null;
+        }
+
+        let label = routeLabels[segment] ?? segment;
+
+        if (segment === 'products' && params.id) {
+          label = 'Продукция';
+        }
+
+        return (
+          <span key={to} className="breadcrumbs__item">
+            <span className="breadcrumbs__separator">/</span>
+            {isLast ? (
+              <span className="breadcrumbs__current">{label}</span>
+            ) : (
+              <Link to={to} className="breadcrumbs__link">
+                {label}
+              </Link>
+            )}
+          </span>
+        );
+      })}
+    </div>
   );
 }

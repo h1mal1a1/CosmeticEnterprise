@@ -18,6 +18,24 @@ export default function AdminLayout() {
           </NavLink>
 
           <NavLink
+            to="/admin/recipes"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+            }
+          >
+            Рецептуры
+          </NavLink>
+
+          <NavLink
+            to="/admin/units-of-measurement"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+            }
+          >
+            Единицы измерения
+          </NavLink>
+
+          <NavLink
             to="/admin/finished-products"
             className={({ isActive }) =>
               `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`

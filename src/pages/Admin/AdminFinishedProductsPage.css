@@ -1,0 +1,191 @@
+.admin-finished-products-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-finished-products-page__header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #111827;
+}
+
+.admin-finished-products-page__header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.admin-finished-products-page__card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.admin-finished-products-page__section-title {
+  margin: 0 0 20px;
+  font-size: 22px;
+  color: #111827;
+}
+
+.admin-finished-products-page__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.admin-finished-products-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-finished-products-page__field span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-finished-products-page__field input,
+.admin-finished-products-page__field select,
+.admin-finished-products-page__inline-input,
+.admin-finished-products-page__inline-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 14px;
+  background: #ffffff;
+  outline: none;
+}
+
+.admin-finished-products-page__field input:focus,
+.admin-finished-products-page__field select:focus,
+.admin-finished-products-page__inline-input:focus,
+.admin-finished-products-page__inline-select:focus {
+  border-color: #111827;
+}
+
+.admin-finished-products-page__form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.admin-finished-products-page__primary-button,
+.admin-finished-products-page__secondary-button,
+.admin-finished-products-page__danger-button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.admin-finished-products-page__primary-button {
+  background: #111827;
+  color: #ffffff;
+}
+
+.admin-finished-products-page__secondary-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.admin-finished-products-page__secondary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.admin-finished-products-page__danger-button {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.admin-finished-products-page__primary-button:disabled,
+.admin-finished-products-page__secondary-button:disabled,
+.admin-finished-products-page__danger-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.admin-finished-products-page__error {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.admin-finished-products-page__state {
+  padding: 18px;
+  border-radius: 16px;
+  background: #f9fafb;
+  color: #6b7280;
+}
+
+.admin-finished-products-page__table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+}
+
+.admin-finished-products-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-finished-products-page__table th,
+.admin-finished-products-page__table td {
+  padding: 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-finished-products-page__table th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  background: #f9fafb;
+}
+
+.admin-finished-products-page__table td {
+  color: #111827;
+  font-size: 14px;
+}
+
+.admin-finished-products-page__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 180px;
+}
+
+.admin-finished-products-page__inline-input {
+  min-width: 180px;
+}
+
+.admin-finished-products-page__inline-select {
+  min-width: 170px;
+}
+
+@media (max-width: 900px) {
+  .admin-finished-products-page__form-grid {
+    grid-template-columns: 1fr;
+  }
+}

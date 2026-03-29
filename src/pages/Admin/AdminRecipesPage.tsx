@@ -1,100 +1,100 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
-  createCategory,
-  deleteCategory,
-  getCategories,
-  updateCategory,
-  type Category,
-} from '../../api/categoriesApi';
-import './AdminDictionaryPage.css';
+  createRecipe,
+  deleteRecipe,
+  getRecipes,
+  updateRecipe,
+  type Recipe,
+} from "../../api/recipesApi";
+import "./AdminDictionaryPage.css";
 
-export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
+export default function AdminRecipesPage() {
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const [createName, setCreateName] = useState('');
+  const [error, setError] = useState<string>("");
+  const [createName, setCreateName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingName, setEditingName] = useState('');
+  const [editingName, setEditingName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  async function loadCategories() {
+  async function loadRecipes() {
     try {
       setLoading(true);
-      setError('');
-      const data = await getCategories();
-      setCategories(data);
+      setError("");
+      const data = await getRecipes();
+      setRecipes(data);
     } catch (err) {
       console.error(err);
-      setError('Не удалось загрузить категории.');
+      setError("Не удалось загрузить рецептуры.");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    void loadCategories();
+    void loadRecipes();
   }, []);
 
   async function handleCreate() {
     const name = createName.trim();
 
     if (!name) {
-      setError('Введите название категории.');
+      setError("Введите название рецептуры.");
       return;
     }
 
     try {
       setIsCreating(true);
-      setError('');
-      const created = await createCategory({ name });
-      setCategories((prev) => [...prev, created]);
-      setCreateName('');
+      setError("");
+      const created = await createRecipe({ name });
+      setRecipes((prev) => [...prev, created]);
+      setCreateName("");
     } catch (err) {
       console.error(err);
-      setError('Не удалось создать категорию.');
+      setError("Не удалось создать рецептуру.");
     } finally {
       setIsCreating(false);
     }
   }
 
-  function handleStartEdit(category: Category) {
-    setEditingId(category.id);
-    setEditingName(category.name);
-    setError('');
+  function handleStartEdit(recipe: Recipe) {
+    setEditingId(recipe.id);
+    setEditingName(recipe.name);
+    setError("");
   }
 
   function handleCancelEdit() {
     setEditingId(null);
-    setEditingName('');
+    setEditingName("");
   }
 
   async function handleSaveEdit(id: number) {
     const name = editingName.trim();
 
     if (!name) {
-      setError('Название категории не может быть пустым.');
+      setError("Название рецептуры не может быть пустым.");
       return;
     }
 
     try {
       setIsSaving(true);
-      setError('');
-      await updateCategory(id, { name });
+      setError("");
+      await updateRecipe(id, { name });
 
-      setCategories((prev) =>
-        prev.map((category) =>
-          category.id === id ? { ...category, name } : category,
+      setRecipes((prev) =>
+        prev.map((recipe) =>
+          recipe.id === id ? { ...recipe, name } : recipe,
         ),
       );
 
       setEditingId(null);
-      setEditingName('');
+      setEditingName("");
     } catch (err) {
       console.error(err);
-      setError('Не удалось обновить категорию.');
+      setError("Не удалось обновить рецептуру.");
     } finally {
       setIsSaving(false);
     }
@@ -102,7 +102,7 @@ export default function AdminCategoriesPage() {
 
   async function handleDelete(id: number) {
     const isConfirmed = window.confirm(
-      'Удалить категорию? Это действие нельзя отменить.',
+      "Удалить рецептуру? Это действие нельзя отменить.",
     );
 
     if (!isConfirmed) {
@@ -111,12 +111,12 @@ export default function AdminCategoriesPage() {
 
     try {
       setDeletingId(id);
-      setError('');
-      await deleteCategory(id);
-      setCategories((prev) => prev.filter((category) => category.id !== id));
+      setError("");
+      await deleteRecipe(id);
+      setRecipes((prev) => prev.filter((recipe) => recipe.id !== id));
     } catch (err) {
       console.error(err);
-      setError('Не удалось удалить категорию.');
+      setError("Не удалось удалить рецептуру. Возможно, она уже используется.");
     } finally {
       setDeletingId(null);
     }
@@ -125,8 +125,8 @@ export default function AdminCategoriesPage() {
   return (
     <div className="admin-dictionary-page">
       <div className="admin-dictionary-page__header">
-        <h1>Категории</h1>
-        <p>Управление категориями товаров.</p>
+        <h1>Рецептуры</h1>
+        <p>Управление справочником рецептур для готовой продукции.</p>
       </div>
 
       <div className="admin-dictionary-page__create">
@@ -134,7 +134,7 @@ export default function AdminCategoriesPage() {
           type="text"
           value={createName}
           onChange={(event) => setCreateName(event.target.value)}
-          placeholder="Введите название категории"
+          placeholder="Введите название рецептуры"
           className="admin-dictionary-page__input"
           disabled={isCreating}
         />
@@ -144,7 +144,7 @@ export default function AdminCategoriesPage() {
           className="admin-dictionary-page__primary-button"
           disabled={isCreating}
         >
-          {isCreating ? 'Добавление...' : 'Добавить'}
+          {isCreating ? "Добавление..." : "Добавить"}
         </button>
       </div>
 
@@ -152,8 +152,8 @@ export default function AdminCategoriesPage() {
 
       {loading ? (
         <div className="admin-dictionary-page__state">Загрузка...</div>
-      ) : categories.length === 0 ? (
-        <div className="admin-dictionary-page__state">Список категорий пуст.</div>
+      ) : recipes.length === 0 ? (
+        <div className="admin-dictionary-page__state">Список рецептур пуст.</div>
       ) : (
         <div className="admin-dictionary-page__table-wrapper">
           <table className="admin-dictionary-page__table">
@@ -165,13 +165,13 @@ export default function AdminCategoriesPage() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => {
-                const isEditing = editingId === category.id;
-                const isDeleting = deletingId === category.id;
+              {recipes.map((recipe) => {
+                const isEditing = editingId === recipe.id;
+                const isDeleting = deletingId === recipe.id;
 
                 return (
-                  <tr key={category.id}>
-                    <td>{category.id}</td>
+                  <tr key={recipe.id}>
+                    <td>{recipe.id}</td>
                     <td>
                       {isEditing ? (
                         <input
@@ -182,7 +182,7 @@ export default function AdminCategoriesPage() {
                           disabled={isSaving}
                         />
                       ) : (
-                        category.name
+                        recipe.name
                       )}
                     </td>
                     <td>
@@ -191,11 +191,11 @@ export default function AdminCategoriesPage() {
                           <>
                             <button
                               type="button"
-                              onClick={() => void handleSaveEdit(category.id)}
+                              onClick={() => void handleSaveEdit(recipe.id)}
                               className="admin-dictionary-page__primary-button"
                               disabled={isSaving}
                             >
-                              {isSaving ? 'Сохранение...' : 'Сохранить'}
+                              {isSaving ? "Сохранение..." : "Сохранить"}
                             </button>
                             <button
                               type="button"
@@ -210,7 +210,7 @@ export default function AdminCategoriesPage() {
                           <>
                             <button
                               type="button"
-                              onClick={() => handleStartEdit(category)}
+                              onClick={() => handleStartEdit(recipe)}
                               className="admin-dictionary-page__secondary-button"
                               disabled={deletingId !== null}
                             >
@@ -218,11 +218,11 @@ export default function AdminCategoriesPage() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => void handleDelete(category.id)}
+                              onClick={() => void handleDelete(recipe.id)}
                               className="admin-dictionary-page__danger-button"
                               disabled={isDeleting}
                             >
-                              {isDeleting ? 'Удаление...' : 'Удалить'}
+                              {isDeleting ? "Удаление..." : "Удалить"}
                             </button>
                           </>
                         )}
