@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="nginx\html\" />
       <Folder Include="Repositories\" />
     </ItemGroup>
 

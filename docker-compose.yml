@@ -81,27 +81,19 @@
     networks:
       - app-network
 
-  frontend:
-    build:
-      context: "G:/Projects/React_TS/cosmetic-enterprise-front"
-      dockerfile: Dockerfile
-    container_name: frontend
-    networks:
-      - app-network
-
   nginx:
-    image: nginx:latest
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+      additional_contexts:
+        frontend_src: "G:/Projects/React_TS/cosmetic-enterprise-front"
     container_name: nginx
     depends_on:
       - backend
-      - frontend
       - minio
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
     networks:
       - app-network
 
