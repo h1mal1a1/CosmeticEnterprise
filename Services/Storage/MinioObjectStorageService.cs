@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Configuration;
+﻿using System.Text.Json;
+using CosmeticEnterpriseBack.Configuration;
 using CosmeticEnterpriseBack.Interfaces;
 using Microsoft.Extensions.Options;
 using Minio;
@@ -55,6 +56,31 @@ public class MinioObjectStorageService : IObjectStorageService
 
         var makeBucketArgs = new MakeBucketArgs()
             .WithBucket(_settings.BucketName);
+
         await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
+        await SetPublicReadPolicyAsync(cancellationToken);
+    }
+
+    private async Task SetPublicReadPolicyAsync(CancellationToken cancellationToken)
+    {
+        var policy = $$"""
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "AWS": ["*"] },
+              "Action": ["s3:GetObject"],
+              "Resource": ["arn:aws:s3:::{{_settings.BucketName}}/*"]
+            }
+          ]
+        }
+        """;
+
+        var setPolicyArgs = new SetPolicyArgs()
+            .WithBucket(_settings.BucketName)
+            .WithPolicy(policy);
+
+        await _minioClient.SetPolicyAsync(setPolicyArgs, cancellationToken);
     }
 }
