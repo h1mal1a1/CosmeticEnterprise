@@ -1,0 +1,11 @@
+@"
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.idea/
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+"@ | Set-Content .gitignore

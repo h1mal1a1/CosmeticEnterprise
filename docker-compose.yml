@@ -1,7 +1,7 @@
 ﻿services:
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: backend
     environment:
@@ -66,10 +66,10 @@
 
   nginx:
     build:
-      context: .
+      context: ./backend
       dockerfile: nginx/Dockerfile
       additional_contexts:
-        frontend_src: "G:/Projects/React_TS/cosmetic-enterprise-front"
+        frontend_src: ./frontend
     container_name: nginx
     depends_on:
       - backend
