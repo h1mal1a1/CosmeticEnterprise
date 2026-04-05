@@ -9,3 +9,6 @@
 **/*.user
 **/*.suo
 "@ | Set-Content .gitignore
+
+nginx/certs/*
+!nginx/certs/.gitkeep
