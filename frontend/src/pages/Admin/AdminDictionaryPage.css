@@ -1,0 +1,129 @@
+.admin-dictionary-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-dictionary-page__header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #111827;
+}
+
+.admin-dictionary-page__header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.admin-dictionary-page__create {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-dictionary-page__input {
+  min-width: 320px;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  background: #ffffff;
+}
+
+.admin-dictionary-page__input:focus {
+  border-color: #111827;
+}
+
+.admin-dictionary-page__input--inline {
+  min-width: 220px;
+}
+
+.admin-dictionary-page__primary-button,
+.admin-dictionary-page__secondary-button,
+.admin-dictionary-page__danger-button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.admin-dictionary-page__primary-button {
+  background: #111827;
+  color: #ffffff;
+}
+
+.admin-dictionary-page__secondary-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.admin-dictionary-page__danger-button {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.admin-dictionary-page__primary-button:disabled,
+.admin-dictionary-page__secondary-button:disabled,
+.admin-dictionary-page__danger-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.admin-dictionary-page__error {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.admin-dictionary-page__state {
+  padding: 18px;
+  border-radius: 16px;
+  background: #f9fafb;
+  color: #6b7280;
+}
+
+.admin-dictionary-page__table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+}
+
+.admin-dictionary-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-dictionary-page__table th,
+.admin-dictionary-page__table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-dictionary-page__table th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  background: #f9fafb;
+}
+
+.admin-dictionary-page__table td {
+  color: #111827;
+  font-size: 15px;
+}
+
+.admin-dictionary-page__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
