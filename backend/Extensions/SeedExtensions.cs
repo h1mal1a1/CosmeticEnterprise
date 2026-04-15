@@ -44,9 +44,11 @@ public static class SeedExtensions
 
     private static async Task SeedCatalogAsync(AppDbContext dbContext)
     {
-        if (await dbContext.FinishedProducts.AnyAsync())
+        const int targetProductsCount = 100;
+        var currentProductsCount = await dbContext.FinishedProducts.CountAsync();
+        if (currentProductsCount >= targetProductsCount)
             return;
-
+        
         var creamCategory = new ProductCategories { Name = "Крема" };
         var shampooCategory = new ProductCategories { Name = "Шампуни" };
 
@@ -60,54 +62,70 @@ public static class SeedExtensions
 
         await dbContext.SaveChangesAsync();
 
-        var products = new List<FinishedProducts>
-        {
-            new()
-            {
-                Name = "Nivea",
-                IdProductCategory = creamCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            },
-            new()
-            {
-                Name = "Librederm",
-                IdProductCategory = creamCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            },
-            new()
-            {
-                Name = "Natura Siberica",
-                IdProductCategory = creamCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            },
+        var random = new Random();
 
-            new()
-            {
-                Name = "Matrix",
-                IdProductCategory = shampooCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            },
-            new()
-            {
-                Name = "Kapous",
-                IdProductCategory = shampooCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            },
-            new()
-            {
-                Name = "L'Oreal",
-                IdProductCategory = shampooCategory.Id,
-                IdRecipe = recipe.Id,
-                IdUnitsOfMeasurement = unit.Id
-            }
+        var creamNames = new[]
+        {
+            "Aloe Cream",
+            "Hydra Cream",
+            "Soft Cream",
+            "Ultra Cream",
+            "Bio Cream",
+            "Silk Cream",
+            "Vitamin Cream",
+            "Fresh Cream",
+            "Natural Cream",
+            "Care Cream"
         };
 
-        dbContext.FinishedProducts.AddRange(products);
+        var shampooNames = new[]
+        {
+            "Aloe Shampoo",
+            "Hydra Shampoo",
+            "Soft Shampoo",
+            "Ultra Shampoo",
+            "Bio Shampoo",
+            "Silk Shampoo",
+            "Vitamin Shampoo",
+            "Fresh Shampoo",
+            "Natural Shampoo",
+            "Care Shampoo"
+        };
+
+        var existingNames = await dbContext.FinishedProducts
+            .Select(x => x.Name)
+            .ToHashSetAsync();
+
+        var productsToAdd = new List<FinishedProducts>();
+        var missingCount = targetProductsCount - currentProductsCount;
+        var sequence = currentProductsCount + 1;
+
+        while (productsToAdd.Count < missingCount)
+        {
+            var isCream = random.Next(0, 2) == 0;
+            var baseName = isCream
+                ? creamNames[random.Next(creamNames.Length)]
+                : shampooNames[random.Next(shampooNames.Length)];
+
+            var name = $"{baseName} {sequence}";
+
+            sequence++;
+
+            if (existingNames.Contains(name))
+                continue;
+
+            existingNames.Add(name);
+
+            productsToAdd.Add(new FinishedProducts
+            {
+                Name = name,
+                IdProductCategory = isCream ? creamCategory.Id : shampooCategory.Id,
+                IdRecipe = recipe.Id,
+                IdUnitsOfMeasurement = unit.Id
+            });
+        }
+
+        dbContext.FinishedProducts.AddRange(productsToAdd);
 
         await dbContext.SaveChangesAsync();
     }
