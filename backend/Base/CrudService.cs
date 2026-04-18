@@ -63,7 +63,7 @@ public class CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TRespons
     {
         _authorizationService.EnsureAccess(_resourceType, CrudAction.Update);
         
-        var entity = await _reader.GetByIdAsync(id, cancellationToken);
+        var entity = await _reader.GetByIdForUpdateAsync(id, cancellationToken);
         if (entity is null)
             return default;
         _updateMapper.Map(request, entity);
@@ -75,7 +75,7 @@ public class CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TRespons
     {
         _authorizationService.EnsureAccess(_resourceType, CrudAction.Delete);
         
-        var entity = await _reader.GetByIdAsync(id, cancellationToken);
+        var entity = await _reader.GetByIdForUpdateAsync(id, cancellationToken);
         if (entity is null)
             return false;
         _dbSet.Remove(entity);

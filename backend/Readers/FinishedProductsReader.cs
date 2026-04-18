@@ -18,6 +18,13 @@ public class FinishedProductsReader : IEntityReader<FinishedProducts, long>
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
+    public async Task<FinishedProducts?> GetByIdForUpdateAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<FinishedProducts>()
+            .Include(x => x.Images)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
     public async Task<List<FinishedProducts>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<FinishedProducts>()

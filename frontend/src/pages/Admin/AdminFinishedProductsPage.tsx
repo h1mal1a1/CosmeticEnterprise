@@ -21,6 +21,7 @@ import "./AdminFinishedProductsPage.css";
 
 type FormState = {
   name: string;
+  price: string;
   idProductCategory: string;
   idRecipe: string;
   idUnitsOfMeasurement: string;
@@ -28,6 +29,7 @@ type FormState = {
 
 const initialFormState: FormState = {
   name: "",
+  price: "",
   idProductCategory: "",
   idRecipe: "",
   idUnitsOfMeasurement: "",
@@ -115,6 +117,15 @@ export default function AdminFinishedProductsPage() {
       return "Введите название готовой продукции.";
     }
 
+    if (!form.price.trim()) {
+      return "Введите цену.";
+    }
+
+    const price = Number(form.price);
+    if (Number.isNaN(price) || price <= 0) {
+      return "Цена должна быть больше 0.";
+    }
+
     if (!form.idProductCategory) {
       return "Выберите категорию.";
     }
@@ -135,6 +146,7 @@ export default function AdminFinishedProductsPage() {
   ): CreateFinishedProductRequest {
     return {
       name: form.name.trim(),
+      price: Number(form.price),
       idProductCategory: Number(form.idProductCategory),
       idRecipe: Number(form.idRecipe),
       idUnitsOfMeasurement: Number(form.idUnitsOfMeasurement),
@@ -146,6 +158,7 @@ export default function AdminFinishedProductsPage() {
   ): UpdateFinishedProductRequest {
     return {
       name: form.name.trim(),
+      price: Number(form.price),
       idProductCategory: Number(form.idProductCategory),
       idRecipe: Number(form.idRecipe),
       idUnitsOfMeasurement: Number(form.idUnitsOfMeasurement),
@@ -185,6 +198,7 @@ export default function AdminFinishedProductsPage() {
 
     setEditForm({
       name: product.name ?? "",
+      price: String(product.price ?? ""),
       idProductCategory: String(product.idProductCategory ?? ""),
       idRecipe: String(product.idRecipe ?? ""),
       idUnitsOfMeasurement: String(product.idUnitsOfMeasurement ?? ""),
@@ -280,6 +294,21 @@ export default function AdminFinishedProductsPage() {
           </label>
 
           <label className="admin-finished-products-page__field">
+            <span>Цена</span>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={createForm.price}
+              onChange={(event) =>
+                handleCreateFormChange("price", event.target.value)
+              }
+              placeholder="Например, 499.99"
+              disabled={isCreating}
+            />
+          </label>
+
+          <label className="admin-finished-products-page__field">
             <span>Категория</span>
             <select
               value={createForm.idProductCategory}
@@ -370,6 +399,7 @@ export default function AdminFinishedProductsPage() {
               <tr>
                 <th>ID</th>
                 <th>Название</th>
+                <th>Цена</th>
                 <th>Категория</th>
                 <th>Рецептура</th>
                 <th>Ед. изм.</th>
@@ -398,6 +428,24 @@ export default function AdminFinishedProductsPage() {
                         />
                       ) : (
                         product.name
+                      )}
+                    </td>
+
+                    <td>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          value={editForm.price}
+                          onChange={(event) =>
+                            handleEditFormChange("price", event.target.value)
+                          }
+                          className="admin-finished-products-page__inline-input"
+                          disabled={isSaving}
+                        />
+                      ) : (
+                        product.price
                       )}
                     </td>
 

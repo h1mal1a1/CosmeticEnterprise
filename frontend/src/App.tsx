@@ -18,6 +18,7 @@ import AdminFinishedProductsPage from "./pages/Admin/AdminFinishedProductsPage";
 import AdminRecipesPage from "./pages/Admin/AdminRecipesPage";
 import AdminUnitsOfMeasurementPage from "./pages/Admin/AdminUnitsOfMeasurementPage";
 import AdminFinishedProductImagesPage from "./pages/Admin/AdminFinishedProductImagesPage";
+import CartPage from "./pages/Cart/CartPage";
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -93,6 +94,12 @@ function AppContent() {
             О нас
           </Link>
 
+          {isAuthenticated && (
+            <Link to="/cart" className="nav-link">
+              Корзина
+            </Link>
+          )}
+
           {isAuthenticated && isAdmin && (
             <Link to="/admin/categories" className="nav-link nav-link--accent">
               Панель управления
@@ -127,6 +134,15 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartPage />
               </ProtectedRoute>
             }
           />

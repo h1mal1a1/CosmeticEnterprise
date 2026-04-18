@@ -2,22 +2,44 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getFinishedProductById } from '../../api/finishedProductsApi';
 import { getCategories, type Category } from '../../api/categoriesApi';
+import {
+  addCartItem,
+  getCart,
+  removeCartItem,
+  updateCartItemQuantity,
+} from '../../api/cartApi';
+import { ApiError } from '../../types/api';
+import type { ShoppingCart } from '../../types/cart';
 import type { FinishedProduct, FinishedProductImage } from '../../types/finishedProduct';
+import { useAuth } from '../../components/auth/AuthProvider';
 import './ProductDetailsPage.css';
 
 function getInitialImage(product: FinishedProduct): FinishedProductImage | null {
   return product.images.find((x) => x.isMain) ?? product.images[0] ?? null;
 }
 
+function formatPrice(value: number): string {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    minimumFractionDigits: 2,
+  }).format(value);
+}
+
 export default function ProductDetailsPage() {
+  const { isAuthenticated } = useAuth();
+
   const { id } = useParams();
   const productId = id ? Number(id) : null;
 
   const [product, setProduct] = useState<FinishedProduct | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [cart, setCart] = useState<ShoppingCart | null>(null);
   const [selectedImage, setSelectedImage] = useState<FinishedProductImage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isChangingCart, setIsChangingCart] = useState(false);
+  const [cartMessage, setCartMessage] = useState('');
 
   useEffect(() => {
     async function loadData() {
@@ -31,14 +53,23 @@ export default function ProductDetailsPage() {
         setError('');
         setIsLoading(true);
 
-        const [productData, categoriesData] = await Promise.all([
+        const requests: Promise<unknown>[] = [
           getFinishedProductById(productId),
           getCategories(),
-        ]);
+        ];
 
-        setProduct(productData);
-        setCategories(categoriesData);
-        setSelectedImage(getInitialImage(productData));
+        if (isAuthenticated) {
+          requests.push(getCart());
+        }
+
+        const [productData, categoriesData, cartData] = await Promise.all(requests);
+
+        const typedProduct = productData as FinishedProduct;
+
+        setProduct(typedProduct);
+        setCategories(categoriesData as Category[]);
+        setCart((cartData as ShoppingCart | undefined) ?? null);
+        setSelectedImage(getInitialImage(typedProduct));
       } catch {
         setError('Не удалось загрузить страницу товара');
       } finally {
@@ -47,7 +78,7 @@ export default function ProductDetailsPage() {
     }
 
     void loadData();
-  }, [productId]);
+  }, [productId, isAuthenticated]);
 
   const categoryName = useMemo(() => {
     if (!product) {
@@ -56,6 +87,126 @@ export default function ProductDetailsPage() {
 
     return categories.find((x) => x.id === product.idProductCategory)?.name ?? '';
   }, [categories, product]);
+
+  const currentCartItem = useMemo(() => {
+    if (!product || !cart) {
+      return null;
+    }
+
+    return cart.items.find((x) => x.idFinishedProduct === product.id) ?? null;
+  }, [cart, product]);
+
+  const quantityInCart = currentCartItem?.quantity ?? 0;
+
+  function getAuthRequiredMessage() {
+    return 'Для добавления товара в корзину необходимо авторизоваться';
+  }
+
+  async function handleAddToCart() {
+    if (!product) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setCartMessage(getAuthRequiredMessage());
+      return;
+    }
+
+    try {
+      setIsChangingCart(true);
+      setCartMessage('');
+
+      const updatedCart = await addCartItem({
+        idFinishedProduct: product.id,
+        quantity: 1,
+      });
+
+      setCart(updatedCart);
+      setCartMessage('Товар добавлен в корзину');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setCartMessage(getAuthRequiredMessage());
+      } else if (err instanceof ApiError) {
+        setCartMessage(err.message);
+      } else {
+        setCartMessage('Не удалось добавить товар в корзину');
+      }
+    } finally {
+      setIsChangingCart(false);
+    }
+  }
+
+  async function handleIncreaseQuantity() {
+    if (!product) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setCartMessage(getAuthRequiredMessage());
+      return;
+    }
+
+    if (!currentCartItem) {
+      await handleAddToCart();
+      return;
+    }
+
+    try {
+      setIsChangingCart(true);
+      setCartMessage('');
+
+      const updatedCart = await updateCartItemQuantity(currentCartItem.id, {
+        quantity: currentCartItem.quantity + 1,
+      });
+
+      setCart(updatedCart);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setCartMessage(getAuthRequiredMessage());
+      } else if (err instanceof ApiError) {
+        setCartMessage(err.message);
+      } else {
+        setCartMessage('Не удалось изменить количество товара');
+      }
+    } finally {
+      setIsChangingCart(false);
+    }
+  }
+
+  async function handleDecreaseQuantity() {
+    if (!currentCartItem) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setCartMessage(getAuthRequiredMessage());
+      return;
+    }
+
+    try {
+      setIsChangingCart(true);
+      setCartMessage('');
+
+      const updatedCart =
+        currentCartItem.quantity <= 1
+          ? await removeCartItem(currentCartItem.id)
+          : await updateCartItemQuantity(currentCartItem.id, {
+              quantity: currentCartItem.quantity - 1,
+            });
+
+      setCart(updatedCart);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setCartMessage(getAuthRequiredMessage());
+      } else if (err instanceof ApiError) {
+        setCartMessage(err.message);
+      } else {
+        setCartMessage('Не удалось изменить количество товара');
+      }
+    } finally {
+      setIsChangingCart(false);
+    }
+  }
 
   if (isLoading) {
     return <div className="product-details-state">Загрузка товара...</div>;
@@ -133,6 +284,59 @@ export default function ProductDetailsPage() {
           </div>
 
           <h1 className="product-details-info__title">{product.name}</h1>
+
+          <div className="product-details-info__price">
+            {formatPrice(product.price)}
+          </div>
+
+          <div className="product-details-info__actions">
+            {quantityInCart > 0 ? (
+              <div className="product-details-info__quantity-control">
+                <button
+                  type="button"
+                  className="product-details-info__quantity-button"
+                  onClick={() => void handleDecreaseQuantity()}
+                  disabled={isChangingCart}
+                  aria-label="Уменьшить количество"
+                >
+                  −
+                </button>
+
+                <span className="product-details-info__quantity-value">
+                  {quantityInCart}
+                </span>
+
+                <button
+                  type="button"
+                  className="product-details-info__quantity-button"
+                  onClick={() => void handleIncreaseQuantity()}
+                  disabled={isChangingCart || quantityInCart >= 999}
+                  aria-label="Увеличить количество"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="product-details-info__buy-button"
+                onClick={() => void handleAddToCart()}
+                disabled={isChangingCart}
+              >
+                {isChangingCart ? 'Добавление...' : 'Добавить в корзину'}
+              </button>
+            )}
+
+            <Link to="/cart" className="product-details-info__cart-link">
+              Перейти в корзину
+            </Link>
+          </div>
+
+          {cartMessage && (
+            <div className="product-details-info__cart-message">
+              {cartMessage}
+            </div>
+          )}
 
           <div className="product-details-info__meta">
             <div className="product-details-info__meta-item">

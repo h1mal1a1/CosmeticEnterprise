@@ -13,7 +13,14 @@ public class EntityReader<TEntity, TKey> : IEntityReader<TEntity, TKey>
     public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Set<TEntity>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id!.Equals(id), cancellationToken);
+    }
+
+    public async Task<TEntity?> GetByIdForUpdateAsync(TKey id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<TEntity>()
+            .FirstOrDefaultAsync(x => x.Id != null && x.Id.Equals(id), cancellationToken);
     }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)

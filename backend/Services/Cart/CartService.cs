@@ -5,7 +5,8 @@ using CosmeticEnterpriseBack.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Services.Cart;
-public class CartService(AppDbContext dbContext, IObjectStorageService objectStorageService): ICartService
+
+public class CartService(AppDbContext dbContext, IObjectStorageService objectStorageService) : ICartService
 {
     public async Task<ShoppingCartResponse> GetCartAsync(long userId, CancellationToken cancellationToken)
     {
@@ -25,9 +26,12 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
             };
         }
 
+        await RefreshCartPricesAsync(cart.Id, cancellationToken);
+
         return await BuildCartResponseAsync(cart.Id, cancellationToken);
     }
-    public async Task<ShoppingCartResponse> AddItemAsync(long userId, AddCartItemRequest request, 
+
+    public async Task<ShoppingCartResponse> AddItemAsync(long userId, AddCartItemRequest request,
         CancellationToken cancellationToken)
     {
         var cart = await GetOrCreateCartAsync(userId, cancellationToken);
@@ -39,8 +43,10 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
         if (product is null)
             throw new KeyNotFoundException("Finished product not found.");
 
-        var existingItem = await dbContext.ShoppingCartItems.FirstOrDefaultAsync(x => 
-                x.IdShoppingCart == cart.Id && x.IdFinishedProduct == request.IdFinishedProduct,cancellationToken);
+        var existingItem = await dbContext.ShoppingCartItems
+            .FirstOrDefaultAsync(
+                x => x.IdShoppingCart == cart.Id && x.IdFinishedProduct == request.IdFinishedProduct,
+                cancellationToken);
 
         if (existingItem is null)
         {
@@ -58,33 +64,49 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
         else
         {
             var newQuantity = existingItem.Quantity + request.Quantity;
+
             if (newQuantity > 999)
                 throw new ArgumentException("Quantity cannot be greater than 999.");
+
             existingItem.Quantity = newQuantity;
+            existingItem.UnitPrice = product.Price;
         }
+
         cart.UpdatedAtUtc = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await RefreshCartPricesAsync(cart.Id, cancellationToken);
+
         return await BuildCartResponseAsync(cart.Id, cancellationToken);
     }
-    public async Task<ShoppingCartResponse> UpdateItemQuantityAsync(long userId, long itemId, 
+
+    public async Task<ShoppingCartResponse> UpdateItemQuantityAsync(long userId, long itemId,
         UpdateCartItemQuantityRequest request, CancellationToken cancellationToken)
     {
         var cart = await GetOrCreateCartAsync(userId, cancellationToken);
 
-        var item = await dbContext.ShoppingCartItems .FirstOrDefaultAsync(x => 
-                x.Id == itemId && x.IdShoppingCart == cart.Id, cancellationToken);
+        var item = await dbContext.ShoppingCartItems
+            .Include(x => x.FinishedProduct)
+            .FirstOrDefaultAsync(
+                x => x.Id == itemId && x.IdShoppingCart == cart.Id,
+                cancellationToken);
 
         if (item is null)
             throw new KeyNotFoundException("Cart item not found.");
 
         item.Quantity = request.Quantity;
+        item.UnitPrice = item.FinishedProduct.Price;
         cart.UpdatedAtUtc = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await RefreshCartPricesAsync(cart.Id, cancellationToken);
+
         return await BuildCartResponseAsync(cart.Id, cancellationToken);
     }
-    public async Task<ShoppingCartResponse> RemoveItemAsync(long userId, long itemId, 
+
+    public async Task<ShoppingCartResponse> RemoveItemAsync(long userId, long itemId,
         CancellationToken cancellationToken)
     {
         var cart = await GetOrCreateCartAsync(userId, cancellationToken);
@@ -104,10 +126,11 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
 
         return await BuildCartResponseAsync(cart.Id, cancellationToken);
     }
+
     public async Task ClearCartAsync(long userId, CancellationToken cancellationToken)
     {
-        var cart = await dbContext.ShoppingCarts.FirstOrDefaultAsync(x => x.IdUser == userId, 
-            cancellationToken);
+        var cart = await dbContext.ShoppingCarts
+            .FirstOrDefaultAsync(x => x.IdUser == userId, cancellationToken);
 
         if (cart is null)
             return;
@@ -124,6 +147,7 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
     private async Task<ShoppingCart> GetOrCreateCartAsync(long userId, CancellationToken cancellationToken)
     {
         var cart = await dbContext.ShoppingCarts
@@ -144,6 +168,37 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
 
         return cart;
     }
+
+    private async Task RefreshCartPricesAsync(long cartId, CancellationToken cancellationToken)
+    {
+        var items = await dbContext.ShoppingCartItems
+            .Include(x => x.FinishedProduct)
+            .Where(x => x.IdShoppingCart == cartId)
+            .ToListAsync(cancellationToken);
+
+        var hasChanges = false;
+
+        foreach (var item in items)
+        {
+            if (item.UnitPrice != item.FinishedProduct.Price)
+            {
+                item.UnitPrice = item.FinishedProduct.Price;
+                hasChanges = true;
+            }
+        }
+
+        if (!hasChanges)
+            return;
+
+        var cart = await dbContext.ShoppingCarts
+            .FirstOrDefaultAsync(x => x.Id == cartId, cancellationToken);
+
+        if (cart is not null)
+            cart.UpdatedAtUtc = DateTime.UtcNow;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task<ShoppingCartResponse> BuildCartResponseAsync(long cartId, CancellationToken cancellationToken)
     {
         var cart = await dbContext.ShoppingCarts
