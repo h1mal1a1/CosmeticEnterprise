@@ -12,6 +12,7 @@ public class FinishedProductCreateMapper :
         return new FinishedProducts
         {
             Name = request.Name.Trim(),
+            Price = request.Price,
             IdRecipe = request.IdRecipe,
             IdProductCategory = request.IdProductCategory,
             IdUnitsOfMeasurement = request.IdUnitsOfMeasurement

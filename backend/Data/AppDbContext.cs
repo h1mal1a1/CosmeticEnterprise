@@ -28,6 +28,9 @@ public class AppDbContext : DbContext
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     
     public DbSet<FinishedProductImages> FinishedProductImages { get; set; }
+    
+    public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+    public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

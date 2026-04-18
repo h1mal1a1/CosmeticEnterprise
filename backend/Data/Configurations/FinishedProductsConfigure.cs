@@ -11,9 +11,19 @@ public class FinishedProductsConfigure : IEntityTypeConfiguration<FinishedProduc
         builder.ToTable("finished_products");
         builder.HasKey(f => f.Id);
 
-        builder.Property(f => f.IdRecipe).HasColumnName("id_recipe");
-        builder.Property(f => f.IdProductCategory).HasColumnName("id_product_category");
-        builder.Property(f => f.IdUnitsOfMeasurement).HasColumnName("id_units_of_measurement");
+        builder.Property(x => x.Price)
+            .HasColumnName("price")
+            .HasPrecision(18, 2)
+            .IsRequired();
+        
+        builder.Property(f => f.IdRecipe)
+            .HasColumnName("id_recipe");
+        
+        builder.Property(f => f.IdProductCategory)
+            .HasColumnName("id_product_category");
+        
+        builder.Property(f => f.IdUnitsOfMeasurement)
+            .HasColumnName("id_units_of_measurement");
 
         builder.HasOne(f => f.Recipe)
             .WithMany(f => f.FinishedProductsList)

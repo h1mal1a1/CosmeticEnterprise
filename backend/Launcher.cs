@@ -6,6 +6,7 @@ using CosmeticEnterpriseBack.Extensions;
 using CosmeticEnterpriseBack.Interfaces;
 using CosmeticEnterpriseBack.Middleware;
 using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Services.Cart;
 using CosmeticEnterpriseBack.Services.Crud;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using CosmeticEnterpriseBack.Services.FinishedProductImages;
@@ -159,6 +160,7 @@ public static class Launcher
         builder.Services.AddScoped<DbContext, AppDbContext>();
         builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
         builder.Services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();
+        builder.Services.AddScoped<ICartService, CartService>();
         builder.Services.AddCrudServices();
         AddJwt(builder);
         AddMinio(builder);

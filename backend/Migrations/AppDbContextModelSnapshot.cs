@@ -111,6 +111,11 @@ namespace CosmeticEnterpriseBack.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("price");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdProductCategory");
@@ -333,6 +338,75 @@ namespace CosmeticEnterpriseBack.Migrations
                         .IsUnique();
 
                     b.ToTable("sales_channels", (string)null);
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ShoppingCart", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_user");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUser")
+                        .IsUnique();
+
+                    b.ToTable("shopping_carts", (string)null);
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ShoppingCartItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<long>("IdFinishedProduct")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_finished_product");
+
+                    b.Property<long>("IdShoppingCart")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_shopping_cart");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdFinishedProduct");
+
+                    b.HasIndex("IdShoppingCart", "IdFinishedProduct")
+                        .IsUnique();
+
+                    b.ToTable("shopping_cart_items", (string)null);
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Suppliers", b =>
@@ -643,6 +717,36 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.Navigation("FinishedProducts");
                 });
 
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ShoppingCart", b =>
+                {
+                    b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ShoppingCartItem", b =>
+                {
+                    b.HasOne("CosmeticEnterpriseBack.Entities.FinishedProducts", "FinishedProduct")
+                        .WithMany()
+                        .HasForeignKey("IdFinishedProduct")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CosmeticEnterpriseBack.Entities.ShoppingCart", "ShoppingCart")
+                        .WithMany("Items")
+                        .HasForeignKey("IdShoppingCart")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FinishedProduct");
+
+                    b.Navigation("ShoppingCart");
+                });
+
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.SuppliesFromSuppliers", b =>
                 {
                     b.HasOne("CosmeticEnterpriseBack.Entities.Suppliers", "Supplier")
@@ -728,6 +832,11 @@ namespace CosmeticEnterpriseBack.Migrations
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.SalesChannels", b =>
                 {
                     b.Navigation("OrdersList");
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ShoppingCart", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Suppliers", b =>
