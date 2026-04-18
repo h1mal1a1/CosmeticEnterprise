@@ -13,3 +13,5 @@
 nginx/certs/*
 !nginx/certs/.gitkeep
 CosmeticEnterprise.code-workspace
+
+.env*
