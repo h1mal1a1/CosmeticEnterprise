@@ -48,11 +48,15 @@ public class FinishedProductImageService : IFinishedProductImageService
         var isFirstImage =
             !await _dbContext.FinishedProductImages
                 .AnyAsync(x => x.IdFinishedProduct == finishedProductId,cancellationToken);
+        
+        var maxOrder = isFirstImage ? 
+            0 :
+            await _dbContext.FinishedProductImages.Where(x=>x.IdFinishedProduct == finishedProductId).Select(f=>f.SortOrder).MaxAsync(cancellationToken: cancellationToken);
         var entity = new Entities.FinishedProductImages
         {
             IdFinishedProduct = finishedProductId,
             ObjectKey = objectKey,
-            SortOrder = request.SortOrder,
+            SortOrder = maxOrder +1,
             IsMain = request.IsMain || isFirstImage
         };
 
