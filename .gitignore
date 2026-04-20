@@ -14,4 +14,6 @@ nginx/certs/*
 !nginx/certs/.gitkeep
 CosmeticEnterprise.code-workspace
 
-.env*
+.env.backend
+.env.db
+.env.minio
