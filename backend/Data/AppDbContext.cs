@@ -8,9 +8,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-    public DbSet<Customers> Customers { get; set; }
+
     public DbSet<SalesChannels> SalesChannels { get; set; }
-    public DbSet<OrderStatuses> OrderStatuses { get; set; }
     public DbSet<Orders> Orders { get; set; }
     public DbSet<OrderItems> OrderItems { get; set; }
     public DbSet<FinishedProducts> FinishedProducts { get; set; }
@@ -26,9 +25,10 @@ public class AppDbContext : DbContext
     public DbSet<Suppliers> Suppliers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-    
+    public DbSet<UserAddress> UserAddresses { get; set; }
+
     public DbSet<FinishedProductImages> FinishedProductImages { get; set; }
-    
+
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 using CosmeticEnterpriseBack.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CosmeticEnterpriseBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260421202026_RefactorOrdersAndLeftovers")]
+    partial class RefactorOrdersAndLeftovers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -571,96 +574,6 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserAddress", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Apartment")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("apartment");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("city");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("comment");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("country");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<string>("House")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("house");
-
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_user");
-
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_default");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("phone");
-
-                    b.Property<string>("PostalCode")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("postal_code");
-
-                    b.Property<string>("RecipientName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("recipient_name");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("street");
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdUser")
-                        .HasDatabaseName("IX_user_addresses_id_user");
-
-                    b.ToTable("user_addresses", (string)null);
-                });
-
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserRefreshToken", b =>
                 {
                     b.Property<long>("IdUserRefreshToken")
@@ -895,17 +808,6 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.Navigation("SuppliesFromSuppliers");
                 });
 
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserAddress", b =>
-                {
-                    b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
-                        .WithMany("UserAddresses")
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserRefreshToken", b =>
                 {
                     b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
@@ -978,8 +880,6 @@ namespace CosmeticEnterpriseBack.Migrations
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("UserAddresses");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Warehouses", b =>

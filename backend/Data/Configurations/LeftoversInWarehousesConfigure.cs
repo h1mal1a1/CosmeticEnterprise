@@ -9,6 +9,7 @@ public class LeftoversInWarehousesConfigure : IEntityTypeConfiguration<Leftovers
     public void Configure(EntityTypeBuilder<LeftoversInWarehouses> builder)
     {
         builder.ToTable("leftovers_in_warehouses");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.IdFinishedProduct)
@@ -16,6 +17,16 @@ public class LeftoversInWarehousesConfigure : IEntityTypeConfiguration<Leftovers
 
         builder.Property(x => x.IdWarehouse)
             .HasColumnName("id_warehouse");
+
+        builder.Property(x => x.Quantity)
+            .HasColumnName("quantity")
+            .HasDefaultValue(0)
+            .IsRequired();
+
+        builder.Property(x => x.ReservedQuantity)
+            .HasColumnName("reserved_quantity")
+            .HasDefaultValue(0)
+            .IsRequired();
 
         builder.HasOne(x => x.FinishedProducts)
             .WithMany(x => x.LeftoversInWarehousesList)

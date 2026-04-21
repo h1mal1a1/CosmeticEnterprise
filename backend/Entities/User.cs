@@ -25,4 +25,7 @@ public class User
 
     public ICollection<UserRefreshToken> RefreshTokens { get; set; }
         = new List<UserRefreshToken>();
+
+    public ICollection<UserAddress> UserAddresses { get; set; }
+        = new List<UserAddress>();
 }
