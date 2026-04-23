@@ -9,11 +9,12 @@ public class RecipesConfigure : IEntityTypeConfiguration<Recipes>
     public void Configure(EntityTypeBuilder<Recipes> builder)
     {
         builder.ToTable("recipes");
-        
-        builder.HasKey(f => f.Id);
+
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
 
         builder.Property(x => x.Name)
             .HasColumnName("name")
@@ -21,6 +22,7 @@ public class RecipesConfigure : IEntityTypeConfiguration<Recipes>
             .IsRequired();
 
         builder.HasIndex(x => x.Name)
+            .HasDatabaseName("IX_recipes_name")
             .IsUnique();
     }
 }

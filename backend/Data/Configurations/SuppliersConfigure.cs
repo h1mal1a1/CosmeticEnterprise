@@ -9,6 +9,11 @@ public class SuppliersConfigure : IEntityTypeConfiguration<Suppliers>
     public void Configure(EntityTypeBuilder<Suppliers> builder)
     {
         builder.ToTable("suppliers");
-        builder.HasKey(f => f.Id);
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
     }
 }

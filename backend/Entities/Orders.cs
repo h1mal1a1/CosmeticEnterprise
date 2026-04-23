@@ -16,6 +16,12 @@ public class Orders
     public User User { get; set; } = null!;
 
     /// <summary>
+    /// Адрес доставки
+    /// </summary>
+    public long IdUserAddress { get; set; }
+    public UserAddress UserAddress { get; set; } = null!;
+
+    /// <summary>
     /// Канал продаж
     /// </summary>
     public long IdSalesChannel { get; set; }

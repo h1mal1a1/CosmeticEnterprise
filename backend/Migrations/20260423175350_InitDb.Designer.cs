@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CosmeticEnterpriseBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260418205256_AddPriceAndShoppingCart")]
-    partial class AddPriceAndShoppingCart
+    [Migration("20260423175350_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,31 +24,6 @@ namespace CosmeticEnterpriseBack.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Customers", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("customers", (string)null);
-                });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.FinishedProductImages", b =>
                 {
@@ -81,10 +56,12 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdFinishedProduct");
+                    b.HasIndex("IdFinishedProduct")
+                        .HasDatabaseName("IX_product_images_id_finished_product");
 
                     b.HasIndex("IdFinishedProduct", "IsMain")
                         .IsUnique()
+                        .HasDatabaseName("IX_product_images_id_finished_product_is_main")
                         .HasFilter("\"is_main\" = true");
 
                     b.ToTable("product_images", (string)null);
@@ -94,7 +71,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -112,7 +90,8 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -121,11 +100,14 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdProductCategory");
+                    b.HasIndex("IdProductCategory")
+                        .HasDatabaseName("IX_finished_products_id_product_category");
 
-                    b.HasIndex("IdRecipe");
+                    b.HasIndex("IdRecipe")
+                        .HasDatabaseName("IX_finished_products_id_recipe");
 
-                    b.HasIndex("IdUnitsOfMeasurement");
+                    b.HasIndex("IdUnitsOfMeasurement")
+                        .HasDatabaseName("IX_finished_products_id_units_of_measurement");
 
                     b.ToTable("finished_products", (string)null);
                 });
@@ -134,7 +116,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -146,11 +129,25 @@ namespace CosmeticEnterpriseBack.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_warehouse");
 
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("ReservedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("reserved_quantity");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdFinishedProduct");
+                    b.HasIndex("IdFinishedProduct")
+                        .HasDatabaseName("IX_leftovers_in_warehouses_id_finished_product");
 
-                    b.HasIndex("IdWarehouse");
+                    b.HasIndex("IdWarehouse")
+                        .HasDatabaseName("IX_leftovers_in_warehouses_id_warehouse");
 
                     b.ToTable("leftovers_in_warehouses", (string)null);
                 });
@@ -159,7 +156,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -169,7 +167,8 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdUnitsOfMeasurement");
+                    b.HasIndex("IdUnitsOfMeasurement")
+                        .HasDatabaseName("IX_materials_id_units_of_measurement");
 
                     b.ToTable("materials", (string)null);
                 });
@@ -178,7 +177,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -190,16 +190,133 @@ namespace CosmeticEnterpriseBack.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_order");
 
+                    b.Property<decimal>("LineTotal")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("line_total");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("unit_price");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdFinishedProduct");
+                    b.HasIndex("IdFinishedProduct")
+                        .HasDatabaseName("IX_order_items_id_finished_product");
 
-                    b.HasIndex("IdOrder");
+                    b.HasIndex("IdOrder")
+                        .HasDatabaseName("IX_order_items_id_order");
 
                     b.ToTable("order_items", (string)null);
                 });
 
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.OrderStatuses", b =>
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Orders", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text")
+                        .HasColumnName("comment");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<decimal>("DeliveryPrice")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("delivery_price");
+
+                    b.Property<string>("DeliveryStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("delivery_status");
+
+                    b.Property<long>("IdSalesChannel")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_sales_channel");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_user");
+
+                    b.Property<long>("IdUserAddress")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_user_address");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("order_status");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("payment_method");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("payment_status");
+
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("payment_type");
+
+                    b.Property<decimal>("TotalAmount")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("total_amount");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdSalesChannel")
+                        .HasDatabaseName("IX_orders_id_sales_channel");
+
+                    b.HasIndex("IdUser")
+                        .HasDatabaseName("IX_orders_id_user");
+
+                    b.HasIndex("IdUserAddress")
+                        .HasDatabaseName("IX_orders_id_user_address");
+
+                    b.ToTable("orders", (string)null);
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ProductCategories", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,68 +327,15 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("order_statuses", (string)null);
-                });
-
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Orders", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("IdCustomer")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_customer");
-
-                    b.Property<long>("IdOrderStatus")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_order_status");
-
-                    b.Property<long>("IdSalesChannel")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id_sales_channel");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdCustomer");
-
-                    b.HasIndex("IdOrderStatus");
-
-                    b.HasIndex("IdSalesChannel");
-
-                    b.ToTable("orders", (string)null);
-                });
-
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ProductCategories", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_product_categories_name");
 
                     b.ToTable("product_categories", (string)null);
                 });
@@ -280,7 +344,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -290,7 +355,8 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdFinishedProduct");
+                    b.HasIndex("IdFinishedProduct")
+                        .HasDatabaseName("IX_product_parties_id_finished_product");
 
                     b.ToTable("product_parties", (string)null);
                 });
@@ -313,7 +379,8 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_recipes_name");
 
                     b.ToTable("recipes", (string)null);
                 });
@@ -335,10 +402,9 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_sales_channels_name");
 
                     b.ToTable("sales_channels", (string)null);
                 });
@@ -367,7 +433,8 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdUser")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_shopping_carts_id_user");
 
                     b.ToTable("shopping_carts", (string)null);
                 });
@@ -404,10 +471,12 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdFinishedProduct");
+                    b.HasIndex("IdFinishedProduct")
+                        .HasDatabaseName("IX_shopping_cart_items_id_finished_product");
 
                     b.HasIndex("IdShoppingCart", "IdFinishedProduct")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_shopping_cart_items_id_shopping_cart_id_finished_product");
 
                     b.ToTable("shopping_cart_items", (string)null);
                 });
@@ -416,7 +485,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -429,7 +499,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -439,7 +510,8 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSupplier");
+                    b.HasIndex("IdSupplier")
+                        .HasDatabaseName("IX_supplies_from_suppliers_id_supplier");
 
                     b.ToTable("supplies_from_suppliers", (string)null);
                 });
@@ -448,7 +520,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -462,9 +535,11 @@ namespace CosmeticEnterpriseBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdMaterial");
+                    b.HasIndex("IdMaterial")
+                        .HasDatabaseName("IX_supply_positions_id_material");
 
-                    b.HasIndex("IdSuppliesFromSupplier");
+                    b.HasIndex("IdSuppliesFromSupplier")
+                        .HasDatabaseName("IX_supply_positions_id_supplies_from_supplier");
 
                     b.ToTable("supply_positions", (string)null);
                 });
@@ -487,7 +562,8 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_units_of_measurement_name");
 
                     b.ToTable("units_of_measurement", (string)null);
                 });
@@ -496,88 +572,199 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("IdUser")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("IdUser"));
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("password_hash");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("role_name");
 
                     b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("username");
 
                     b.HasKey("IdUser");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_users_email");
 
                     b.HasIndex("Username")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_users_username");
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserAddress", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Apartment")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("apartment");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("comment");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("country");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<string>("House")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("house");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_user");
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_default");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("postal_code");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("recipient_name");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("street");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUser")
+                        .HasDatabaseName("IX_user_addresses_id_user");
+
+                    b.ToTable("user_addresses", (string)null);
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserRefreshToken", b =>
                 {
                     b.Property<long>("IdUserRefreshToken")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("IdUserRefreshToken"));
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("CreatedByIp")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_ip");
 
                     b.Property<string>("DeviceName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("device_name");
 
                     b.Property<DateTime>("ExpiresAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
 
                     b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_user");
 
                     b.Property<bool>("IsRevoked")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_revoked");
 
                     b.Property<string>("RefreshTokenHash")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("refresh_token_hash");
 
                     b.Property<DateTime?>("RevokedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at_utc");
 
                     b.Property<string>("RevokedByIp")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("revoked_by_ip");
 
                     b.HasKey("IdUserRefreshToken");
 
-                    b.HasIndex("IdUser");
+                    b.HasIndex("IdUser")
+                        .HasDatabaseName("IX_user_refresh_tokens_id_user");
 
                     b.ToTable("user_refresh_tokens", (string)null);
                 });
@@ -586,7 +773,8 @@ namespace CosmeticEnterpriseBack.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -668,7 +856,7 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.HasOne("CosmeticEnterpriseBack.Entities.FinishedProducts", "FinishedProducts")
                         .WithMany("OrderItemsList")
                         .HasForeignKey("IdFinishedProduct")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CosmeticEnterpriseBack.Entities.Orders", "Order")
@@ -684,29 +872,29 @@ namespace CosmeticEnterpriseBack.Migrations
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Orders", b =>
                 {
-                    b.HasOne("CosmeticEnterpriseBack.Entities.Customers", "Customer")
-                        .WithMany("OrdersList")
-                        .HasForeignKey("IdCustomer")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CosmeticEnterpriseBack.Entities.OrderStatuses", "OrderStatus")
-                        .WithMany("OrdersList")
-                        .HasForeignKey("IdOrderStatus")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CosmeticEnterpriseBack.Entities.SalesChannels", "SalesChannel")
                         .WithMany("OrdersList")
                         .HasForeignKey("IdSalesChannel")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("OrderStatus");
+                    b.HasOne("CosmeticEnterpriseBack.Entities.UserAddress", "UserAddress")
+                        .WithMany("Orders")
+                        .HasForeignKey("IdUserAddress")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("SalesChannel");
+
+                    b.Navigation("User");
+
+                    b.Navigation("UserAddress");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.ProductParties", b =>
@@ -780,6 +968,17 @@ namespace CosmeticEnterpriseBack.Migrations
                     b.Navigation("SuppliesFromSuppliers");
                 });
 
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserAddress", b =>
+                {
+                    b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
+                        .WithMany("UserAddresses")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserRefreshToken", b =>
                 {
                     b.HasOne("CosmeticEnterpriseBack.Entities.User", "User")
@@ -789,11 +988,6 @@ namespace CosmeticEnterpriseBack.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Customers", b =>
-                {
-                    b.Navigation("OrdersList");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.FinishedProducts", b =>
@@ -810,11 +1004,6 @@ namespace CosmeticEnterpriseBack.Migrations
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Materials", b =>
                 {
                     b.Navigation("SupplyPositionsList");
-                });
-
-            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.OrderStatuses", b =>
-                {
-                    b.Navigation("OrdersList");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Orders", b =>
@@ -861,7 +1050,16 @@ namespace CosmeticEnterpriseBack.Migrations
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.User", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserAddresses");
+                });
+
+            modelBuilder.Entity("CosmeticEnterpriseBack.Entities.UserAddress", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("CosmeticEnterpriseBack.Entities.Warehouses", b =>

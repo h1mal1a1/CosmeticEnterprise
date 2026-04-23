@@ -72,4 +72,6 @@ public class UserAddress
     /// Дата обновления
     /// </summary>
     public DateTime UpdatedAtUtc { get; set; }
+
+    public ICollection<Orders> Orders { get; set; } = [];
 }

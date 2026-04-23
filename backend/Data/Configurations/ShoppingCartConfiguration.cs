@@ -29,6 +29,7 @@ public sealed class ShoppingCartConfiguration : IEntityTypeConfiguration<Shoppin
             .IsRequired();
 
         builder.HasIndex(x => x.IdUser)
+            .HasDatabaseName("IX_shopping_carts_id_user")
             .IsUnique();
 
         builder.HasOne(x => x.User)

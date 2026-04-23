@@ -9,10 +9,12 @@ public class UnitsOfMeasurementConfigure : IEntityTypeConfiguration<UnitsOfMeasu
     public void Configure(EntityTypeBuilder<UnitsOfMeasurement> builder)
     {
         builder.ToTable("units_of_measurement");
-        builder.HasKey(f => f.Id);
-        
+
+        builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
 
         builder.Property(x => x.Name)
             .HasColumnName("name")
@@ -20,6 +22,7 @@ public class UnitsOfMeasurementConfigure : IEntityTypeConfiguration<UnitsOfMeasu
             .IsRequired();
 
         builder.HasIndex(x => x.Name)
+            .HasDatabaseName("IX_units_of_measurement_name")
             .IsUnique();
     }
 }

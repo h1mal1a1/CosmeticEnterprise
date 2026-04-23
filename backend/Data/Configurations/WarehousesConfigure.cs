@@ -9,6 +9,11 @@ public class WarehousesConfigure : IEntityTypeConfiguration<Warehouses>
     public void Configure(EntityTypeBuilder<Warehouses> builder)
     {
         builder.ToTable("warehouses");
-        builder.HasKey(f => f.Id);
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
     }
 }

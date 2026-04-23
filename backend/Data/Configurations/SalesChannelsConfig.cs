@@ -9,11 +9,20 @@ public class SalesChannelsConfig : IEntityTypeConfiguration<SalesChannels>
     public void Configure(EntityTypeBuilder<SalesChannels> builder)
     {
         builder.ToTable("sales_channels");
-        builder.HasKey(c=>c.Id);
-        builder.Property(p => p.Id).HasColumnName("id").UseIdentityColumn().ValueGeneratedOnAdd();
-        builder.Property(p => p.Name).HasColumnName("name").HasMaxLength(100);
 
-        builder.HasIndex(i => i.Id);
-        builder.HasIndex(i => i.Name).IsUnique();
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
+
+        builder.Property(x => x.Name)
+            .HasColumnName("name")
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.HasIndex(x => x.Name)
+            .HasDatabaseName("IX_sales_channels_name")
+            .IsUnique();
     }
 }

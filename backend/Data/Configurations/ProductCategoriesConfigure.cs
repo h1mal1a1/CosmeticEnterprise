@@ -9,14 +9,20 @@ public class ProductCategoriesConfigure : IEntityTypeConfiguration<ProductCatego
     public void Configure(EntityTypeBuilder<ProductCategories> builder)
     {
         builder.ToTable("product_categories");
-        
-        builder.HasKey(f => f.Id);
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
 
         builder.Property(x => x.Name)
-            .IsRequired()
-            .HasMaxLength(200);
+            .HasColumnName("name")
+            .HasMaxLength(200)
+            .IsRequired();
 
         builder.HasIndex(x => x.Name)
+            .HasDatabaseName("IX_product_categories_name")
             .IsUnique();
     }
 }

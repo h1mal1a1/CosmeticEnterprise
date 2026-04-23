@@ -26,9 +26,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     public DbSet<UserAddress> UserAddresses { get; set; }
-
     public DbSet<FinishedProductImages> FinishedProductImages { get; set; }
-
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 

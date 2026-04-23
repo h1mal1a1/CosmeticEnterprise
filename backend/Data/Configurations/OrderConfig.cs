@@ -12,11 +12,21 @@ public class OrderConfig : IEntityTypeConfiguration<Orders>
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
+
         builder.Property(x => x.IdUser)
-            .HasColumnName("id_user");
+            .HasColumnName("id_user")
+            .IsRequired();
+
+        builder.Property(x => x.IdUserAddress)
+            .HasColumnName("id_user_address")
+            .IsRequired();
 
         builder.Property(x => x.IdSalesChannel)
-            .HasColumnName("id_sales_channel");
+            .HasColumnName("id_sales_channel")
+            .IsRequired();
 
         builder.Property(x => x.OrderStatus)
             .HasColumnName("order_status")
@@ -73,10 +83,24 @@ public class OrderConfig : IEntityTypeConfiguration<Orders>
             .HasDefaultValueSql("NOW()")
             .IsRequired();
 
+        builder.HasIndex(x => x.IdUser)
+            .HasDatabaseName("IX_orders_id_user");
+
+        builder.HasIndex(x => x.IdUserAddress)
+            .HasDatabaseName("IX_orders_id_user_address");
+
+        builder.HasIndex(x => x.IdSalesChannel)
+            .HasDatabaseName("IX_orders_id_sales_channel");
+
         builder.HasOne(x => x.User)
-            .WithMany()
+            .WithMany(x => x.Orders)
             .HasForeignKey(x => x.IdUser)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.UserAddress)
+            .WithMany(x => x.Orders)
+            .HasForeignKey(x => x.IdUserAddress)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.SalesChannel)
             .WithMany(x => x.OrdersList)

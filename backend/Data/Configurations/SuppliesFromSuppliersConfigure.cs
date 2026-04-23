@@ -9,14 +9,23 @@ public class SuppliesFromSuppliersConfigure : IEntityTypeConfiguration<SuppliesF
     public void Configure(EntityTypeBuilder<SuppliesFromSuppliers> builder)
     {
         builder.ToTable("supplies_from_suppliers");
-        
+
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
+
         builder.Property(x => x.IdSupplier)
-            .HasColumnName("id_supplier");
+            .HasColumnName("id_supplier")
+            .IsRequired();
+
+        builder.HasIndex(x => x.IdSupplier)
+            .HasDatabaseName("IX_supplies_from_suppliers_id_supplier");
 
         builder.HasOne(x => x.Supplier)
             .WithMany(x => x.SuppliesFromSuppliersList)
-            .HasForeignKey(x => x.IdSupplier);
+            .HasForeignKey(x => x.IdSupplier)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

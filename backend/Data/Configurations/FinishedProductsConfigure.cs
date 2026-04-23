@@ -9,32 +9,56 @@ public class FinishedProductsConfigure : IEntityTypeConfiguration<FinishedProduc
     public void Configure(EntityTypeBuilder<FinishedProducts> builder)
     {
         builder.ToTable("finished_products");
-        builder.HasKey(f => f.Id);
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("id")
+            .UseIdentityByDefaultColumn();
+
+        builder.Property(x => x.Name)
+            .HasColumnName("name")
+            .IsRequired();
 
         builder.Property(x => x.Price)
             .HasColumnName("price")
             .HasPrecision(18, 2)
             .IsRequired();
-        
-        builder.Property(f => f.IdRecipe)
-            .HasColumnName("id_recipe");
-        
-        builder.Property(f => f.IdProductCategory)
-            .HasColumnName("id_product_category");
-        
-        builder.Property(f => f.IdUnitsOfMeasurement)
-            .HasColumnName("id_units_of_measurement");
 
-        builder.HasOne(f => f.Recipe)
-            .WithMany(f => f.FinishedProductsList)
-            .HasForeignKey(f => f.IdRecipe);
+        builder.Property(x => x.IdRecipe)
+            .HasColumnName("id_recipe")
+            .IsRequired();
 
-        builder.HasOne(f => f.ProductCategories)
-            .WithMany(f => f.FinishedProductsList)
-            .HasForeignKey(f => f.IdProductCategory);
+        builder.Property(x => x.IdProductCategory)
+            .HasColumnName("id_product_category")
+            .IsRequired();
 
-        builder.HasOne(f => f.UnitsOfMeasurement)
-            .WithMany(f => f.FinishedProductsList)
-            .HasForeignKey(f => f.IdUnitsOfMeasurement);
+        builder.Property(x => x.IdUnitsOfMeasurement)
+            .HasColumnName("id_units_of_measurement")
+            .IsRequired();
+
+        builder.HasIndex(x => x.IdRecipe)
+            .HasDatabaseName("IX_finished_products_id_recipe");
+
+        builder.HasIndex(x => x.IdProductCategory)
+            .HasDatabaseName("IX_finished_products_id_product_category");
+
+        builder.HasIndex(x => x.IdUnitsOfMeasurement)
+            .HasDatabaseName("IX_finished_products_id_units_of_measurement");
+
+        builder.HasOne(x => x.Recipe)
+            .WithMany(x => x.FinishedProductsList)
+            .HasForeignKey(x => x.IdRecipe)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.ProductCategories)
+            .WithMany(x => x.FinishedProductsList)
+            .HasForeignKey(x => x.IdProductCategory)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.UnitsOfMeasurement)
+            .WithMany(x => x.FinishedProductsList)
+            .HasForeignKey(x => x.IdUnitsOfMeasurement)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

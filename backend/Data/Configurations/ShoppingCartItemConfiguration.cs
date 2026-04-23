@@ -37,7 +37,11 @@ public sealed class ShoppingCartItemConfiguration : IEntityTypeConfiguration<Sho
             .HasColumnName("created_at_utc")
             .IsRequired();
 
+        builder.HasIndex(x => x.IdFinishedProduct)
+            .HasDatabaseName("IX_shopping_cart_items_id_finished_product");
+
         builder.HasIndex(x => new { x.IdShoppingCart, x.IdFinishedProduct })
+            .HasDatabaseName("IX_shopping_cart_items_id_shopping_cart_id_finished_product")
             .IsUnique();
 
         builder.HasOne(x => x.ShoppingCart)

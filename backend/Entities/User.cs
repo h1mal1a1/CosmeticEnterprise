@@ -23,9 +23,7 @@ public class User
 
     public DateTime UpdatedAtUtc { get; set; }
 
-    public ICollection<UserRefreshToken> RefreshTokens { get; set; }
-        = new List<UserRefreshToken>();
-
-    public ICollection<UserAddress> UserAddresses { get; set; }
-        = new List<UserAddress>();
+    public ICollection<UserRefreshToken> RefreshTokens { get; set; } = [];
+    public ICollection<UserAddress> UserAddresses { get; set; } = [];
+    public ICollection<Orders> Orders { get; set; } = [];
 }
