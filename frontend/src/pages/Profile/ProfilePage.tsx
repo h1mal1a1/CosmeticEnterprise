@@ -1,6 +1,6 @@
-import './ProfilePage.css';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../components/auth/AuthProvider';
+import "./ProfilePage.css";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/auth/AuthProvider";
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -8,7 +8,7 @@ export default function ProfilePage() {
 
   async function handleLogout() {
     await logout();
-    navigate('/', { replace: true });
+    navigate("/", { replace: true });
   }
 
   return (
@@ -23,7 +23,7 @@ export default function ProfilePage() {
           <div className="profile-field">
             <span className="profile-field__label">Имя пользователя</span>
             <span className="profile-field__value">
-              {user?.username ?? 'Неизвестно'}
+              {user?.username ?? "Неизвестно"}
             </span>
           </div>
 
@@ -31,6 +31,20 @@ export default function ProfilePage() {
             <span className="profile-field__label">Почта</span>
             <span className="profile-field__value">Не указана</span>
           </div>
+        </div>
+
+        <div className="profile-actions">
+          <Link to="/profile/addresses" className="profile-actions__link">
+            Мои адреса
+          </Link>
+
+          <Link to="/profile/orders" className="profile-actions__link">
+            Мои заказы
+          </Link>
+
+          <Link to="/cart" className="profile-actions__link">
+            Перейти в корзину
+          </Link>
         </div>
 
         <button className="profile-logout-button" onClick={handleLogout}>

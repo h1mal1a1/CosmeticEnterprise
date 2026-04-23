@@ -18,7 +18,12 @@ import AdminFinishedProductsPage from "./pages/Admin/AdminFinishedProductsPage";
 import AdminRecipesPage from "./pages/Admin/AdminRecipesPage";
 import AdminUnitsOfMeasurementPage from "./pages/Admin/AdminUnitsOfMeasurementPage";
 import AdminFinishedProductImagesPage from "./pages/Admin/AdminFinishedProductImagesPage";
+import AdminOrdersPage from "./pages/Admin/AdminOrdersPage";
+import AdminOrderDetailsPage from "./pages/Admin/AdminOrderDetailsPage";
 import CartPage from "./pages/Cart/CartPage";
+import UserAddressesPage from "./pages/Profile/UserAddressesPage";
+import MyOrdersPage from "./pages/Profile/MyOrdersPage";
+import OrderDetailsPage from "./pages/Profile/OrderDetailsPage";
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -139,6 +144,33 @@ function AppContent() {
           />
 
           <Route
+            path="/profile/addresses"
+            element={
+              <ProtectedRoute>
+                <UserAddressesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile/orders"
+            element={
+              <ProtectedRoute>
+                <MyOrdersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile/orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/cart"
             element={
               <ProtectedRoute>
@@ -166,6 +198,8 @@ function AppContent() {
               path="finished-products"
               element={<AdminFinishedProductsPage />}
             />
+            <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="orders/:id" element={<AdminOrderDetailsPage />} />
             <Route
               path="finished-products/:id/images"
               element={<AdminFinishedProductImagesPage />}

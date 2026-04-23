@@ -1,5 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import './AdminLayout.css';
+import { NavLink, Outlet } from "react-router-dom";
+import "./AdminLayout.css";
 
 export default function AdminLayout() {
   return (
@@ -11,7 +11,7 @@ export default function AdminLayout() {
           <NavLink
             to="/admin/categories"
             className={({ isActive }) =>
-              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
             }
           >
             Категории
@@ -20,7 +20,7 @@ export default function AdminLayout() {
           <NavLink
             to="/admin/recipes"
             className={({ isActive }) =>
-              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
             }
           >
             Рецептуры
@@ -29,7 +29,7 @@ export default function AdminLayout() {
           <NavLink
             to="/admin/units-of-measurement"
             className={({ isActive }) =>
-              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
             }
           >
             Единицы измерения
@@ -38,10 +38,19 @@ export default function AdminLayout() {
           <NavLink
             to="/admin/finished-products"
             className={({ isActive }) =>
-              `admin-sidebar__link ${isActive ? 'admin-sidebar__link--active' : ''}`
+              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
             }
           >
             Готовая продукция
+          </NavLink>
+
+          <NavLink
+            to="/admin/orders"
+            className={({ isActive }) =>
+              `admin-sidebar__link ${isActive ? "admin-sidebar__link--active" : ""}`
+            }
+          >
+            Заказы
           </NavLink>
         </nav>
       </aside>
