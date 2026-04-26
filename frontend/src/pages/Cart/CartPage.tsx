@@ -52,7 +52,11 @@ const initialAddressForm: AddressFormState = {
   isDefault: false,
 };
 
-const SITE_SALES_CHANNEL_ID = 1;
+const PAYMENT_TYPE_IMMEDIATE: PaymentType = 1;
+const PAYMENT_TYPE_POSTPAID: PaymentType = 2;
+
+const PAYMENT_METHOD_CASH: PaymentMethod = 1;
+const PAYMENT_METHOD_SBP: PaymentMethod = 3;
 
 function formatPrice(value: number): string {
   return new Intl.NumberFormat("ru-RU", {
@@ -99,12 +103,17 @@ export default function CartPage() {
   const [dictionaries, setDictionaries] = useState<OrderDictionaries | null>(null);
 
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
-  const [paymentType, setPaymentType] = useState<PaymentType>("Immediate");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Sbp");
+  const [paymentType, setPaymentType] = useState<PaymentType>(
+    PAYMENT_TYPE_IMMEDIATE,
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
+    PAYMENT_METHOD_SBP,
+  );
   const [comment, setComment] = useState("");
 
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [addressForm, setAddressForm] = useState<AddressFormState>(initialAddressForm);
+  const [addressForm, setAddressForm] =
+    useState<AddressFormState>(initialAddressForm);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,6 +131,16 @@ export default function CartPage() {
     () => dictionaries?.paymentMethods ?? [],
     [dictionaries],
   );
+
+  const availablePaymentMethodOptions = useMemo(() => {
+    if (paymentType === PAYMENT_TYPE_IMMEDIATE) {
+      return paymentMethodOptions.filter(
+        (option) => option.value !== PAYMENT_METHOD_CASH,
+      );
+    }
+
+    return paymentMethodOptions;
+  }, [paymentMethodOptions, paymentType]);
 
   useEffect(() => {
     void loadPageData();
@@ -259,6 +278,22 @@ export default function CartPage() {
     }
   }
 
+  function handlePaymentTypeChange(value: PaymentType) {
+    setPaymentType(value);
+
+    if (value === PAYMENT_TYPE_IMMEDIATE && paymentMethod === PAYMENT_METHOD_CASH) {
+      setPaymentMethod(PAYMENT_METHOD_SBP);
+    }
+  }
+
+  function handlePaymentMethodChange(value: PaymentMethod) {
+    setPaymentMethod(value);
+
+    if (value === PAYMENT_METHOD_CASH) {
+      setPaymentType(PAYMENT_TYPE_POSTPAID);
+    }
+  }
+
   async function handleCheckout() {
     if (!cart || cart.items.length === 0) {
       setError("Корзина пуста");
@@ -270,13 +305,17 @@ export default function CartPage() {
       return;
     }
 
+    if (cart.items.some((item) => !item.hasEnoughStock)) {
+      setError("В корзине есть товары в количестве больше доступного остатка.");
+      return;
+    }
+
     try {
       setIsCheckoutLoading(true);
       setError(null);
 
       const request: CreateOrderRequest = {
         idUserAddress: selectedAddressId,
-        idSalesChannel: SITE_SALES_CHANNEL_ID,
         paymentType,
         paymentMethod,
         comment: comment.trim() || null,
@@ -289,6 +328,8 @@ export default function CartPage() {
 
       navigate(`/profile/orders/${order.id}`);
     } catch (err) {
+      await loadCartOnly();
+
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
@@ -319,6 +360,7 @@ export default function CartPage() {
 
   const items = cart?.items ?? [];
   const isEmpty = items.length === 0;
+  const hasStockProblems = items.some((item) => !item.hasEnoughStock);
 
   return (
     <section className="cart-page">
@@ -346,6 +388,13 @@ export default function CartPage() {
 
       {error && <p className="cart-page__error cart-page__error--inline">{error}</p>}
 
+      {hasStockProblems && (
+        <p className="cart-page__error cart-page__error--inline">
+          В корзине есть товары, количество которых превышает доступный остаток.
+          Уменьшите количество, чтобы оформить заказ.
+        </p>
+      )}
+
       {isEmpty ? (
         <div className="cart-page__empty">
           <p>Добавьте товары, чтобы оформить заказ.</p>
@@ -355,6 +404,7 @@ export default function CartPage() {
           <div className="cart-list">
             {items.map((item) => {
               const isUpdating = updatingItemId === item.id;
+              const isOutOfStock = item.availableQuantity <= 0;
 
               return (
                 <article key={item.id} className="cart-item">
@@ -374,9 +424,29 @@ export default function CartPage() {
 
                   <div className="cart-item__content">
                     <h2 className="cart-item__title">{item.productName}</h2>
+
                     <p className="cart-item__price">
                       Цена за единицу: {formatPrice(item.unitPrice)}
                     </p>
+
+                    <p
+                      className={
+                        isOutOfStock
+                          ? "cart-item__stock cart-item__stock--empty"
+                          : "cart-item__stock"
+                      }
+                    >
+                      {isOutOfStock
+                        ? "Нет в наличии"
+                        : `В наличии: ${item.availableQuantity}`}
+                    </p>
+
+                    {!item.hasEnoughStock && (
+                      <p className="cart-item__stock-error">
+                        В корзине больше товара, чем доступно. Уменьшите
+                        количество до {item.availableQuantity}.
+                      </p>
+                    )}
 
                     <div className="cart-item__controls">
                       <div className="cart-item__quantity">
@@ -401,7 +471,11 @@ export default function CartPage() {
                           onClick={() =>
                             void handleQuantityChange(item.id, item.quantity + 1)
                           }
-                          disabled={isUpdating || item.quantity >= 999}
+                          disabled={
+                            isUpdating ||
+                            item.quantity >= item.availableQuantity ||
+                            item.quantity >= 999
+                          }
                         >
                           +
                         </button>
@@ -637,10 +711,12 @@ export default function CartPage() {
                 id="payment-type"
                 className="cart-summary__select"
                 value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value as PaymentType)}
+                onChange={(e) =>
+                  handlePaymentTypeChange(Number(e.target.value) as PaymentType)
+                }
               >
                 {paymentTypeOptions.map((option) => (
-                  <option key={option.value} value={option.name}>
+                  <option key={option.value} value={option.value}>
                     {option.displayName}
                   </option>
                 ))}
@@ -655,10 +731,12 @@ export default function CartPage() {
                 id="payment-method"
                 className="cart-summary__select"
                 value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                onChange={(e) =>
+                  handlePaymentMethodChange(Number(e.target.value) as PaymentMethod)
+                }
               >
-                {paymentMethodOptions.map((option) => (
-                  <option key={option.value} value={option.name}>
+                {availablePaymentMethodOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
                     {option.displayName}
                   </option>
                 ))}
@@ -694,7 +772,10 @@ export default function CartPage() {
               className="cart-summary__checkout-button"
               onClick={() => void handleCheckout()}
               disabled={
-                isCheckoutLoading || addresses.length === 0 || !selectedAddressId
+                isCheckoutLoading ||
+                addresses.length === 0 ||
+                !selectedAddressId ||
+                hasStockProblems
               }
             >
               {isCheckoutLoading ? "Оформляем..." : "Оформить заказ"}

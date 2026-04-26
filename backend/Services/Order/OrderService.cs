@@ -9,6 +9,7 @@ namespace CosmeticEnterpriseBack.Services.Order;
 
 public class OrderService(AppDbContext dbContext) : IOrderService
 {
+    private const string WebsiteSalesChannelName = "Website";
     public async Task<OrderResponse> CreateOrderFromCartAsync(long userId, CreateOrderRequest request, CancellationToken cancellationToken)
     {
         ValidateReturnUrl(request.ReturnUrl);
@@ -22,12 +23,12 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         if (userAddress is null)
             throw new KeyNotFoundException("User address not found.");
 
-        var salesChannelExists = await dbContext.SalesChannels
+        var salesChannel = await dbContext.SalesChannels
             .AsNoTracking()
-            .AnyAsync(x => x.Id == request.IdSalesChannel, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Name == WebsiteSalesChannelName, cancellationToken);
 
-        if (!salesChannelExists)
-            throw new KeyNotFoundException("Sales channel not found.");
+        if (salesChannel is null)
+            throw new KeyNotFoundException("Website sales channel not found.");
 
         var cart = await dbContext.ShoppingCarts
             .Include(x => x.Items)
@@ -116,7 +117,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             {
                 IdUser = userId,
                 IdUserAddress = request.IdUserAddress,
-                IdSalesChannel = request.IdSalesChannel,
+                IdSalesChannel = salesChannel.Id,
                 OrderStatus = orderStatus,
                 DeliveryStatus = DeliveryStatus.Pending,
                 PaymentType = request.PaymentType,

@@ -43,6 +43,10 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
         if (product is null)
             throw new KeyNotFoundException("Finished product not found.");
 
+        var availableQuantity = await GetAvailableQuantityAsync(request.IdFinishedProduct,cancellationToken);
+        if (availableQuantity <= 0)
+            throw new InvalidOperationException("Product is out of stock.");
+
         var existingItem = await dbContext.ShoppingCartItems
             .FirstOrDefaultAsync(
                 x => x.IdShoppingCart == cart.Id && x.IdFinishedProduct == request.IdFinishedProduct,
@@ -50,6 +54,9 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
 
         if (existingItem is null)
         {
+            if (request.Quantity > availableQuantity)
+                throw new InvalidOperationException($"Only {availableQuantity} items are available.");
+
             existingItem = new ShoppingCartItem
             {
                 IdShoppingCart = cart.Id,
@@ -64,7 +71,8 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
         else
         {
             var newQuantity = existingItem.Quantity + request.Quantity;
-
+            if (newQuantity > availableQuantity)
+                throw new InvalidOperationException($"Only {availableQuantity} items are available.");
             if (newQuantity > 999)
                 throw new ArgumentException("Quantity cannot be greater than 999.");
 
@@ -94,6 +102,11 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
 
         if (item is null)
             throw new KeyNotFoundException("Cart item not found.");
+
+        var availableQuantity = await GetAvailableQuantityAsync(item.IdFinishedProduct, cancellationToken);
+
+        if (request.Quantity > availableQuantity)
+            throw new InvalidOperationException($"Only {availableQuantity} items are available.");
 
         item.Quantity = request.Quantity;
         item.UnitPrice = item.FinishedProduct.Price;
@@ -208,6 +221,23 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
                     .ThenInclude(x => x.Images)
             .FirstAsync(x => x.Id == cartId, cancellationToken);
 
+        var productIds = cart.Items
+            .Select(x => x.IdFinishedProduct)
+            .Distinct()
+            .ToList();
+
+        var availableQuantities = await dbContext.LeftoversInWarehouses
+            .AsNoTracking()
+            .Where(x => productIds.Contains(x.IdFinishedProduct))
+            .GroupBy(x => x.IdFinishedProduct)
+            .Select(x => new
+            {
+                IdFinishedProduct = x.Key,
+                AvailableQuantity = x.Sum(y => y.Quantity - y.ReservedQuantity)
+            })
+            .ToDictionaryAsync(x => x.IdFinishedProduct, x => x.AvailableQuantity, cancellationToken);
+
+
         var items = cart.Items
             .OrderBy(x => x.Id)
             .Select(x =>
@@ -216,7 +246,7 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
                     .OrderByDescending(i => i.IsMain)
                     .ThenBy(i => i.SortOrder)
                     .FirstOrDefault();
-
+                var availableQuantity = availableQuantities.GetValueOrDefault(x.IdFinishedProduct,0);
                 return new ShoppingCartItemResponse
                 {
                     Id = x.Id,
@@ -227,7 +257,9 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
                         : objectStorageService.GetFileUrl(mainImage.ObjectKey),
                     UnitPrice = x.UnitPrice,
                     Quantity = x.Quantity,
-                    LineTotal = x.UnitPrice * x.Quantity
+                    LineTotal = x.UnitPrice * x.Quantity,
+                    AvailableQuantity = availableQuantity,
+                    HasEnoughStock = x.Quantity <= availableQuantity
                 };
             })
             .ToList();
@@ -240,5 +272,12 @@ public class CartService(AppDbContext dbContext, IObjectStorageService objectSto
             TotalItemsQuantity = items.Sum(x => x.Quantity),
             TotalAmount = items.Sum(x => x.LineTotal)
         };
+    }
+    private async Task<int> GetAvailableQuantityAsync(long idFinishedProduct, CancellationToken cancellationToken)
+    {
+        return await dbContext.LeftoversInWarehouses
+            .AsNoTracking()
+            .Where(x => x.IdFinishedProduct == idFinishedProduct)
+            .SumAsync(x => x.Quantity - x.ReservedQuantity, cancellationToken);
     }
 }

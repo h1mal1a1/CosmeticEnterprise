@@ -44,6 +44,13 @@ public static class SeedExtensions
 
     private static async Task SeedCatalogAsync(AppDbContext dbContext)
     {
+        var websiteChannelExists = await dbContext.SalesChannels.AnyAsync(c => c.Name == "Website");
+        if(!websiteChannelExists)
+        {
+            dbContext.SalesChannels.Add(new SalesChannels { Name = "Website" });
+            await dbContext.SaveChangesAsync();
+        }
+
         const int targetProductsCount = 100;
         var currentProductsCount = await dbContext.FinishedProducts.CountAsync();
         if (currentProductsCount >= targetProductsCount)

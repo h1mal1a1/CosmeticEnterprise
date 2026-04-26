@@ -46,8 +46,14 @@ function formatDate(value: string): string {
   }).format(new Date(value));
 }
 
-function getDisplayName(options: EnumOption[], name: string): string {
-  return options.find((x) => x.name === name)?.displayName ?? name;
+function getDisplayName(
+  options: EnumOption[],
+  value: string | number,
+): string {
+  return (
+    options.find((x) => x.value === value || x.name === value)?.displayName ??
+    String(value)
+  );
 }
 
 export default function AdminOrderDetailsPage() {

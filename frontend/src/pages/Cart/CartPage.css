@@ -116,9 +116,27 @@
 }
 
 .cart-item__price {
-  margin: 0 0 16px;
+  margin: 0 0 8px;
   color: #6b7280;
   font-size: 15px;
+}
+
+.cart-item__stock {
+  margin: 0 0 12px;
+  color: #047857;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cart-item__stock--empty {
+  color: #b91c1c;
+}
+
+.cart-item__stock-error {
+  margin: 0 0 12px;
+  color: #b91c1c;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .cart-item__controls {

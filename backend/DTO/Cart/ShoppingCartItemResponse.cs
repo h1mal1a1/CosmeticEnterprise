@@ -8,5 +8,7 @@ public class ShoppingCartItemResponse
     public string? MainImageUrl { get; set; }
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
+    public int AvailableQuantity { get; set; }
+    public bool HasEnoughStock { get; set; }
     public decimal LineTotal { get; set; }
 }

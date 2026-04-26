@@ -13,9 +13,11 @@ export type DeliveryStatus =
   | "Delivered"
   | "Cancelled";
 
-export type PaymentType = "Immediate" | "Postpaid";
+export type PaymentType = 1 | 2;
+// 1 = Immediate, 2 = Postpaid
 
-export type PaymentMethod = "Cash" | "BankTransfer" | "Sbp";
+export type PaymentMethod = 1 | 2 | 3;
+// 1 = Cash, 2 = BankTransfer, 3 = Sbp
 
 export type PaymentStatus = "Pending" | "Paid" | "Failed";
 
@@ -35,7 +37,6 @@ export type OrderDictionaries = {
 
 export type CreateOrderRequest = {
   idUserAddress: number;
-  idSalesChannel: number;
   paymentType: PaymentType;
   paymentMethod: PaymentMethod;
   comment?: string | null;
