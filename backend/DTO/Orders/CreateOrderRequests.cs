@@ -13,11 +13,6 @@ public class CreateOrderRequest
     public long IdUserAddress { get; set; }
 
     /// <summary>
-    /// Канал продаж (сайт, маркетплейс и т.д.)
-    /// </summary>
-    public long IdSalesChannel { get; set; }
-
-    /// <summary>
     /// Тип оплаты
     /// </summary>
     public PaymentType PaymentType { get; set; }
