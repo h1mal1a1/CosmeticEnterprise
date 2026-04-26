@@ -9,6 +9,8 @@ public class OrderResponse
     public long IdUserAddress { get; set; }
     public long IdSalesChannel { get; set; }
 
+    public string DeliveryAddress { get; set; } = string.Empty;
+
     public OrderStatus OrderStatus { get; set; }
     public DeliveryStatus DeliveryStatus { get; set; }
     public PaymentType PaymentType { get; set; }

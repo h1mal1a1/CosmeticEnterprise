@@ -135,9 +135,7 @@ export default function AdminOrderDetailsPage() {
   }
 
   async function handleSaveStatuses() {
-    if (!id || !form) {
-      return;
-    }
+    if (!id || !form) return;
 
     try {
       setIsSaving(true);
@@ -270,7 +268,7 @@ export default function AdminOrderDetailsPage() {
 
               <div className="admin-order-details-info__row">
                 <span>Адрес</span>
-                <strong>{order.idUserAddress}</strong>
+                <strong>{order.deliveryAddress}</strong>
               </div>
 
               <div className="admin-order-details-info__row">
@@ -284,9 +282,7 @@ export default function AdminOrderDetailsPage() {
 
               <div className="admin-order-details-info__row">
                 <span>Статус доставки</span>
-                <span
-                  className={getDeliveryStatusBadgeClass(order.deliveryStatus)}
-                >
+                <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
                   {dictionaries
                     ? getDisplayName(
                         deliveryStatusOptions,
@@ -334,77 +330,6 @@ export default function AdminOrderDetailsPage() {
                   <p>{order.comment}</p>
                 </div>
               )}
-            </div>
-
-            <div className="admin-order-status-form">
-              <label className="admin-order-status-form__field">
-                <span>Статус заказа</span>
-                <select
-                  value={form.orderStatus}
-                  onChange={(e) =>
-                    setForm((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            orderStatus: e.target.value as OrderStatus,
-                          }
-                        : prev,
-                    )
-                  }
-                >
-                  {orderStatusOptions.map((option) => (
-                    <option key={option.value} value={option.name}>
-                      {option.displayName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="admin-order-status-form__field">
-                <span>Статус доставки</span>
-                <select
-                  value={form.deliveryStatus}
-                  onChange={(e) =>
-                    setForm((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            deliveryStatus: e.target.value as DeliveryStatus,
-                          }
-                        : prev,
-                    )
-                  }
-                >
-                  {deliveryStatusOptions.map((option) => (
-                    <option key={option.value} value={option.name}>
-                      {option.displayName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="admin-order-status-form__field">
-                <span>Статус оплаты</span>
-                <select
-                  value={form.paymentStatus}
-                  onChange={(e) =>
-                    setForm((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            paymentStatus: e.target.value as PaymentStatus,
-                          }
-                        : prev,
-                    )
-                  }
-                >
-                  {paymentStatusOptions.map((option) => (
-                    <option key={option.value} value={option.name}>
-                      {option.displayName}
-                    </option>
-                  ))}
-                </select>
-              </label>
             </div>
 
             <div className="admin-order-details-total">

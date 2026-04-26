@@ -57,6 +57,7 @@ export type OrderResponse = {
   idUser: number;
   idUserAddress: number;
   idSalesChannel: number;
+  deliveryAddress: string;
   orderStatus: OrderStatus;
   deliveryStatus: DeliveryStatus;
   paymentType: PaymentType;

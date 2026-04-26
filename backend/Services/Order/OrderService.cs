@@ -10,6 +10,7 @@ namespace CosmeticEnterpriseBack.Services.Order;
 public class OrderService(AppDbContext dbContext) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
+
     public async Task<OrderResponse> CreateOrderFromCartAsync(long userId, CreateOrderRequest request, CancellationToken cancellationToken)
     {
         ValidateReturnUrl(request.ReturnUrl);
@@ -182,6 +183,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     {
         var order = await dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
             .FirstOrDefaultAsync(
@@ -197,6 +199,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     public async Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken)
     {
         var order = await dbContext.Orders
+            .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
             .FirstOrDefaultAsync(
@@ -267,6 +270,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     {
         var order = await dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
             .FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken);
@@ -280,6 +284,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     public async Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, CancellationToken cancellationToken)
     {
         var order = await dbContext.Orders
+            .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
             .FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken);
@@ -480,6 +485,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             IdUser = order.IdUser,
             IdUserAddress = order.IdUserAddress,
             IdSalesChannel = order.IdSalesChannel,
+            DeliveryAddress = FormatAddress(order.UserAddress),
             OrderStatus = order.OrderStatus,
             DeliveryStatus = order.DeliveryStatus,
             PaymentType = order.PaymentType,
@@ -503,6 +509,25 @@ public class OrderService(AppDbContext dbContext) : IOrderService
                 })
                 .ToList()
         };
+    }
+
+    private static string FormatAddress(UserAddress address)
+    {
+        var parts = new List<string>
+        {
+            address.Country,
+            address.City,
+            address.Street,
+            address.House
+        };
+
+        if (!string.IsNullOrWhiteSpace(address.Apartment))
+            parts.Add($"кв./офис {address.Apartment}");
+
+        if (!string.IsNullOrWhiteSpace(address.PostalCode))
+            parts.Add($"индекс {address.PostalCode}");
+
+        return string.Join(", ", parts.Where(x => !string.IsNullOrWhiteSpace(x)));
     }
 
     private static void ValidateReturnUrl(string? returnUrl)
