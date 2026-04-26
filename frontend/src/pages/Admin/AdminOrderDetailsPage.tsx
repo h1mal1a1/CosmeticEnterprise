@@ -61,7 +61,8 @@ export default function AdminOrderDetailsPage() {
   const navigate = useNavigate();
 
   const [order, setOrder] = useState<OrderResponse | null>(null);
-  const [dictionaries, setDictionaries] = useState<OrderDictionaries | null>(null);
+  const [dictionaries, setDictionaries] =
+    useState<OrderDictionaries | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -283,15 +284,24 @@ export default function AdminOrderDetailsPage() {
 
               <div className="admin-order-details-info__row">
                 <span>Статус доставки</span>
-                <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
-                  {getDeliveryStatusLabel(order.deliveryStatus)}
+                <span
+                  className={getDeliveryStatusBadgeClass(order.deliveryStatus)}
+                >
+                  {dictionaries
+                    ? getDisplayName(
+                        deliveryStatusOptions,
+                        order.deliveryStatus,
+                      )
+                    : getDeliveryStatusLabel(order.deliveryStatus)}
                 </span>
               </div>
 
               <div className="admin-order-details-info__row">
                 <span>Статус оплаты</span>
                 <span className={getPaymentStatusBadgeClass(order.paymentStatus)}>
-                  {getPaymentStatusLabel(order.paymentStatus)}
+                  {dictionaries
+                    ? getDisplayName(paymentStatusOptions, order.paymentStatus)
+                    : getPaymentStatusLabel(order.paymentStatus)}
                 </span>
               </div>
 

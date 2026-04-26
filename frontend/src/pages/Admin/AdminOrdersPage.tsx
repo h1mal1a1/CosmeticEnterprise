@@ -34,13 +34,17 @@ function formatDate(value: string): string {
   }).format(new Date(value));
 }
 
-function getDisplayName(options: EnumOption[], name: string): string {
-  return options.find((x) => x.name === name)?.displayName ?? name;
+function getDisplayName(options: EnumOption[], value: string | number): string {
+  return (
+    options.find((x) => x.value === value || x.name === value)?.displayName ??
+    String(value)
+  );
 }
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderListItemResponse[]>([]);
-  const [dictionaries, setDictionaries] = useState<OrderDictionaries | null>(null);
+  const [dictionaries, setDictionaries] =
+    useState<OrderDictionaries | null>(null);
 
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("");
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>("");
@@ -59,10 +63,12 @@ export default function AdminOrdersPage() {
     () => dictionaries?.orderStatuses ?? [],
     [dictionaries],
   );
+
   const deliveryStatusOptions = useMemo(
     () => dictionaries?.deliveryStatuses ?? [],
     [dictionaries],
   );
+
   const paymentStatusOptions = useMemo(
     () => dictionaries?.paymentStatuses ?? [],
     [dictionaries],
@@ -227,11 +233,15 @@ export default function AdminOrdersPage() {
                   </span>
 
                   <span className={getPaymentStatusBadgeClass(order.paymentStatus)}>
-                    {getPaymentStatusLabel(order.paymentStatus)}
+                    {dictionaries
+                      ? getDisplayName(paymentStatusOptions, order.paymentStatus)
+                      : getPaymentStatusLabel(order.paymentStatus)}
                   </span>
 
                   <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
-                    {getDeliveryStatusLabel(order.deliveryStatus)}
+                    {dictionaries
+                      ? getDisplayName(deliveryStatusOptions, order.deliveryStatus)
+                      : getDeliveryStatusLabel(order.deliveryStatus)}
                   </span>
                 </div>
 
