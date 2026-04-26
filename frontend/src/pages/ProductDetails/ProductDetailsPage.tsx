@@ -97,6 +97,7 @@ export default function ProductDetailsPage() {
   }, [cart, product]);
 
   const quantityInCart = currentCartItem?.quantity ?? 0;
+  const isOutOfStock = product ? product.availableQuantity <= 0 : false;
 
   function getAuthRequiredMessage() {
     return 'Для добавления товара в корзину необходимо авторизоваться';
@@ -104,6 +105,11 @@ export default function ProductDetailsPage() {
 
   async function handleAddToCart() {
     if (!product) {
+      return;
+    }
+
+    if (product.availableQuantity <= 0) {
+      setCartMessage('Товара нет в наличии');
       return;
     }
 
@@ -141,6 +147,11 @@ export default function ProductDetailsPage() {
       return;
     }
 
+    if (product.availableQuantity <= 0) {
+      setCartMessage('Товара нет в наличии');
+      return;
+    }
+
     if (!isAuthenticated) {
       setCartMessage(getAuthRequiredMessage());
       return;
@@ -148,6 +159,11 @@ export default function ProductDetailsPage() {
 
     if (!currentCartItem) {
       await handleAddToCart();
+      return;
+    }
+
+    if (currentCartItem.quantity >= product.availableQuantity) {
+      setCartMessage('В корзине уже максимальное доступное количество товара');
       return;
     }
 
@@ -310,7 +326,7 @@ export default function ProductDetailsPage() {
                   type="button"
                   className="product-details-info__quantity-button"
                   onClick={() => void handleIncreaseQuantity()}
-                  disabled={isChangingCart || quantityInCart >= 999}
+                  disabled={isChangingCart || quantityInCart >= product.availableQuantity}
                   aria-label="Увеличить количество"
                 >
                   +
@@ -321,9 +337,13 @@ export default function ProductDetailsPage() {
                 type="button"
                 className="product-details-info__buy-button"
                 onClick={() => void handleAddToCart()}
-                disabled={isChangingCart}
+                disabled={isChangingCart || isOutOfStock}
               >
-                {isChangingCart ? 'Добавление...' : 'Добавить в корзину'}
+                {isOutOfStock
+                  ? 'Нет в наличии'
+                  : isChangingCart
+                    ? 'Добавление...'
+                    : 'Добавить в корзину'}
               </button>
             )}
 

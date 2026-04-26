@@ -14,6 +14,7 @@ public class FinishedProductsReader : IEntityReader<FinishedProducts, long>
     {
         return await _dbContext.Set<FinishedProducts>()
             .Include(x => x.Images)
+            .Include(x => x.LeftoversInWarehousesList)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
@@ -22,6 +23,7 @@ public class FinishedProductsReader : IEntityReader<FinishedProducts, long>
     {
         return await _dbContext.Set<FinishedProducts>()
             .Include(x => x.Images)
+            .Include(x => x.LeftoversInWarehousesList)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
@@ -29,6 +31,7 @@ public class FinishedProductsReader : IEntityReader<FinishedProducts, long>
     {
         return await _dbContext.Set<FinishedProducts>()
             .Include(x => x.Images)
+            .Include(x => x.LeftoversInWarehousesList)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

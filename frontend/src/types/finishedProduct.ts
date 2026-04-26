@@ -12,6 +12,7 @@ export type FinishedProduct = {
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;
+    availableQuantity: number;
     images: FinishedProductImage[];
 };
 

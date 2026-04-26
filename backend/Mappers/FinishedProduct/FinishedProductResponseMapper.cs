@@ -22,9 +22,11 @@ public class FinishedProductResponseMapper :
             IdRecipe = entity.IdRecipe,
             IdProductCategory = entity.IdProductCategory,
             IdUnitsOfMeasurement = entity.IdUnitsOfMeasurement,
+            AvailableQuantity = entity.LeftoversInWarehousesList
+                .Sum(x => Math.Max(0, x.Quantity - x.ReservedQuantity)),
             Images = entity.Images
-                .OrderBy(x=>x.SortOrder)
-                .Select(x=>new FinishedProductImageResponse
+                .OrderBy(x => x.SortOrder)
+                .Select(x => new FinishedProductImageResponse
                 {
                     Id = x.Id,
                     FileUrl = _objectStorageService.GetFileUrl(x.ObjectKey),

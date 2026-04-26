@@ -81,11 +81,23 @@ export default function ProductsPage() {
   }, [categories, selectedCategoryId]);
 
   const filteredProducts = useMemo(() => {
-    if (selectedCategoryId === null) {
-      return products;
-    }
+    const filtered =
+      selectedCategoryId === null
+        ? products
+        : products.filter((x) => x.idProductCategory === selectedCategoryId);
 
-    return products.filter((x) => x.idProductCategory === selectedCategoryId);
+    return filtered
+      .slice()
+      .sort((a, b) => {
+        const aInStock = a.availableQuantity > 0;
+        const bInStock = b.availableQuantity > 0;
+
+        if (aInStock === bInStock) {
+          return a.name.localeCompare(b.name);
+        }
+
+        return aInStock ? -1 : 1;
+      });
   }, [products, selectedCategoryId]);
 
   const cartItemMap = useMemo(() => {
@@ -115,6 +127,13 @@ export default function ProductsPage() {
   ) {
     event.preventDefault();
     event.stopPropagation();
+
+    const product = products.find((x) => x.id === productId);
+
+    if (!product || product.availableQuantity <= 0) {
+      setCartMessage('Товара нет в наличии');
+      return;
+    }
 
     if (!isAuthenticated) {
       setCartMessage(getAuthRequiredMessage());
@@ -152,6 +171,13 @@ export default function ProductsPage() {
     event.preventDefault();
     event.stopPropagation();
 
+    const product = products.find((x) => x.id === productId);
+
+    if (!product || product.availableQuantity <= 0) {
+      setCartMessage('Товара нет в наличии');
+      return;
+    }
+
     if (!isAuthenticated) {
       setCartMessage(getAuthRequiredMessage());
       return;
@@ -161,6 +187,11 @@ export default function ProductsPage() {
 
     if (!cartItem) {
       await handleAddToCart(event, productId);
+      return;
+    }
+
+    if (cartItem.quantity >= product.availableQuantity) {
+      setCartMessage('В корзине уже максимальное доступное количество товара');
       return;
     }
 
@@ -265,12 +296,17 @@ export default function ProductsPage() {
             const isChanging = changingProductId === product.id;
             const cartItem = cartItemMap.get(product.id);
             const quantityInCart = cartItem?.quantity ?? 0;
+            const isOutOfStock = product.availableQuantity <= 0;
 
             return (
               <Link
                 key={product.id}
                 to={`/products/${product.id}`}
-                className="product-card"
+                className={
+                  isOutOfStock
+                    ? 'product-card product-card--out-of-stock'
+                    : 'product-card'
+                }
               >
                 {mainImage ? (
                   <img
@@ -324,7 +360,7 @@ export default function ProductsPage() {
                           type="button"
                           className="product-card__quantity-button"
                           onClick={(event) => void handleIncreaseQuantity(event, product.id)}
-                          disabled={isChanging || quantityInCart >= 999}
+                          disabled={isChanging || quantityInCart >= product.availableQuantity}
                           aria-label="Увеличить количество"
                         >
                           +
@@ -335,9 +371,13 @@ export default function ProductsPage() {
                         type="button"
                         className="product-card__button"
                         onClick={(event) => void handleAddToCart(event, product.id)}
-                        disabled={isChanging}
+                        disabled={isChanging || isOutOfStock}
                       >
-                        {isChanging ? 'Добавление...' : 'В корзину'}
+                        {isOutOfStock
+                          ? 'Нет в наличии'
+                          : isChanging
+                            ? 'Добавление...'
+                            : 'В корзину'}
                       </button>
                     )}
                   </div>
