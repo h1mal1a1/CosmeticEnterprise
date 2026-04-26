@@ -49,7 +49,8 @@ export default function OrderDetailsPage() {
   const navigate = useNavigate();
 
   const [order, setOrder] = useState<OrderResponse | null>(null);
-  const [dictionaries, setDictionaries] = useState<OrderDictionaries | null>(null);
+  const [dictionaries, setDictionaries] =
+    useState<OrderDictionaries | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -57,6 +58,16 @@ export default function OrderDetailsPage() {
 
   const orderStatusOptions = useMemo(
     () => dictionaries?.orderStatuses ?? [],
+    [dictionaries],
+  );
+
+  const deliveryStatusOptions = useMemo(
+    () => dictionaries?.deliveryStatuses ?? [],
+    [dictionaries],
+  );
+
+  const paymentStatusOptions = useMemo(
+    () => dictionaries?.paymentStatuses ?? [],
     [dictionaries],
   );
 
@@ -161,7 +172,8 @@ export default function OrderDetailsPage() {
   }
 
   const canCancel =
-    order.orderStatus !== "Cancelled" && order.orderStatus !== "Completed";
+    order.orderStatus !== "Cancelled" &&
+    order.orderStatus !== "Completed";
 
   return (
     <section className="order-details-page">
@@ -173,7 +185,9 @@ export default function OrderDetailsPage() {
 
       <div className="order-details-page__header">
         <div>
-          <h1 className="order-details-page__title">Заказ №{order.id}</h1>
+          <h1 className="order-details-page__title">
+            Заказ №{order.id}
+          </h1>
           <p className="order-details-page__subtitle">
             Создан: {formatDate(order.createdAtUtc)}
           </p>
@@ -202,7 +216,9 @@ export default function OrderDetailsPage() {
               {order.items.map((item) => (
                 <article key={item.id} className="order-item-card">
                   <div className="order-item-card__content">
-                    <h3 className="order-item-card__title">{item.productName}</h3>
+                    <h3 className="order-item-card__title">
+                      {item.productName}
+                    </h3>
 
                     <div className="order-item-card__meta">
                       <span>Количество: {item.quantity}</span>
@@ -221,7 +237,9 @@ export default function OrderDetailsPage() {
 
         <aside className="order-details-page__sidebar">
           <div className="order-details-card">
-            <h2 className="order-details-card__title">Информация о заказе</h2>
+            <h2 className="order-details-card__title">
+              Информация о заказе
+            </h2>
 
             <div className="order-details-info">
               <div className="order-details-info__row">
@@ -236,14 +254,24 @@ export default function OrderDetailsPage() {
               <div className="order-details-info__row">
                 <span>Статус доставки</span>
                 <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
-                  {getDeliveryStatusLabel(order.deliveryStatus)}
+                  {dictionaries
+                    ? getDisplayName(
+                        deliveryStatusOptions,
+                        order.deliveryStatus,
+                      )
+                    : getDeliveryStatusLabel(order.deliveryStatus)}
                 </span>
               </div>
 
               <div className="order-details-info__row">
                 <span>Статус оплаты</span>
                 <span className={getPaymentStatusBadgeClass(order.paymentStatus)}>
-                  {getPaymentStatusLabel(order.paymentStatus)}
+                  {dictionaries
+                    ? getDisplayName(
+                        paymentStatusOptions,
+                        order.paymentStatus,
+                      )
+                    : getPaymentStatusLabel(order.paymentStatus)}
                 </span>
               </div>
 
