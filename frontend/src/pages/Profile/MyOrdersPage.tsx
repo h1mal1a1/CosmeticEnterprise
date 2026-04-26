@@ -34,13 +34,17 @@ function formatDate(value: string): string {
   }).format(new Date(value));
 }
 
-function getDisplayName(options: EnumOption[], name: string): string {
-  return options.find((x) => x.name === name)?.displayName ?? name;
+function getDisplayName(options: EnumOption[], value: string | number): string {
+  return (
+    options.find((x) => x.value === value || x.name === value)?.displayName ??
+    String(value)
+  );
 }
 
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState<OrderListItemResponse[]>([]);
-  const [dictionaries, setDictionaries] = useState<OrderDictionaries | null>(null);
+  const [dictionaries, setDictionaries] =
+    useState<OrderDictionaries | null>(null);
 
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -55,6 +59,21 @@ export default function MyOrdersPage() {
 
   const orderStatusOptions = useMemo(
     () => dictionaries?.orderStatuses ?? [],
+    [dictionaries],
+  );
+
+  const deliveryStatusOptions = useMemo(
+    () => dictionaries?.deliveryStatuses ?? [],
+    [dictionaries],
+  );
+
+  const paymentMethodOptions = useMemo(
+    () => dictionaries?.paymentMethods ?? [],
+    [dictionaries],
+  );
+
+  const paymentStatusOptions = useMemo(
+    () => dictionaries?.paymentStatuses ?? [],
     [dictionaries],
   );
 
@@ -175,9 +194,7 @@ export default function MyOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="my-orders-page__empty">
-          У вас пока нет заказов
-        </div>
+        <div className="my-orders-page__empty">У вас пока нет заказов</div>
       ) : (
         <div className="my-orders-list">
           {orders.map((order) => {
@@ -205,11 +222,15 @@ export default function MyOrdersPage() {
                     </span>
 
                     <span className={getPaymentStatusBadgeClass(order.paymentStatus)}>
-                      {getPaymentStatusLabel(order.paymentStatus)}
+                      {dictionaries
+                        ? getDisplayName(paymentStatusOptions, order.paymentStatus)
+                        : getPaymentStatusLabel(order.paymentStatus)}
                     </span>
 
                     <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
-                      {getDeliveryStatusLabel(order.deliveryStatus)}
+                      {dictionaries
+                        ? getDisplayName(deliveryStatusOptions, order.deliveryStatus)
+                        : getDeliveryStatusLabel(order.deliveryStatus)}
                     </span>
                   </div>
                 </div>
@@ -218,21 +239,27 @@ export default function MyOrdersPage() {
                   <div className="my-order-card__field">
                     <span className="my-order-card__label">Оплата</span>
                     <span className="my-order-card__value">
-                      {order.paymentMethod}
+                      {dictionaries
+                        ? getDisplayName(paymentMethodOptions, order.paymentMethod)
+                        : order.paymentMethod}
                     </span>
                   </div>
 
                   <div className="my-order-card__field">
                     <span className="my-order-card__label">Статус оплаты</span>
                     <span className="my-order-card__value">
-                      {getPaymentStatusLabel(order.paymentStatus)}
+                      {dictionaries
+                        ? getDisplayName(paymentStatusOptions, order.paymentStatus)
+                        : getPaymentStatusLabel(order.paymentStatus)}
                     </span>
                   </div>
 
                   <div className="my-order-card__field">
                     <span className="my-order-card__label">Доставка</span>
                     <span className="my-order-card__value">
-                      {getDeliveryStatusLabel(order.deliveryStatus)}
+                      {dictionaries
+                        ? getDisplayName(deliveryStatusOptions, order.deliveryStatus)
+                        : getDeliveryStatusLabel(order.deliveryStatus)}
                     </span>
                   </div>
 
