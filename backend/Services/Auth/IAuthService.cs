@@ -11,4 +11,6 @@ public interface IAuthService
     Task<AuthResponse> RefreshAsync(string refreshToken);
 
     Task<MeResponse> GetMeAsync(long idUser);
+
+    Task<MeResponse> UpdateProfileAsync(long idUser, UpdateProfileRequest request);
 }

@@ -5,7 +5,6 @@ using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CosmeticEnterpriseBack.Controllers;
 
@@ -20,13 +19,16 @@ public class AuthController : ControllerBase
     private readonly IAuthCookieService _authCookieService;
     private readonly ICurrentUserService _currentUser;
 
-    public AuthController(IAuthService authService, IAuthCookieService authCookieService, 
+    public AuthController(
+        IAuthService authService,
+        IAuthCookieService authCookieService,
         ICurrentUserService currentUser)
     {
         _authService = authService;
         _authCookieService = authCookieService;
         _currentUser = currentUser;
     }
+
     /// <summary>
     /// Регистрирует пользователя
     /// </summary>
@@ -39,7 +41,7 @@ public class AuthController : ControllerBase
         await _authService.RegisterAsync(request);
         return Ok();
     }
-    
+
     /// <summary>
     /// Выполняет вход пользователя и возвращает JWT токен.
     /// </summary>
@@ -50,7 +52,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var authResponse = await _authService.LoginAsync(request);
-        _authCookieService.AppendAuthCookies(Response, authResponse); 
+        _authCookieService.AppendAuthCookies(Response, authResponse);
         return Ok(new { message = "Login successful" });
     }
 
@@ -65,10 +67,10 @@ public class AuthController : ControllerBase
         var refreshToken = Request.Cookies[AuthCookieNames.RefreshToken];
         if (string.IsNullOrWhiteSpace(refreshToken))
             return Unauthorized();
-        
+
         var authResponse = await _authService.RefreshAsync(refreshToken);
         _authCookieService.AppendAuthCookies(Response, authResponse);
-        return Ok(new {message = "Tokens refreshed"});
+        return Ok(new { message = "Tokens refreshed" });
     }
 
     /// <summary>
@@ -82,7 +84,7 @@ public class AuthController : ControllerBase
         _authCookieService.DeleteAuthCookies(Response);
         return Ok(new { message = "Logout successful" });
     }
-    
+
     /// <summary>
     /// Позволяет получить id, username и role пользователя
     /// </summary>
@@ -91,9 +93,26 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetMe()
     {
-        if(!_currentUser.UserId.HasValue)
+        if (!_currentUser.UserId.HasValue)
             return Unauthorized();
+
         var response = await _authService.GetMeAsync(_currentUser.UserId.Value);
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Обновляет email и телефон текущего пользователя
+    /// </summary>
+    /// <param name="request">Новые email и телефон</param>
+    /// <returns>Обновленные данные пользователя</returns>
+    [HttpPut("profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+    {
+        if (!_currentUser.UserId.HasValue)
+            return Unauthorized();
+
+        var response = await _authService.UpdateProfileAsync(_currentUser.UserId.Value, request);
         return Ok(response);
     }
 }

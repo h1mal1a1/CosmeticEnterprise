@@ -10,6 +10,11 @@ export type RegisterRequest = {
   phone: string;
 };
 
+export type UpdateProfileRequest = {
+  email: string;
+  phone: string;
+};
+
 export type AuthResponse = {
   accessToken: string;
   refreshToken?: string;
