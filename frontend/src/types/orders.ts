@@ -1,7 +1,5 @@
 export type OrderStatus =
   | "Created"
-  | "AwaitingPayment"
-  | "Paid"
   | "Processing"
   | "Completed"
   | "Cancelled";
@@ -14,10 +12,8 @@ export type DeliveryStatus =
   | "Cancelled";
 
 export type PaymentType = 1 | 2;
-// 1 = Immediate, 2 = Postpaid
 
 export type PaymentMethod = 1 | 2 | 3;
-// 1 = Cash, 2 = BankTransfer, 3 = Sbp
 
 export type PaymentStatus = "Pending" | "Paid" | "Failed";
 

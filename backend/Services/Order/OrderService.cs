@@ -110,9 +110,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
                 });
             }
 
-            var orderStatus = request.PaymentType == PaymentType.Immediate
-                ? OrderStatus.AwaitingPayment
-                : OrderStatus.Created;
+            var orderStatus = OrderStatus.Created;
 
             var order = new Orders
             {

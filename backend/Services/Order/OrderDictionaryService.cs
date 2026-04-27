@@ -39,8 +39,6 @@ public class OrderDictionaryService : IOrderDictionaryService
         return status switch
         {
             OrderStatus.Created => "Создан",
-            OrderStatus.AwaitingPayment => "Ожидает оплаты",
-            OrderStatus.Paid => "Оплачен",
             OrderStatus.Processing => "В обработке",
             OrderStatus.Completed => "Завершен",
             OrderStatus.Cancelled => "Отменен",

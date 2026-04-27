@@ -10,10 +10,6 @@ export function getOrderStatusLabel(status: OrderStatus): string {
   switch (status) {
     case "Created":
       return "Создан";
-    case "AwaitingPayment":
-      return "Ожидает оплаты";
-    case "Paid":
-      return "Оплачен";
     case "Processing":
       return "В обработке";
     case "Completed":
@@ -85,12 +81,8 @@ export function getOrderStatusBadgeClass(status: OrderStatus): string {
       return "status-badge status-badge--success";
     case "Cancelled":
       return "status-badge status-badge--danger";
-    case "AwaitingPayment":
-      return "status-badge status-badge--warning";
     case "Processing":
       return "status-badge status-badge--info";
-    case "Paid":
-      return "status-badge status-badge--success";
     case "Created":
     default:
       return "status-badge status-badge--neutral";

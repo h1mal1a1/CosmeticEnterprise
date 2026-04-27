@@ -5,10 +5,8 @@ namespace CosmeticEnterpriseBack.Enums;
 /// </summary>
 public enum OrderStatus
 {
-    Created = 1,           // Создан
-    AwaitingPayment = 2,   // Ожидает оплаты
-    Paid = 3,              // Оплачен
-    Processing = 4,        // В обработке
-    Completed = 5,         // Завершен
-    Cancelled = 6          // Отменен
+    Created = 1,      // Создан
+    Processing = 2,   // В обработке
+    Completed = 3,    // Завершен
+    Cancelled = 4     // Отменен
 }
