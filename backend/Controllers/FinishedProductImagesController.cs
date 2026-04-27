@@ -28,11 +28,20 @@ public class FinishedProductImagesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPatch("{imageId:long}/main")]
+    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> SetMain([FromRoute] long finishedProductId,
+        [FromRoute] long imageId, CancellationToken cancellationToken)
+    {
+        var result = await _finishedProductImageService.SetMainAsync(
+            finishedProductId,
+            imageId,
+            cancellationToken);
+
+        return Ok(result);
+    }
+
     [HttpDelete("{imageId:long}")]
-    public async Task<IActionResult> Delete(
-        [FromRoute] long finishedProductId,
-        [FromRoute] long imageId,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromRoute] long finishedProductId, [FromRoute] long imageId, CancellationToken cancellationToken)
     {
         await _finishedProductImageService.DeleteAsync(
             finishedProductId,

@@ -24,7 +24,26 @@ export async function uploadFinishedProductImages(
     throw new Error(`Ошибка загрузки изображений: ${response.status}`);
   }
 
-  return response.json() as Promise<FinishedProductImage[]>;
+  return response.json();
+}
+
+export async function setMainFinishedProductImage(
+  finishedProductId: number,
+  imageId: number,
+): Promise<FinishedProductImage[]> {
+  const response = await fetch(
+    `${env.apiBaseUrl}/api/finished-products/${finishedProductId}/images/${imageId}/main`,
+    {
+      method: 'PATCH',
+      credentials: 'include',
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Ошибка установки главного изображения: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 export async function deleteFinishedProductImage(

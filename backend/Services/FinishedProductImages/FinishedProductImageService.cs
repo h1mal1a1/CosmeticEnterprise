@@ -8,19 +8,25 @@ namespace CosmeticEnterpriseBack.Services.FinishedProductImages;
 public class FinishedProductImageService : IFinishedProductImageService
 {
     private static readonly HashSet<string> AllowedContentTypes = ["image/jpeg", "image/png", "image/webp"];
+
     private readonly AppDbContext _dbContext;
     private readonly IObjectStorageService _objectStorageService;
 
-    public FinishedProductImageService(AppDbContext dbContext, IObjectStorageService objectStorageService)
+    public FinishedProductImageService(
+        AppDbContext dbContext,
+        IObjectStorageService objectStorageService)
     {
         _dbContext = dbContext;
         _objectStorageService = objectStorageService;
     }
 
-    public async Task<IReadOnlyList<FinishedProductImageResponse>> UploadAsync(long finishedProductId, UploadFinishedProductImageRequest request,
+    public async Task<IReadOnlyList<FinishedProductImageResponse>> UploadAsync(
+        long finishedProductId,
+        UploadFinishedProductImageRequest request,
         CancellationToken cancellationToken = default)
     {
-        var productExists = await _dbContext.FinishedProducts.AnyAsync(x => x.Id == finishedProductId, cancellationToken);
+        var productExists = await _dbContext.FinishedProducts
+            .AnyAsync(x => x.Id == finishedProductId, cancellationToken);
 
         if (!productExists)
             throw new InvalidOperationException($"Finished product with id {finishedProductId} not found");
@@ -30,7 +36,8 @@ public class FinishedProductImageService : IFinishedProductImageService
 
         var responses = new List<FinishedProductImageResponse>();
 
-        var isFirstImage = !await _dbContext.FinishedProductImages.AnyAsync(x => x.IdFinishedProduct == finishedProductId, cancellationToken);
+        var isFirstImage = !await _dbContext.FinishedProductImages
+            .AnyAsync(x => x.IdFinishedProduct == finishedProductId, cancellationToken);
 
         var currentMaxOrder = isFirstImage
             ? 0
@@ -56,7 +63,12 @@ public class FinishedProductImageService : IFinishedProductImageService
 
             await using var stream = file.OpenReadStream();
 
-            await _objectStorageService.UploadAsync(stream, objectKey, file.ContentType, file.Length, cancellationToken);
+            await _objectStorageService.UploadAsync(
+                stream,
+                objectKey,
+                file.ContentType,
+                file.Length,
+                cancellationToken);
 
             currentMaxOrder++;
 
@@ -65,7 +77,7 @@ public class FinishedProductImageService : IFinishedProductImageService
                 IdFinishedProduct = finishedProductId,
                 ObjectKey = objectKey,
                 SortOrder = currentMaxOrder,
-                IsMain = isFirstImage && responses.Count == 0 // первая картинка из первой загрузки
+                IsMain = isFirstImage && responses.Count == 0
             };
 
             _dbContext.FinishedProductImages.Add(entity);
@@ -84,7 +96,43 @@ public class FinishedProductImageService : IFinishedProductImageService
         return responses;
     }
 
-    public async Task DeleteAsync(long finishedProductId, long imageId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<FinishedProductImageResponse>> SetMainAsync(
+        long finishedProductId,
+        long imageId,
+        CancellationToken cancellationToken = default)
+    {
+        var images = await _dbContext.FinishedProductImages
+            .Where(x => x.IdFinishedProduct == finishedProductId)
+            .ToListAsync(cancellationToken);
+
+        if (images.Count == 0)
+            throw new InvalidOperationException("No images found");
+
+        var target = images.FirstOrDefault(x => x.Id == imageId);
+
+        if (target is null)
+            throw new InvalidOperationException("Image not found");
+
+        foreach (var img in images)
+            img.IsMain = false;
+
+        target.IsMain = true;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return images.Select(x => new FinishedProductImageResponse
+        {
+            Id = x.Id,
+            FileUrl = _objectStorageService.GetFileUrl(x.ObjectKey),
+            SortOrder = x.SortOrder,
+            IsMain = x.IsMain
+        }).ToList();
+    }
+
+    public async Task DeleteAsync(
+        long finishedProductId,
+        long imageId,
+        CancellationToken cancellationToken = default)
     {
         var image = await _dbContext.FinishedProductImages
             .FirstOrDefaultAsync(

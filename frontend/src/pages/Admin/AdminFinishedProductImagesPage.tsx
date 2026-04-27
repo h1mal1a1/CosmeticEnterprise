@@ -4,6 +4,7 @@ import { getFinishedProductById } from "../../api/finishedProductsApi";
 import {
   uploadFinishedProductImages,
   deleteFinishedProductImage,
+  setMainFinishedProductImage,
 } from "../../api/finishedProductImagesApi";
 import type {
   FinishedProduct,
@@ -20,6 +21,7 @@ export default function AdminFinishedProductImagesPage() {
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [settingMainId, setSettingMainId] = useState<number | null>(null);
 
   async function loadProduct() {
     try {
@@ -81,6 +83,27 @@ export default function AdminFinishedProductImagesPage() {
     }
   }
 
+  async function handleSetMain(imageId: number) {
+    try {
+      setSettingMainId(imageId);
+      setError("");
+
+      const updatedImages = await setMainFinishedProductImage(
+        finishedProductId,
+        imageId,
+      );
+
+      setProduct((prev) =>
+        prev ? { ...prev, images: updatedImages } : prev,
+      );
+    } catch (err) {
+      console.error(err);
+      setError("Не удалось установить главное изображение.");
+    } finally {
+      setSettingMainId(null);
+    }
+  }
+
   async function handleDeleteImage(imageId: number) {
     const isConfirmed = window.confirm(
       "Удалить изображение? Это действие нельзя отменить.",
@@ -131,7 +154,7 @@ export default function AdminFinishedProductImagesPage() {
       <div className="admin-finished-product-images-page__header">
         <div>
           <h1>Изображения продукта</h1>
-          <p>Загрузка и удаление изображений для готовой продукции.</p>
+          <p>Загрузка и управление изображениями готовой продукции.</p>
         </div>
 
         <Link
@@ -218,14 +241,29 @@ export default function AdminFinishedProductImagesPage() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => void handleDeleteImage(image.id)}
-                      className="admin-finished-product-images-page__danger-button"
-                      disabled={deletingId === image.id}
-                    >
-                      {deletingId === image.id ? "Удаление..." : "Удалить"}
-                    </button>
+                    <div className="admin-finished-product-images-page__actions">
+                      <button
+                        type="button"
+                        onClick={() => void handleSetMain(image.id)}
+                        className="admin-finished-product-images-page__primary-button"
+                        disabled={image.isMain || settingMainId === image.id}
+                      >
+                        {image.isMain
+                          ? "Главное"
+                          : settingMainId === image.id
+                          ? "Сохранение..."
+                          : "Сделать главным"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => void handleDeleteImage(image.id)}
+                        className="admin-finished-product-images-page__danger-button"
+                        disabled={deletingId === image.id}
+                      >
+                        {deletingId === image.id ? "Удаление..." : "Удалить"}
+                      </button>
+                    </div>
                   </div>
                 ))}
             </div>
