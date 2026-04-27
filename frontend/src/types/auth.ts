@@ -17,5 +17,6 @@ export type AuthResponse = {
 export type CurrentUser = {
   idUser: number;
   username: string;
+  email?: string | null;
   roleName: string;
 };

@@ -29,7 +29,9 @@ export default function ProfilePage() {
 
           <div className="profile-field">
             <span className="profile-field__label">Почта</span>
-            <span className="profile-field__value">Не указана</span>
+            <span className="profile-field__value">
+              {user?.email?.trim() ? user.email : "Не указана"}
+            </span>
           </div>
         </div>
 
