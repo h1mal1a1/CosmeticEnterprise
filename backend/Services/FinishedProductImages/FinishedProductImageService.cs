@@ -34,7 +34,7 @@ public class FinishedProductImageService : IFinishedProductImageService
         if (request.Files is null || request.Files.Count == 0)
             throw new InvalidOperationException("Files are required");
 
-        var responses = new List<FinishedProductImageResponse>();
+        var entities = new List<Entities.FinishedProductImages>();
 
         var isFirstImage = !await _dbContext.FinishedProductImages
             .AnyAsync(x => x.IdFinishedProduct == finishedProductId, cancellationToken);
@@ -55,6 +55,7 @@ public class FinishedProductImageService : IFinishedProductImageService
                 throw new InvalidOperationException("Unsupported file type");
 
             const long maxFileSize = 5 * 1024 * 1024;
+
             if (file.Length > maxFileSize)
                 throw new InvalidOperationException("File size must be <= 5MB");
 
@@ -77,23 +78,28 @@ public class FinishedProductImageService : IFinishedProductImageService
                 IdFinishedProduct = finishedProductId,
                 ObjectKey = objectKey,
                 SortOrder = currentMaxOrder,
-                IsMain = isFirstImage && responses.Count == 0
+                IsMain = isFirstImage && entities.Count == 0
             };
 
-            _dbContext.FinishedProductImages.Add(entity);
-
-            responses.Add(new FinishedProductImageResponse
-            {
-                Id = entity.Id,
-                FileUrl = _objectStorageService.GetFileUrl(objectKey),
-                SortOrder = entity.SortOrder,
-                IsMain = entity.IsMain
-            });
+            entities.Add(entity);
         }
 
+        if (entities.Count == 0)
+            throw new InvalidOperationException("Files are required");
+
+        _dbContext.FinishedProductImages.AddRange(entities);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return responses;
+        return entities
+            .OrderBy(x => x.SortOrder)
+            .Select(x => new FinishedProductImageResponse
+            {
+                Id = x.Id,
+                FileUrl = _objectStorageService.GetFileUrl(x.ObjectKey),
+                SortOrder = x.SortOrder,
+                IsMain = x.IsMain
+            })
+            .ToList();
     }
 
     public async Task<IReadOnlyList<FinishedProductImageResponse>> SetMainAsync(
@@ -101,8 +107,11 @@ public class FinishedProductImageService : IFinishedProductImageService
         long imageId,
         CancellationToken cancellationToken = default)
     {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
         var images = await _dbContext.FinishedProductImages
             .Where(x => x.IdFinishedProduct == finishedProductId)
+            .OrderBy(x => x.SortOrder)
             .ToListAsync(cancellationToken);
 
         if (images.Count == 0)
@@ -111,14 +120,19 @@ public class FinishedProductImageService : IFinishedProductImageService
         var target = images.FirstOrDefault(x => x.Id == imageId);
 
         if (target is null)
-            throw new InvalidOperationException("Image not found");
+            throw new InvalidOperationException($"Image with id {imageId} not found");
 
-        foreach (var img in images)
-            img.IsMain = false;
+        var currentMainImages = images.Where(x => x.IsMain).ToList();
+
+        foreach (var image in currentMainImages)
+            image.IsMain = false;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         target.IsMain = true;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return images.Select(x => new FinishedProductImageResponse
         {
