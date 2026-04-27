@@ -43,6 +43,12 @@ export type CreateOrderRequest = {
   returnUrl?: string | null;
 };
 
+export type UpdateOrderStatusesRequest = {
+  orderStatus: number;
+  deliveryStatus: number;
+  paymentStatus: number;
+};
+
 export type OrderItemResponse = {
   id: number;
   idFinishedProduct: number;

@@ -48,8 +48,14 @@
   cursor: pointer;
 }
 
+.admin-order-details-page__save-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .admin-order-details-page__status,
-.admin-order-details-page__error {
+.admin-order-details-page__error,
+.admin-order-details-page__success {
   padding: 24px;
   border-radius: 20px;
   background: #ffffff;
@@ -58,6 +64,10 @@
 
 .admin-order-details-page__error {
   color: #b91c1c;
+}
+
+.admin-order-details-page__success {
+  color: #047857;
 }
 
 .admin-order-details-page__layout {
@@ -137,6 +147,64 @@
   text-align: right;
 }
 
+.admin-order-details-info__current-statuses {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-order-details-info__current-statuses h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.admin-order-details-info__status-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-order-details-info__status-editor h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.admin-order-details-info__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-order-details-info__field span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-order-details-info__field select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  transition: all 0.2s ease;
+}
+
+.admin-order-details-info__field select:focus {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+}
+
 .admin-order-details-info__comment {
   margin-top: 8px;
   padding-top: 14px;
@@ -155,32 +223,6 @@
   margin: 0;
   color: #4b5563;
   line-height: 1.5;
-}
-
-.admin-order-status-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.admin-order-status-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.admin-order-status-form__field span {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.admin-order-status-form__field select {
-  border: 1px solid #d1d5db;
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-size: 14px;
-  background: #ffffff;
 }
 
 .admin-order-details-total {

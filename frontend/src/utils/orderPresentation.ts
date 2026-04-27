@@ -1,7 +1,9 @@
 import type {
   DeliveryStatus,
   OrderStatus,
+  PaymentMethod,
   PaymentStatus,
+  PaymentType,
 } from "../types/orders";
 
 export function getOrderStatusLabel(status: OrderStatus): string {
@@ -50,6 +52,30 @@ export function getPaymentStatusLabel(status: PaymentStatus): string {
       return "Ошибка оплаты";
     default:
       return status;
+  }
+}
+
+export function getPaymentTypeLabel(paymentType: PaymentType): string {
+  switch (paymentType) {
+    case 1:
+      return "Оплата сразу";
+    case 2:
+      return "Постоплата";
+    default:
+      return String(paymentType);
+  }
+}
+
+export function getPaymentMethodLabel(paymentMethod: PaymentMethod): string {
+  switch (paymentMethod) {
+    case 1:
+      return "Наличными";
+    case 2:
+      return "Перевод";
+    case 3:
+      return "СБП";
+    default:
+      return String(paymentMethod);
   }
 }
 

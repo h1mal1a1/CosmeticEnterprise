@@ -5,6 +5,7 @@ import type {
   OrderResponse,
   OrderListItemResponse,
   PagedResult,
+  UpdateOrderStatusesRequest,
 } from "../types/orders";
 
 function buildOrdersQueryString(query: GetOrdersQuery = {}): string {
@@ -37,12 +38,6 @@ function buildOrdersQueryString(query: GetOrdersQuery = {}): string {
   const queryString = params.toString();
   return queryString ? `?${queryString}` : "";
 }
-
-export type UpdateOrderStatusesRequest = {
-  orderStatus: string;
-  deliveryStatus: string;
-  paymentStatus: string;
-};
 
 export function checkout(request: CreateOrderRequest): Promise<OrderResponse> {
   return apiRequest<OrderResponse>("/api/orders/checkout", {

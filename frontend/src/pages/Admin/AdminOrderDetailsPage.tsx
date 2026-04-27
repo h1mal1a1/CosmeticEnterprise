@@ -17,11 +17,10 @@ import {
 import "../../styles/status-badges.css";
 import {
   getDeliveryStatusBadgeClass,
-  getDeliveryStatusLabel,
   getOrderStatusBadgeClass,
-  getOrderStatusLabel,
+  getPaymentMethodLabel,
   getPaymentStatusBadgeClass,
-  getPaymentStatusLabel,
+  getPaymentTypeLabel,
 } from "../../utils/orderPresentation";
 import "./AdminOrderDetailsPage.css";
 
@@ -56,6 +55,24 @@ function getDisplayName(
   );
 }
 
+function getEnumValue(options: EnumOption[], name: string): number {
+  const option = options.find((x) => x.name === name);
+
+  if (!option) {
+    throw new Error(`Enum option '${name}' not found.`);
+  }
+
+  return option.value;
+}
+
+function isFormChanged(order: OrderResponse, form: FormState): boolean {
+  return (
+    order.orderStatus !== form.orderStatus ||
+    order.deliveryStatus !== form.deliveryStatus ||
+    order.paymentStatus !== form.paymentStatus
+  );
+}
+
 export default function AdminOrderDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -68,6 +85,7 @@ export default function AdminOrderDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const orderStatusOptions = useMemo(
     () => dictionaries?.orderStatuses ?? [],
@@ -108,6 +126,7 @@ export default function AdminOrderDetailsPage() {
     try {
       setIsLoading(true);
       setError(null);
+      setSuccessMessage(null);
 
       const orderId = Number(id);
 
@@ -135,16 +154,17 @@ export default function AdminOrderDetailsPage() {
   }
 
   async function handleSaveStatuses() {
-    if (!id || !form) return;
+    if (!id || !form || !dictionaries) return;
 
     try {
       setIsSaving(true);
       setError(null);
+      setSuccessMessage(null);
 
       const updated = await updateAdminOrderStatuses(Number(id), {
-        orderStatus: form.orderStatus,
-        deliveryStatus: form.deliveryStatus,
-        paymentStatus: form.paymentStatus,
+        orderStatus: getEnumValue(orderStatusOptions, form.orderStatus),
+        deliveryStatus: getEnumValue(deliveryStatusOptions, form.deliveryStatus),
+        paymentStatus: getEnumValue(paymentStatusOptions, form.paymentStatus),
       });
 
       setOrder(updated);
@@ -153,6 +173,7 @@ export default function AdminOrderDetailsPage() {
         deliveryStatus: updated.deliveryStatus,
         paymentStatus: updated.paymentStatus,
       });
+      setSuccessMessage("Статусы заказа сохранены");
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -173,7 +194,7 @@ export default function AdminOrderDetailsPage() {
     );
   }
 
-  if (error || !order || !form) {
+  if (!order || !form) {
     return (
       <section className="admin-order-details-page">
         <div className="admin-order-details-page__topbar">
@@ -192,6 +213,8 @@ export default function AdminOrderDetailsPage() {
       </section>
     );
   }
+
+  const hasChanges = isFormChanged(order, form);
 
   return (
     <section className="admin-order-details-page">
@@ -218,13 +241,17 @@ export default function AdminOrderDetailsPage() {
           type="button"
           className="admin-order-details-page__save-button"
           onClick={() => void handleSaveStatuses()}
-          disabled={isSaving}
+          disabled={isSaving || !hasChanges || !dictionaries}
         >
           {isSaving ? "Сохранение..." : "Сохранить статусы"}
         </button>
       </div>
 
       {error && <p className="admin-order-details-page__error">{error}</p>}
+
+      {successMessage && (
+        <p className="admin-order-details-page__success">{successMessage}</p>
+      )}
 
       <div className="admin-order-details-page__layout">
         <div className="admin-order-details-page__main">
@@ -271,34 +298,110 @@ export default function AdminOrderDetailsPage() {
                 <strong>{order.deliveryAddress}</strong>
               </div>
 
-              <div className="admin-order-details-info__row">
-                <span>Статус заказа</span>
-                <span className={getOrderStatusBadgeClass(order.orderStatus)}>
-                  {dictionaries
-                    ? getDisplayName(orderStatusOptions, order.orderStatus)
-                    : getOrderStatusLabel(order.orderStatus)}
-                </span>
+              <div className="admin-order-details-info__current-statuses">
+                <h3>Текущие статусы</h3>
+
+                <div className="admin-order-details-info__row">
+                  <span>Статус заказа</span>
+                  <span className={getOrderStatusBadgeClass(order.orderStatus)}>
+                    {getDisplayName(orderStatusOptions, order.orderStatus)}
+                  </span>
+                </div>
+
+                <div className="admin-order-details-info__row">
+                  <span>Статус доставки</span>
+                  <span
+                    className={getDeliveryStatusBadgeClass(
+                      order.deliveryStatus,
+                    )}
+                  >
+                    {getDisplayName(deliveryStatusOptions, order.deliveryStatus)}
+                  </span>
+                </div>
+
+                <div className="admin-order-details-info__row">
+                  <span>Статус оплаты</span>
+                  <span
+                    className={getPaymentStatusBadgeClass(order.paymentStatus)}
+                  >
+                    {getDisplayName(paymentStatusOptions, order.paymentStatus)}
+                  </span>
+                </div>
               </div>
 
-              <div className="admin-order-details-info__row">
-                <span>Статус доставки</span>
-                <span className={getDeliveryStatusBadgeClass(order.deliveryStatus)}>
-                  {dictionaries
-                    ? getDisplayName(
-                        deliveryStatusOptions,
-                        order.deliveryStatus,
+              <div className="admin-order-details-info__status-editor">
+                <h3>Изменить статусы</h3>
+
+                <label className="admin-order-details-info__field">
+                  <span>Статус заказа</span>
+                  <select
+                    value={form.orderStatus}
+                    onChange={(event) =>
+                      setForm((current) =>
+                        current
+                          ? {
+                              ...current,
+                              orderStatus: event.target.value as OrderStatus,
+                            }
+                          : current,
                       )
-                    : getDeliveryStatusLabel(order.deliveryStatus)}
-                </span>
-              </div>
+                    }
+                  >
+                    {orderStatusOptions.map((option) => (
+                      <option key={option.name} value={option.name}>
+                        {option.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-              <div className="admin-order-details-info__row">
-                <span>Статус оплаты</span>
-                <span className={getPaymentStatusBadgeClass(order.paymentStatus)}>
-                  {dictionaries
-                    ? getDisplayName(paymentStatusOptions, order.paymentStatus)
-                    : getPaymentStatusLabel(order.paymentStatus)}
-                </span>
+                <label className="admin-order-details-info__field">
+                  <span>Статус доставки</span>
+                  <select
+                    value={form.deliveryStatus}
+                    onChange={(event) =>
+                      setForm((current) =>
+                        current
+                          ? {
+                              ...current,
+                              deliveryStatus: event.target
+                                .value as DeliveryStatus,
+                            }
+                          : current,
+                      )
+                    }
+                  >
+                    {deliveryStatusOptions.map((option) => (
+                      <option key={option.name} value={option.name}>
+                        {option.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="admin-order-details-info__field">
+                  <span>Статус оплаты</span>
+                  <select
+                    value={form.paymentStatus}
+                    onChange={(event) =>
+                      setForm((current) =>
+                        current
+                          ? {
+                              ...current,
+                              paymentStatus: event.target
+                                .value as PaymentStatus,
+                            }
+                          : current,
+                      )
+                    }
+                  >
+                    {paymentStatusOptions.map((option) => (
+                      <option key={option.name} value={option.name}>
+                        {option.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
               <div className="admin-order-details-info__row">
@@ -306,7 +409,7 @@ export default function AdminOrderDetailsPage() {
                 <strong>
                   {dictionaries
                     ? getDisplayName(paymentTypeOptions, order.paymentType)
-                    : order.paymentType}
+                    : getPaymentTypeLabel(order.paymentType)}
                 </strong>
               </div>
 
@@ -315,7 +418,7 @@ export default function AdminOrderDetailsPage() {
                 <strong>
                   {dictionaries
                     ? getDisplayName(paymentMethodOptions, order.paymentMethod)
-                    : order.paymentMethod}
+                    : getPaymentMethodLabel(order.paymentMethod)}
                 </strong>
               </div>
 
