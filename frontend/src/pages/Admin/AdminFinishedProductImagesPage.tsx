@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getFinishedProductById } from "../../api/finishedProductsApi";
 import {
-  uploadFinishedProductImage,
+  uploadFinishedProductImages,
   deleteFinishedProductImage,
 } from "../../api/finishedProductImagesApi";
 import type {
@@ -46,9 +46,9 @@ export default function AdminFinishedProductImagesPage() {
   }, [finishedProductId]);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files ?? []);
 
-    if (!file) {
+    if (files.length === 0) {
       return;
     }
 
@@ -56,9 +56,9 @@ export default function AdminFinishedProductImagesPage() {
       setUploading(true);
       setError("");
 
-      const uploadedImage = await uploadFinishedProductImage(
+      const uploadedImages = await uploadFinishedProductImages(
         finishedProductId,
-        file,
+        files,
       );
 
       setProduct((prev) => {
@@ -68,14 +68,14 @@ export default function AdminFinishedProductImagesPage() {
 
         return {
           ...prev,
-          images: [...prev.images, uploadedImage],
+          images: [...prev.images, ...uploadedImages],
         };
       });
 
       event.target.value = "";
     } catch (err) {
       console.error(err);
-      setError("Не удалось загрузить изображение.");
+      setError("Не удалось загрузить изображения.");
     } finally {
       setUploading(false);
     }
@@ -163,10 +163,11 @@ export default function AdminFinishedProductImagesPage() {
 
             <div className="admin-finished-product-images-page__upload">
               <label className="admin-finished-product-images-page__upload-label">
-                <span>Добавить изображение</span>
+                <span>Добавить изображения</span>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={(event) => void handleFileChange(event)}
                   disabled={uploading}
                 />
@@ -174,11 +175,12 @@ export default function AdminFinishedProductImagesPage() {
 
               {uploading ? (
                 <div className="admin-finished-product-images-page__hint">
-                  Загрузка изображения...
+                  Загрузка изображений...
                 </div>
               ) : (
                 <div className="admin-finished-product-images-page__hint">
-                  Поддерживаются стандартные форматы изображений.
+                  Можно выбрать сразу несколько изображений. Поддерживаются JPG,
+                  PNG и WEBP.
                 </div>
               )}
             </div>

@@ -17,10 +17,8 @@ public class FinishedProductImagesController : ControllerBase
 
     [HttpPost]
     [Consumes("multipart/form-data")]
-    public async Task<ActionResult<FinishedProductImageResponse>> Upload(
-        [FromRoute] long finishedProductId,
-        [FromForm] UploadFinishedProductImageRequest request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> Upload([FromRoute] long finishedProductId,
+        [FromForm] UploadFinishedProductImageRequest request, CancellationToken cancellationToken)
     {
         var result = await _finishedProductImageService.UploadAsync(
             finishedProductId,

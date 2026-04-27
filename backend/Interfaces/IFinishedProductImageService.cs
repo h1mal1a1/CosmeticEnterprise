@@ -4,7 +4,7 @@ namespace CosmeticEnterpriseBack.Interfaces;
 
 public interface IFinishedProductImageService
 {
-    Task<FinishedProductImageResponse> UploadAsync(long finishedProductId, UploadFinishedProductImageRequest request,
+    Task<IReadOnlyList<FinishedProductImageResponse>> UploadAsync(long finishedProductId, UploadFinishedProductImageRequest request, 
         CancellationToken cancellationToken = default);
 
     Task DeleteAsync(long finishedProductId, long imageId, CancellationToken cancellationToken = default);

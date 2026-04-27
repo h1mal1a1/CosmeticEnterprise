@@ -1,12 +1,15 @@
 import { env } from '../config/env';
 import type { FinishedProductImage } from '../types/finishedProduct';
 
-export async function uploadFinishedProductImage(
+export async function uploadFinishedProductImages(
   finishedProductId: number,
-  file: File,
-): Promise<FinishedProductImage> {
+  files: File[],
+): Promise<FinishedProductImage[]> {
   const formData = new FormData();
-  formData.append('file', file);
+
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
 
   const response = await fetch(
     `${env.apiBaseUrl}/api/finished-products/${finishedProductId}/images`,
@@ -18,10 +21,10 @@ export async function uploadFinishedProductImage(
   );
 
   if (!response.ok) {
-    throw new Error(`Ошибка загрузки изображения: ${response.status}`);
+    throw new Error(`Ошибка загрузки изображений: ${response.status}`);
   }
 
-  return response.json() as Promise<FinishedProductImage>;
+  return response.json() as Promise<FinishedProductImage[]>;
 }
 
 export async function deleteFinishedProductImage(
