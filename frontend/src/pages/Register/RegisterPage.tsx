@@ -4,28 +4,61 @@ import { register, login } from '../../api/authApi';
 import { useAuth } from '../../components/auth/AuthProvider';
 import './RegisterPage.css';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+[1-9]\d{7,14}$/;
+
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const normalizedUsername = username.trim();
+  const normalizedEmail = email.trim();
+  const normalizedPhone = phone.trim();
+
+  const isEmailValid = emailRegex.test(normalizedEmail);
+  const isPhoneValid = phoneRegex.test(normalizedPhone);
+
   const isFormValid =
-    username.trim() !== '' &&
+    normalizedUsername !== '' &&
+    isEmailValid &&
+    isPhoneValid &&
     password.trim() !== '' &&
     password === confirmPassword;
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!isFormValid) {
-      setError('Проверьте корректность введённых данных');
+    if (normalizedUsername === '') {
+      setError('Введите логин');
+      return;
+    }
+
+    if (!isEmailValid) {
+      setError('Введите корректный email');
+      return;
+    }
+
+    if (!isPhoneValid) {
+      setError('Введите телефон в международном формате, например +79991234567');
+      return;
+    }
+
+    if (password.trim() === '') {
+      setError('Введите пароль');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Пароли не совпадают');
       return;
     }
 
@@ -34,19 +67,18 @@ export default function RegisterPage() {
       setIsLoading(true);
 
       await register({
-        username: username.trim(),
+        username: normalizedUsername,
         password,
-        email: email.trim() || undefined,
+        email: normalizedEmail,
+        phone: normalizedPhone,
       });
 
-      // авто-логин после регистрации
       await login({
-        username: username.trim(),
+        username: normalizedUsername,
         password,
       });
 
       await refreshUser();
-
       navigate('/profile');
     } catch (err: any) {
       setError(err?.message || 'Ошибка регистрации');
@@ -58,38 +90,74 @@ export default function RegisterPage() {
   return (
     <div className="register-page">
       <div className="register-card">
-        <h1>Регистрация</h1>
+        <div className="register-card__header">
+          <h1>Регистрация</h1>
+          <p>Создайте аккаунт для оформления заказов</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="register-form">
-          <input
-            placeholder="Логин"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <label className="register-form__field">
+            <span>Логин</span>
+            <input
+              type="text"
+              placeholder="Введите логин"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+            />
+          </label>
 
-          <input
-            placeholder="Email (необязательно)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <label className="register-form__field">
+            <span>Email</span>
+            <input
+              type="email"
+              placeholder="example@mail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+            />
+          </label>
 
-          <input
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <label className="register-form__field">
+            <span>Телефон</span>
+            <input
+              type="tel"
+              placeholder="+79991234567"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              autoComplete="tel"
+            />
+          </label>
 
-          <input
-            type="password"
-            placeholder="Повторите пароль"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <label className="register-form__field">
+            <span>Пароль</span>
+            <input
+              type="password"
+              placeholder="Введите пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+          </label>
+
+          <label className="register-form__field">
+            <span>Повторите пароль</span>
+            <input
+              type="password"
+              placeholder="Повторите пароль"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+          </label>
+
+          <p className="register-form__hint">
+            Телефон указывается в международном формате: +, код страны и номер.
+          </p>
 
           {error && <div className="register-error">{error}</div>}
 
-          <button disabled={!isFormValid || isLoading}>
+          <button type="submit" disabled={!isFormValid || isLoading}>
             {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
           </button>
         </form>

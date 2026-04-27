@@ -33,6 +33,13 @@ export default function ProfilePage() {
               {user?.email?.trim() ? user.email : "Не указана"}
             </span>
           </div>
+
+          <div className="profile-field">
+            <span className="profile-field__label">Телефон</span>
+            <span className="profile-field__value">
+              {user?.phone?.trim() ? user.phone : "Не указан"}
+            </span>
+          </div>
         </div>
 
         <div className="profile-actions">

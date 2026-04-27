@@ -41,7 +41,9 @@ public static class SeedExtensions
         {
             Username = userName,
             PasswordHash = string.Empty,
-            RoleName = UserRole.Admin
+            RoleName = UserRole.Admin,
+            Email = "admin@test.com",
+            Phone = "+79999999999"
         };
 
         admin.PasswordHash = passwordHasher.HashPassword(admin, password);

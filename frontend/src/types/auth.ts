@@ -6,7 +6,8 @@ export type LoginRequest = {
 export type RegisterRequest = {
   username: string;
   password: string;
-  email?: string;
+  email: string;
+  phone: string;
 };
 
 export type AuthResponse = {
@@ -17,6 +18,7 @@ export type AuthResponse = {
 export type CurrentUser = {
   idUser: number;
   username: string;
-  email?: string | null;
+  email: string;
+  phone: string;
   roleName: string;
 };

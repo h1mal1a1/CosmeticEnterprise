@@ -23,7 +23,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.Email)
             .HasColumnName("email")
-            .HasMaxLength(255);
+            .HasMaxLength(255)
+            .IsRequired();
+
+        builder.Property(x => x.Phone)
+            .HasColumnName("phone")
+            .HasMaxLength(20)
+            .IsRequired();
 
         builder.Property(x => x.PasswordHash)
             .HasColumnName("password_hash")
@@ -53,6 +59,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(x => x.Email)
             .HasDatabaseName("IX_users_email")
+            .IsUnique();
+
+        builder.HasIndex(x => x.Phone)
+            .HasDatabaseName("IX_users_phone")
             .IsUnique();
     }
 }

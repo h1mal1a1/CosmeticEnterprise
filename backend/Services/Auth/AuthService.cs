@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
 using CosmeticEnterpriseBack.Authorization;
 using Microsoft.AspNetCore.Identity;
 using CosmeticEnterpriseBack.Data;
@@ -23,8 +24,22 @@ public class AuthService : IAuthService
 
     public async Task RegisterAsync(RegisterRequest request)
     {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new BadRequestException("Email is required");
+
+        if (string.IsNullOrWhiteSpace(request.Phone))
+            throw new BadRequestException("Phone is required");
+
+        // E.164 validation
+        var phoneRegex = new Regex(@"^\+[1-9]\d{7,14}$");
+        if (!phoneRegex.IsMatch(request.Phone))
+            throw new BadRequestException("Phone must be in format +123456789");
+
         var existingUser = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Username == request.Username);
+            .FirstOrDefaultAsync(x =>
+                x.Username == request.Username ||
+                x.Email == request.Email ||
+                x.Phone == request.Phone);
 
         if (existingUser != null)
             throw new ConflictException("User already exists");
@@ -33,6 +48,7 @@ public class AuthService : IAuthService
         {
             Username = request.Username,
             Email = request.Email,
+            Phone = request.Phone,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow,
             RoleName = UserRole.User,
@@ -119,6 +135,7 @@ public class AuthService : IAuthService
             IdUser = user.IdUser,
             Username = user.Username,
             Email = user.Email,
+            Phone = user.Phone,
             RoleName = user.RoleName.ToString()
         };
     }
