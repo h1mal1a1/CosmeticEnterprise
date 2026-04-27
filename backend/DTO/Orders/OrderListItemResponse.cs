@@ -6,6 +6,7 @@ public class OrderListItemResponse
 {
     public long Id { get; set; }
     public long IdUser { get; set; }
+    public string Username { get; set; } = string.Empty;
     public long IdUserAddress { get; set; }
     public long IdSalesChannel { get; set; }
 

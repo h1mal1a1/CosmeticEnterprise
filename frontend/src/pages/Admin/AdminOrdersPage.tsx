@@ -224,7 +224,12 @@ export default function AdminOrdersPage() {
                 </div>
 
                 <div className="admin-order-card__meta">
-                  <span>Пользователь: {order.idUser}</span>
+                  <span>
+                    Пользователь:{" "}
+                    {order.username?.trim()
+                      ? order.username
+                      : `id ${order.idUser}`}
+                  </span>
 
                   <span className={getOrderStatusBadgeClass(order.orderStatus)}>
                     {dictionaries

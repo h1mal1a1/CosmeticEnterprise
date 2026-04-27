@@ -61,6 +61,7 @@ export type OrderItemResponse = {
 export type OrderResponse = {
   id: number;
   idUser: number;
+  username: string;
   idUserAddress: number;
   idSalesChannel: number;
   deliveryAddress: string;
@@ -80,6 +81,7 @@ export type OrderResponse = {
 export type OrderListItemResponse = {
   id: number;
   idUser: number;
+  username: string;
   idUserAddress: number;
   idSalesChannel: number;
   orderStatus: OrderStatus;

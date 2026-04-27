@@ -155,6 +155,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         var ordersQuery = dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.User)
             .Include(x => x.OrderItemsList)
             .Where(x => x.IdUser == userId)
             .AsQueryable();
@@ -183,6 +184,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     {
         var order = await dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.User)
             .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
@@ -199,6 +201,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     public async Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken)
     {
         var order = await dbContext.Orders
+            .Include(x => x.User)
             .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
@@ -243,6 +246,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         var ordersQuery = dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.User)
             .Include(x => x.OrderItemsList)
             .AsQueryable();
 
@@ -270,6 +274,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     {
         var order = await dbContext.Orders
             .AsNoTracking()
+            .Include(x => x.User)
             .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
@@ -284,6 +289,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
     public async Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, CancellationToken cancellationToken)
     {
         var order = await dbContext.Orders
+            .Include(x => x.User)
             .Include(x => x.UserAddress)
             .Include(x => x.OrderItemsList)
                 .ThenInclude(x => x.FinishedProducts)
@@ -462,6 +468,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         {
             Id = order.Id,
             IdUser = order.IdUser,
+            Username = order.User.Username,
             IdUserAddress = order.IdUserAddress,
             IdSalesChannel = order.IdSalesChannel,
             OrderStatus = order.OrderStatus,
@@ -483,6 +490,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         {
             Id = order.Id,
             IdUser = order.IdUser,
+            Username = order.User.Username,
             IdUserAddress = order.IdUserAddress,
             IdSalesChannel = order.IdSalesChannel,
             DeliveryAddress = FormatAddress(order.UserAddress),
