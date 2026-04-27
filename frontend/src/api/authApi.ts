@@ -1,8 +1,15 @@
 import { apiRequest } from './client';
-import type { CurrentUser, LoginRequest } from '../types/auth';
+import type { CurrentUser, LoginRequest, RegisterRequest } from '../types/auth';
 
 export function login(request: LoginRequest): Promise<void> {
   return apiRequest<void>('/api/auth/login', {
+    method: 'POST',
+    body: request,
+  });
+}
+
+export function register(request: RegisterRequest): Promise<void> {
+  return apiRequest<void>('/api/auth/register', {
     method: 'POST',
     body: request,
   });

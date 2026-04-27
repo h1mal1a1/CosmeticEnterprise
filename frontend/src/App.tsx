@@ -7,6 +7,7 @@ import ProductsPage from "./pages/Products/ProductsPage";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import AboutPage from "./pages/About/AboutPage";
 import LoginPage from "./pages/Login/LoginPage";
+import RegisterPage from "./pages/Register/RegisterPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./components/auth/AuthProvider";
 import { getCategories, type Category } from "./api/categoriesApi";
@@ -133,6 +134,7 @@ function AppContent() {
           <Route path="/products/:id" element={<ProductDetailsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           <Route
             path="/profile"

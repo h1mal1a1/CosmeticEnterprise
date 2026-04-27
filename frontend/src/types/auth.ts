@@ -1,15 +1,21 @@
 export type LoginRequest = {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
+};
+
+export type RegisterRequest = {
+  username: string;
+  password: string;
+  email?: string;
 };
 
 export type AuthResponse = {
-    accessToken: string;
-    refreshToken?: string;
-}
+  accessToken: string;
+  refreshToken?: string;
+};
 
 export type CurrentUser = {
-    idUser: number;
-    username: string;
-    roleName: string;
+  idUser: number;
+  username: string;
+  roleName: string;
 };

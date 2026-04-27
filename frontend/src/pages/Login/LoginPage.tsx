@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../../api/authApi';
 import { useAuth } from '../../components/auth/AuthProvider';
 import './LoginPage.css';
@@ -98,6 +98,10 @@ export default function LoginPage() {
             {isLoading ? 'Вход...' : 'Войти'}
           </button>
         </form>
+
+        <p style={{ marginTop: '16px', textAlign: 'center' }}>
+          Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
+        </p>
       </div>
     </div>
   );
