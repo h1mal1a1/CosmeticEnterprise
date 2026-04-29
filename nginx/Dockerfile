@@ -11,7 +11,9 @@ RUN npm run build
 
 FROM nginx:1.27-alpine AS final
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+ARG NGINX_CONF=nginx.prod.conf
+
+COPY nginx/${NGINX_CONF} /etc/nginx/nginx.conf
 COPY nginx/certs /etc/nginx/certs
 COPY --from=frontend-build /app/dist /usr/share/nginx/html
 

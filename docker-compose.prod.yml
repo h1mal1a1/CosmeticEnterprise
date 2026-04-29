@@ -1,0 +1,72 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file:
+      - .env.backend.prod
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  db:
+    image: postgres:latest
+    container_name: cosmetic-postgres
+    env_file:
+      - .env.db
+    volumes:
+      - cosmetic_pgdata_prod:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cosmetic_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - app-network
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    env_file:
+      - .env.minio
+    volumes:
+      - minio_data_prod:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+      additional_contexts:
+        frontend_src: ./frontend
+      args:
+        NGINX_CONF: nginx.prod.conf
+    container_name: nginx
+    depends_on:
+      - backend
+      - minio
+    ports:
+      - "443:443"
+    networks:
+      - app-network
+
+volumes:
+  cosmetic_pgdata_prod:
+  minio_data_prod:
+
+networks:
+  app-network:

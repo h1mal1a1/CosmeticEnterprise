@@ -1,11 +1,11 @@
-﻿services:
+services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
     env_file:
-      - .env.backend
+      - .env.backend.dev
     depends_on:
       db:
         condition: service_healthy
@@ -22,7 +22,7 @@
     ports:
       - "5435:5432"
     volumes:
-      - cosmetic_pgdata:/var/lib/postgresql
+      - cosmetic_pgdata_dev:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d cosmetic_db"]
       interval: 5s
@@ -42,7 +42,7 @@
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio_data:/data
+      - minio_data_dev:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 5s
@@ -58,19 +58,20 @@
       dockerfile: nginx/Dockerfile
       additional_contexts:
         frontend_src: ./frontend
+      args:
+        NGINX_CONF: nginx.dev.conf
     container_name: nginx
     depends_on:
       - backend
       - minio
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
     networks:
       - app-network
 
 volumes:
-  cosmetic_pgdata:
-  minio_data:
+  cosmetic_pgdata_dev:
+  minio_data_dev:
 
 networks:
   app-network:
