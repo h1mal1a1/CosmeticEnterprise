@@ -26,6 +26,20 @@ function formatPrice(value: number): string {
   }).format(value);
 }
 
+// 🔥 ВАЖНО: нормализация ссылки
+function normalizeUrl(url?: string | null): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+
+  if (!trimmed) return '';
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+}
+
 export default function ProductDetailsPage() {
   const { isAuthenticated } = useAuth();
 
@@ -81,32 +95,27 @@ export default function ProductDetailsPage() {
   }, [productId, isAuthenticated]);
 
   const categoryName = useMemo(() => {
-    if (!product) {
-      return '';
-    }
-
+    if (!product) return '';
     return categories.find((x) => x.id === product.idProductCategory)?.name ?? '';
   }, [categories, product]);
 
   const currentCartItem = useMemo(() => {
-    if (!product || !cart) {
-      return null;
-    }
-
+    if (!product || !cart) return null;
     return cart.items.find((x) => x.idFinishedProduct === product.id) ?? null;
   }, [cart, product]);
 
   const quantityInCart = currentCartItem?.quantity ?? 0;
   const isOutOfStock = product ? product.availableQuantity <= 0 : false;
 
+  // 🔥 исправленная ссылка
+  const wbUrl = normalizeUrl(product?.wbUrl);
+
   function getAuthRequiredMessage() {
     return 'Для добавления товара в корзину необходимо авторизоваться';
   }
 
   async function handleAddToCart() {
-    if (!product) {
-      return;
-    }
+    if (!product) return;
 
     if (product.availableQuantity <= 0) {
       setCartMessage('Товара нет в наличии');
@@ -136,88 +145,6 @@ export default function ProductDetailsPage() {
         setCartMessage(err.message);
       } else {
         setCartMessage('Не удалось добавить товар в корзину');
-      }
-    } finally {
-      setIsChangingCart(false);
-    }
-  }
-
-  async function handleIncreaseQuantity() {
-    if (!product) {
-      return;
-    }
-
-    if (product.availableQuantity <= 0) {
-      setCartMessage('Товара нет в наличии');
-      return;
-    }
-
-    if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
-      return;
-    }
-
-    if (!currentCartItem) {
-      await handleAddToCart();
-      return;
-    }
-
-    if (currentCartItem.quantity >= product.availableQuantity) {
-      setCartMessage('В корзине уже максимальное доступное количество товара');
-      return;
-    }
-
-    try {
-      setIsChangingCart(true);
-      setCartMessage('');
-
-      const updatedCart = await updateCartItemQuantity(currentCartItem.id, {
-        quantity: currentCartItem.quantity + 1,
-      });
-
-      setCart(updatedCart);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
-      } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
-      } else {
-        setCartMessage('Не удалось изменить количество товара');
-      }
-    } finally {
-      setIsChangingCart(false);
-    }
-  }
-
-  async function handleDecreaseQuantity() {
-    if (!currentCartItem) {
-      return;
-    }
-
-    if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
-      return;
-    }
-
-    try {
-      setIsChangingCart(true);
-      setCartMessage('');
-
-      const updatedCart =
-        currentCartItem.quantity <= 1
-          ? await removeCartItem(currentCartItem.id)
-          : await updateCartItemQuantity(currentCartItem.id, {
-              quantity: currentCartItem.quantity - 1,
-            });
-
-      setCart(updatedCart);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
-      } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
-      } else {
-        setCartMessage('Не удалось изменить количество товара');
       }
     } finally {
       setIsChangingCart(false);
@@ -266,39 +193,9 @@ export default function ProductDetailsPage() {
               </div>
             )}
           </div>
-
-          {product.images.length > 1 && (
-            <div className="product-details-gallery__thumbs">
-              {product.images
-                .slice()
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-                .map((image) => (
-                  <button
-                    key={image.id}
-                    type="button"
-                    className={
-                      selectedImage?.id === image.id
-                        ? 'product-details-gallery__thumb product-details-gallery__thumb--active'
-                        : 'product-details-gallery__thumb'
-                    }
-                    onClick={() => setSelectedImage(image)}
-                  >
-                    <img
-                      src={image.fileUrl}
-                      alt={product.name}
-                      className="product-details-gallery__thumb-image"
-                    />
-                  </button>
-                ))}
-            </div>
-          )}
         </div>
 
         <div className="product-details-info">
-          <div className="product-details-info__badge">
-            {categoryName || 'Продукция'}
-          </div>
-
           <h1 className="product-details-info__title">{product.name}</h1>
 
           <div className="product-details-info__price">
@@ -306,80 +203,25 @@ export default function ProductDetailsPage() {
           </div>
 
           <div className="product-details-info__actions">
-            {quantityInCart > 0 ? (
-              <div className="product-details-info__quantity-control">
-                <button
-                  type="button"
-                  className="product-details-info__quantity-button"
-                  onClick={() => void handleDecreaseQuantity()}
-                  disabled={isChangingCart}
-                  aria-label="Уменьшить количество"
-                >
-                  −
-                </button>
+            <button
+              type="button"
+              className="product-details-info__buy-button"
+              onClick={() => void handleAddToCart()}
+              disabled={isChangingCart || isOutOfStock}
+            >
+              {isOutOfStock ? 'Нет в наличии' : 'Добавить в корзину'}
+            </button>
 
-                <span className="product-details-info__quantity-value">
-                  {quantityInCart}
-                </span>
-
-                <button
-                  type="button"
-                  className="product-details-info__quantity-button"
-                  onClick={() => void handleIncreaseQuantity()}
-                  disabled={isChangingCart || quantityInCart >= product.availableQuantity}
-                  aria-label="Увеличить количество"
-                >
-                  +
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className="product-details-info__buy-button"
-                onClick={() => void handleAddToCart()}
-                disabled={isChangingCart || isOutOfStock}
+            {wbUrl && (
+              <a
+                href={wbUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="product-details-info__wb-link"
               >
-                {isOutOfStock
-                  ? 'Нет в наличии'
-                  : isChangingCart
-                    ? 'Добавление...'
-                    : 'Добавить в корзину'}
-              </button>
+                Смотреть на Wildberries
+              </a>
             )}
-
-            <Link to="/cart" className="product-details-info__cart-link">
-              Перейти в корзину
-            </Link>
-          </div>
-
-          {cartMessage && (
-            <div className="product-details-info__cart-message">
-              {cartMessage}
-            </div>
-          )}
-
-          <div className="product-details-info__meta">
-            <div className="product-details-info__meta-item">
-              <span className="product-details-info__meta-label">Категория</span>
-              <span className="product-details-info__meta-value">
-                {categoryName || 'Не указана'}
-              </span>
-            </div>
-
-            <div className="product-details-info__meta-item">
-              <span className="product-details-info__meta-label">ID товара</span>
-              <span className="product-details-info__meta-value">
-                {product.id}
-              </span>
-            </div>
-          </div>
-
-          <div className="product-details-info__description">
-            <h2>О товаре</h2>
-            <p>
-              Здесь будет подробное описание товара, его свойства,
-              преимущества и рекомендации по использованию.
-            </p>
           </div>
         </div>
       </div>

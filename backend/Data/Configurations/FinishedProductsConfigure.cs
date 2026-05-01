@@ -25,6 +25,10 @@ public class FinishedProductsConfigure : IEntityTypeConfiguration<FinishedProduc
             .HasPrecision(18, 2)
             .IsRequired();
 
+        builder.Property(x => x.WbUrl)
+            .HasColumnName("wb_url")
+            .HasMaxLength(1000);
+
         builder.Property(x => x.IdRecipe)
             .HasColumnName("id_recipe")
             .IsRequired();

@@ -182,6 +182,7 @@ public static class SeedExtensions
             {
                 Name = productName,
                 Price = random.Next(100, 1001),
+                WbUrl = $"www.wildberries.ru/{random.Next(100000, 1000000)}",
                 IdProductCategory = idProductCategory,
                 IdRecipe = idRecipe,
                 IdUnitsOfMeasurement = idUnitsOfMeasurement

@@ -41,6 +41,10 @@
   gap: 8px;
 }
 
+.admin-finished-products-page__field--wide {
+  grid-column: 1 / -1;
+}
+
 .admin-finished-products-page__field span {
   font-size: 14px;
   font-weight: 600;
@@ -125,6 +129,16 @@
   cursor: not-allowed;
 }
 
+.admin-finished-products-page__wb-link {
+  color: #6d28d9;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-finished-products-page__wb-link:hover {
+  text-decoration: underline;
+}
+
 .admin-finished-products-page__error {
   padding: 14px 16px;
   border-radius: 12px;
@@ -183,25 +197,30 @@
 
 .admin-finished-products-page__table th:nth-child(2),
 .admin-finished-products-page__table td:nth-child(2) {
-  width: 20%;
+  width: 18%;
 }
 
 .admin-finished-products-page__table th:nth-child(3),
 .admin-finished-products-page__table td:nth-child(3) {
-  width: 12%;
+  width: 10%;
 }
 
 .admin-finished-products-page__table th:nth-child(4),
-.admin-finished-products-page__table td:nth-child(4),
+.admin-finished-products-page__table td:nth-child(4) {
+  width: 12%;
+}
+
 .admin-finished-products-page__table th:nth-child(5),
 .admin-finished-products-page__table td:nth-child(5),
 .admin-finished-products-page__table th:nth-child(6),
-.admin-finished-products-page__table td:nth-child(6) {
-  width: 16%;
-}
-
+.admin-finished-products-page__table td:nth-child(6),
 .admin-finished-products-page__table th:nth-child(7),
 .admin-finished-products-page__table td:nth-child(7) {
+  width: 14%;
+}
+
+.admin-finished-products-page__table th:nth-child(8),
+.admin-finished-products-page__table td:nth-child(8) {
   width: 180px;
 }
 
@@ -225,5 +244,9 @@
 @media (max-width: 900px) {
   .admin-finished-products-page__form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-finished-products-page__field--wide {
+    grid-column: auto;
   }
 }

@@ -9,6 +9,7 @@ export type FinishedProduct = {
     id: number;
     name: string;
     price: number;
+    wbUrl?: string | null;
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;
@@ -19,6 +20,7 @@ export type FinishedProduct = {
 export type CreateFinishedProductRequest = {
     name: string;
     price: number;
+    wbUrl?: string | null;
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;
@@ -27,6 +29,7 @@ export type CreateFinishedProductRequest = {
 export type UpdateFinishedProductRequest = {
     name: string;
     price: number;
+    wbUrl?: string | null;
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;

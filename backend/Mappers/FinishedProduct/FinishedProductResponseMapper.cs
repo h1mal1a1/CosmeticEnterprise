@@ -19,6 +19,7 @@ public class FinishedProductResponseMapper :
             Id = entity.Id,
             Name = entity.Name,
             Price = entity.Price,
+            WbUrl = entity.WbUrl,
             IdRecipe = entity.IdRecipe,
             IdProductCategory = entity.IdProductCategory,
             IdUnitsOfMeasurement = entity.IdUnitsOfMeasurement,

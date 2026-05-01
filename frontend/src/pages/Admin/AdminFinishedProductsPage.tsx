@@ -22,6 +22,7 @@ import "./AdminFinishedProductsPage.css";
 type FormState = {
   name: string;
   price: string;
+  wbUrl: string;
   idProductCategory: string;
   idRecipe: string;
   idUnitsOfMeasurement: string;
@@ -30,6 +31,7 @@ type FormState = {
 const initialFormState: FormState = {
   name: "",
   price: "",
+  wbUrl: "",
   idProductCategory: "",
   idRecipe: "",
   idUnitsOfMeasurement: "",
@@ -126,6 +128,18 @@ export default function AdminFinishedProductsPage() {
       return "Цена должна быть больше 0.";
     }
 
+    if (form.wbUrl.trim()) {
+      try {
+        const url = new URL(form.wbUrl.trim());
+
+        if (url.protocol !== "http:" && url.protocol !== "https:") {
+          return "Ссылка на Wildberries должна начинаться с http:// или https://.";
+        }
+      } catch {
+        return "Введите корректную ссылку на Wildberries.";
+      }
+    }
+
     if (!form.idProductCategory) {
       return "Выберите категорию.";
     }
@@ -141,12 +155,19 @@ export default function AdminFinishedProductsPage() {
     return "";
   }
 
+  function normalizeOptionalUrl(value: string): string | null {
+    const trimmedValue = value.trim();
+
+    return trimmedValue ? trimmedValue : null;
+  }
+
   function mapFormToCreateRequest(
     form: FormState,
   ): CreateFinishedProductRequest {
     return {
       name: form.name.trim(),
       price: Number(form.price),
+      wbUrl: normalizeOptionalUrl(form.wbUrl),
       idProductCategory: Number(form.idProductCategory),
       idRecipe: Number(form.idRecipe),
       idUnitsOfMeasurement: Number(form.idUnitsOfMeasurement),
@@ -159,6 +180,7 @@ export default function AdminFinishedProductsPage() {
     return {
       name: form.name.trim(),
       price: Number(form.price),
+      wbUrl: normalizeOptionalUrl(form.wbUrl),
       idProductCategory: Number(form.idProductCategory),
       idRecipe: Number(form.idRecipe),
       idUnitsOfMeasurement: Number(form.idUnitsOfMeasurement),
@@ -199,6 +221,7 @@ export default function AdminFinishedProductsPage() {
     setEditForm({
       name: product.name ?? "",
       price: String(product.price ?? ""),
+      wbUrl: product.wbUrl ?? "",
       idProductCategory: String(product.idProductCategory ?? ""),
       idRecipe: String(product.idRecipe ?? ""),
       idUnitsOfMeasurement: String(product.idUnitsOfMeasurement ?? ""),
@@ -308,6 +331,19 @@ export default function AdminFinishedProductsPage() {
             />
           </label>
 
+          <label className="admin-finished-products-page__field admin-finished-products-page__field--wide">
+            <span>Ссылка на Wildberries</span>
+            <input
+              type="url"
+              value={createForm.wbUrl}
+              onChange={(event) =>
+                handleCreateFormChange("wbUrl", event.target.value)
+              }
+              placeholder="https://www.wildberries.ru/catalog/..."
+              disabled={isCreating}
+            />
+          </label>
+
           <label className="admin-finished-products-page__field">
             <span>Категория</span>
             <select
@@ -400,6 +436,7 @@ export default function AdminFinishedProductsPage() {
                 <th>ID</th>
                 <th>Название</th>
                 <th>Цена</th>
+                <th>WB</th>
                 <th>Категория</th>
                 <th>Рецептура</th>
                 <th>Ед. изм.</th>
@@ -446,6 +483,32 @@ export default function AdminFinishedProductsPage() {
                         />
                       ) : (
                         product.price
+                      )}
+                    </td>
+
+                    <td>
+                      {isEditing ? (
+                        <input
+                          type="url"
+                          value={editForm.wbUrl}
+                          onChange={(event) =>
+                            handleEditFormChange("wbUrl", event.target.value)
+                          }
+                          className="admin-finished-products-page__inline-input"
+                          placeholder="https://www.wildberries.ru/catalog/..."
+                          disabled={isSaving}
+                        />
+                      ) : product.wbUrl ? (
+                        <a
+                          href={product.wbUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="admin-finished-products-page__wb-link"
+                        >
+                          Открыть
+                        </a>
+                      ) : (
+                        "—"
                       )}
                     </td>
 
