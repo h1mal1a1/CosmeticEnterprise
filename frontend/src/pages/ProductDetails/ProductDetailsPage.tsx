@@ -26,6 +26,23 @@ function formatPrice(value: number): string {
   }).format(value);
 }
 
+function normalizeExternalUrl(value?: string | null): string {
+  const trimmedValue = value?.trim() ?? '';
+
+  if (!trimmedValue) {
+    return '';
+  }
+
+  if (
+    trimmedValue.toLowerCase().startsWith('http://') ||
+    trimmedValue.toLowerCase().startsWith('https://')
+  ) {
+    return trimmedValue;
+  }
+
+  return `https://${trimmedValue}`;
+}
+
 export default function ProductDetailsPage() {
   const { isAuthenticated } = useAuth();
 
@@ -98,7 +115,7 @@ export default function ProductDetailsPage() {
 
   const quantityInCart = currentCartItem?.quantity ?? 0;
   const isOutOfStock = product ? product.availableQuantity <= 0 : false;
-  const wbUrl = product?.wbUrl?.trim() || '';
+  const wbUrl = normalizeExternalUrl(product?.wbUrl);
 
   function getAuthRequiredMessage() {
     return 'Для добавления товара в корзину необходимо авторизоваться';
