@@ -1,6 +1,6 @@
 import type { DataProvider } from "react-admin";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = "/api";
 
 const request = async <T>(url: string, options: RequestInit = {}): Promise<T> => {
   const response = await fetch(`${API_URL}${url}`, {

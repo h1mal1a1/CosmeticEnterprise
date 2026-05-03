@@ -58,6 +58,7 @@ services:
       dockerfile: nginx/Dockerfile
       additional_contexts:
         frontend_src: ./frontend
+        admin_frontend_src: ./admin-frontend
       args:
         NGINX_CONF: nginx.dev.conf
     container_name: nginx
