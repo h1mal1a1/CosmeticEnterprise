@@ -3,7 +3,9 @@ import { Route } from "react-router-dom";
 import { dataProvider } from "../api/dataProvider";
 import { authProvider } from "../auth/authProvider";
 
-import FinishedProductImagesPage from "../pages/FinishedProductImagesPage";
+import FinishedProductImagesPage from "../pages/FinishedProductImages/FinishedProductImagesPage";
+import OrderDetailsPage from "../pages/OrderDetails/OrderDetailsPage";
+import OrdersPage from "../pages/Orders/OrdersPage";
 
 import {
   CategoryCreate,
@@ -33,7 +35,7 @@ function Dashboard() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Админка CosmeticEnterprise</h1>
-      <p>Управление справочниками, продукцией и изображениями.</p>
+      <p>Управление справочниками, продукцией, изображениями и заказами.</p>
     </div>
   );
 }
@@ -78,11 +80,15 @@ function App() {
         create={FinishedProductCreate}
       />
 
+      <Resource name="orders" options={{ label: "Заказы" }} list={OrdersPage} />
+
       <CustomRoutes>
         <Route
           path="/finished-products/:id/images"
           element={<FinishedProductImagesPage />}
         />
+
+        <Route path="/orders/:id" element={<OrderDetailsPage />} />
       </CustomRoutes>
     </Admin>
   );

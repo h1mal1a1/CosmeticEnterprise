@@ -8,7 +8,7 @@ import {
   uploadFinishedProductImages,
   type FinishedProduct,
   type FinishedProductImage,
-} from "../api/finishedProductImagesApi";
+} from "../../api/finishedProductImagesApi";
 import "./FinishedProductImagesPage.css";
 
 export default function FinishedProductImagesPage() {
