@@ -146,7 +146,7 @@ public static class Launcher
             options.AddPolicy("FrontendCorsPolicy", policy =>
             {
                 policy
-                    .WithOrigins("https://localhost:5173")
+                    .WithOrigins("http://localhost:5173","https://localhost:5173")
                     .AllowCredentials()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
