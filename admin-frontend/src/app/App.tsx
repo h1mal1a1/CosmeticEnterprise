@@ -1,6 +1,9 @@
-import { Admin, Resource } from "react-admin";
+import { Admin, CustomRoutes, Resource } from "react-admin";
+import { Route } from "react-router-dom";
 import { dataProvider } from "../api/dataProvider";
 import { authProvider } from "../auth/authProvider";
+
+import FinishedProductImagesPage from "../pages/FinishedProductImagesPage";
 
 import {
   CategoryCreate,
@@ -30,7 +33,7 @@ function Dashboard() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Админка CosmeticEnterprise</h1>
-      <p>Управление справочниками и готовой продукцией</p>
+      <p>Управление справочниками, продукцией и изображениями.</p>
     </div>
   );
 }
@@ -74,6 +77,13 @@ function App() {
         edit={FinishedProductEdit}
         create={FinishedProductCreate}
       />
+
+      <CustomRoutes>
+        <Route
+          path="/finished-products/:id/images"
+          element={<FinishedProductImagesPage />}
+        />
+      </CustomRoutes>
     </Admin>
   );
 }

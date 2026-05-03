@@ -1,12 +1,19 @@
 import {
+  Button,
   Datagrid,
   EditButton,
+  FunctionField,
   List,
   NumberField,
   ReferenceField,
   TextField,
   UrlField,
 } from "react-admin";
+import { Link } from "react-router-dom";
+
+type FinishedProductRecord = {
+  id: number;
+};
 
 export const FinishedProductList = () => (
   <List pagination={false}>
@@ -33,6 +40,17 @@ export const FinishedProductList = () => (
         <TextField source="name" />
       </ReferenceField>
       <NumberField source="availableQuantity" label="Остаток" />
+      <FunctionField<FinishedProductRecord>
+        label="Изображения"
+        render={(record) => (
+          <Button
+            component={Link}
+            to={`/finished-products/${record.id}/images`}
+            label="Изображения"
+            onClick={(event) => event.stopPropagation()}
+          />
+        )}
+      />
       <EditButton label="Редактировать" />
     </Datagrid>
   </List>
