@@ -9,6 +9,12 @@ import {
 } from "../resources/categories";
 
 import {
+  FinishedProductCreate,
+  FinishedProductEdit,
+  FinishedProductList,
+} from "../resources/finishedProducts";
+
+import {
   RecipeCreate,
   RecipeEdit,
   RecipeList,
@@ -24,7 +30,7 @@ function Dashboard() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Админка CosmeticEnterprise</h1>
-      <p>Управление справочниками</p>
+      <p>Управление справочниками и готовой продукцией</p>
     </div>
   );
 }
@@ -59,6 +65,14 @@ function App() {
         list={UnitList}
         edit={UnitEdit}
         create={UnitCreate}
+      />
+
+      <Resource
+        name="finished-products"
+        options={{ label: "Готовая продукция" }}
+        list={FinishedProductList}
+        edit={FinishedProductEdit}
+        create={FinishedProductCreate}
       />
     </Admin>
   );
