@@ -2,7 +2,31 @@ import type { AuthProvider } from "react-admin";
 
 const API_URL = "/api";
 
-const allowedAdminRoles = ["Admin"];
+const allowedAdminRoles = ["admin"];
+
+type CurrentUser = {
+  idUser: number;
+  username: string;
+  email: string;
+  phone: string;
+  roleName: string;
+};
+
+async function getCurrentUser(): Promise<CurrentUser> {
+  const response = await fetch(`${API_URL}/auth/me`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Не авторизован");
+  }
+
+  return response.json();
+}
+
+function isAdmin(user: CurrentUser): boolean {
+  return allowedAdminRoles.includes(user.roleName.toLowerCase());
+}
 
 export const authProvider: AuthProvider = {
   login: async ({ username, password }) => {
@@ -21,6 +45,17 @@ export const authProvider: AuthProvider = {
     if (!response.ok) {
       throw new Error("Неверный логин или пароль");
     }
+
+    const user = await getCurrentUser();
+
+    if (!isAdmin(user)) {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      throw new Error("Нет доступа к админке");
+    }
   },
 
   logout: async () => {
@@ -31,51 +66,27 @@ export const authProvider: AuthProvider = {
   },
 
   checkAuth: async () => {
-    const response = await fetch(`${API_URL}/auth/me`, {
-      credentials: "include",
-    });
+    const user = await getCurrentUser();
 
-    if (!response.ok) {
-      throw new Error("Не авторизован");
-    }
-
-    const user = await response.json();
-
-    if (!allowedAdminRoles.includes(user.roleName)) {
+    if (!isAdmin(user)) {
       throw new Error("Нет доступа к админке");
     }
   },
 
   checkError: async (error) => {
-    if (error.status === 401 || error.status === 403) {
+    if (error?.status === 401 || error?.status === 403) {
       throw new Error("Ошибка авторизации");
     }
   },
 
   getPermissions: async () => {
-    const response = await fetch(`${API_URL}/auth/me`, {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const user = await response.json();
+    const user = await getCurrentUser();
 
     return user.roleName;
   },
 
   getIdentity: async () => {
-    const response = await fetch(`${API_URL}/auth/me`, {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("Не удалось получить пользователя");
-    }
-
-    const user = await response.json();
+    const user = await getCurrentUser();
 
     return {
       id: user.idUser,

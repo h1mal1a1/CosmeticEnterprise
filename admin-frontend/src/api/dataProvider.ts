@@ -2,6 +2,15 @@ import type { DataProvider } from "react-admin";
 
 const API_URL = "/api";
 
+class HttpError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 const request = async <T>(url: string, options: RequestInit = {}): Promise<T> => {
   const response = await fetch(`${API_URL}${url}`, {
     ...options,
@@ -13,7 +22,7 @@ const request = async <T>(url: string, options: RequestInit = {}): Promise<T> =>
   });
 
   if (!response.ok) {
-    throw new Error(`Ошибка запроса: ${response.status}`);
+    throw new HttpError(`Ошибка запроса: ${response.status}`, response.status);
   }
 
   if (response.status === 204) {
@@ -49,12 +58,18 @@ export const dataProvider: DataProvider = {
   },
 
   update: async (resource, params) => {
-    const data = await request<any>(`/${resource}/${params.id}`, {
+    const data = await request<any | undefined>(`/${resource}/${params.id}`, {
       method: "PUT",
       body: JSON.stringify(params.data),
     });
 
-    return { data };
+    return {
+      data: data ?? {
+        ...params.previousData,
+        ...params.data,
+        id: params.id,
+      },
+    };
   },
 
   delete: async (resource, params) => {
@@ -67,19 +82,40 @@ export const dataProvider: DataProvider = {
     };
   },
 
-  getMany: async () => {
-    throw new Error("getMany не реализован");
+  getMany: async (resource, params) => {
+    const data = await Promise.all(
+      params.ids.map((id) => request<any>(`/${resource}/${id}`)),
+    );
+
+    return { data };
   },
 
   getManyReference: async () => {
     throw new Error("getManyReference не реализован");
   },
 
-  updateMany: async () => {
-    throw new Error("updateMany не реализован");
+  updateMany: async (resource, params) => {
+    await Promise.all(
+      params.ids.map((id) =>
+        request<void>(`/${resource}/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(params.data),
+        }),
+      ),
+    );
+
+    return { data: params.ids };
   },
 
-  deleteMany: async () => {
-    throw new Error("deleteMany не реализован");
+  deleteMany: async (resource, params) => {
+    await Promise.all(
+      params.ids.map((id) =>
+        request<void>(`/${resource}/${id}`, {
+          method: "DELETE",
+        }),
+      ),
+    );
+
+    return { data: params.ids };
   },
 };
