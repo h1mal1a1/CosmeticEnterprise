@@ -35,7 +35,7 @@ a {
 
 .top-nav {
   position: relative;
-  z-index: 9999;
+  z-index: 100; 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -149,7 +149,7 @@ a {
     opacity 0.2s ease,
     visibility 0.2s ease,
     transform 0.2s ease;
-  z-index: 10000;
+  z-index: 110;
 }
 
 .nav-dropdown:hover .nav-dropdown__menu,
@@ -186,9 +186,9 @@ a {
   cursor: default;
 }
 
+/* Исправлено: z-index изменен с 1 на 0, чтобы не блокировать слои */
 .main-content {
   position: relative;
-  z-index: 1;
   margin-top: 8px;
   background: transparent;
 }
