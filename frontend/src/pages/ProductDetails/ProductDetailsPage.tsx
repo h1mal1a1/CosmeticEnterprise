@@ -12,6 +12,7 @@ import { ApiError } from '../../types/api';
 import type { ShoppingCart } from '../../types/cart';
 import type { FinishedProduct, FinishedProductImage } from '../../types/finishedProduct';
 import { useAuth } from '../../components/auth/AuthProvider';
+import { createPortal } from 'react-dom';
 import './ProductDetailsPage.css';
 
 function getInitialImage(product: FinishedProduct): FinishedProductImage | null {
@@ -117,6 +118,12 @@ export default function ProductDetailsPage() {
   const quantityInCart = currentCartItem?.quantity ?? 0;
   const isOutOfStock = product ? product.availableQuantity <= 0 : false;
   const wbUrl = normalizeExternalUrl(product?.wbUrl);
+
+  const sortedImages = useMemo(() => 
+    product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : []
+  , [product]);
+
+  const currentIndex = sortedImages.findIndex(img => img.id === selectedImage?.id);
 
   function getAuthRequiredMessage() {
     return 'Для добавления товара в корзину необходимо авторизоваться';
@@ -254,6 +261,31 @@ export default function ProductDetailsPage() {
     document.body.classList.remove('modal-open');
   }
 
+  function goToPrevImage() {
+    if (currentIndex > 0) {
+      setSelectedImage(sortedImages[currentIndex - 1]);
+    }
+  }
+
+  function goToNextImage() {
+    if (currentIndex < sortedImages.length - 1) {
+      setSelectedImage(sortedImages[currentIndex + 1]);
+    }
+  }
+
+  useEffect(() => {
+    if (!isImageModalOpen) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') goToPrevImage();
+      if (e.key === 'ArrowRight') goToNextImage();
+      if (e.key === 'Escape') closeImageModal();
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isImageModalOpen, currentIndex, sortedImages]);
+
   if (isLoading) {
     return <div className="product-details-state">Загрузка товара...</div>;
   }
@@ -309,27 +341,24 @@ export default function ProductDetailsPage() {
 
           {product.images.length > 1 && (
             <div className="product-details-gallery__thumbs">
-              {product.images
-                .slice()
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-                .map((image) => (
-                  <button
-                    key={image.id}
-                    type="button"
-                    className={
-                      selectedImage?.id === image.id
-                        ? 'product-details-gallery__thumb product-details-gallery__thumb--active'
-                        : 'product-details-gallery__thumb'
-                    }
-                    onClick={() => setSelectedImage(image)}
-                  >
-                    <img
-                      src={image.fileUrl}
-                      alt={product.name}
-                      className="product-details-gallery__thumb-image"
-                    />
-                  </button>
-                ))}
+              {sortedImages.map((image) => (
+                <button
+                  key={image.id}
+                  type="button"
+                  className={
+                    selectedImage?.id === image.id
+                      ? 'product-details-gallery__thumb product-details-gallery__thumb--active'
+                      : 'product-details-gallery__thumb'
+                  }
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <img
+                    src={image.fileUrl}
+                    alt={product.name}
+                    className="product-details-gallery__thumb-image"
+                  />
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -435,20 +464,42 @@ export default function ProductDetailsPage() {
         </div>
       </div>
 
-      {isImageModalOpen && selectedImage && (
+      {isImageModalOpen && selectedImage && createPortal(
         <div className="image-zoom-overlay" onClick={closeImageModal}>
           <div className="image-zoom-container" onClick={(e) => e.stopPropagation()}>
-            <button className="image-zoom-close" onClick={closeImageModal} aria-label="Закрыть">
-              &times;
-            </button>
+            {currentIndex > 0 && (
+              <button 
+                className="image-zoom-arrow image-zoom-arrow--left"
+                onClick={(e) => { e.stopPropagation(); goToPrevImage(); }}
+                aria-label="Предыдущее фото"
+              >
+                ‹
+              </button>
+            )}
+
             <img
               src={selectedImage.fileUrl}
               alt={product.name}
               className="image-zoom-full"
               onClick={closeImageModal}
             />
+
+            {currentIndex < sortedImages.length - 1 && (
+              <button 
+                className="image-zoom-arrow image-zoom-arrow--right"
+                onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
+                aria-label="Следующее фото"
+              >
+                ›
+              </button>
+            )}
+
+            <button className="image-zoom-close" onClick={closeImageModal} aria-label="Закрыть">
+              &times;
+            </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
