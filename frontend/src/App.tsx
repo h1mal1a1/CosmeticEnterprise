@@ -25,6 +25,7 @@ import CartPage from "./pages/Cart/CartPage";
 import UserAddressesPage from "./pages/Profile/UserAddressesPage";
 import MyOrdersPage from "./pages/Profile/MyOrdersPage";
 import OrderDetailsPage from "./pages/Profile/OrderDetailsPage";
+import ScrollToTopButton from "./components/scrolls/ScrollToTopButton";
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -209,6 +210,7 @@ function AppContent() {
           </Route>
         </Routes>
       </main>
+      <ScrollToTopButton offset={400} />
     </div>
   );
 }
