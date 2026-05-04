@@ -57,6 +57,7 @@ export default function ProductDetailsPage() {
   const [error, setError] = useState('');
   const [isChangingCart, setIsChangingCart] = useState(false);
   const [cartMessage, setCartMessage] = useState('');
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -242,6 +243,17 @@ export default function ProductDetailsPage() {
     }
   }
 
+  function openImageModal() {
+    if (!selectedImage) return;
+    setIsImageModalOpen(true);
+    document.body.classList.add('modal-open');
+  }
+
+  function closeImageModal() {
+    setIsImageModalOpen(false);
+    document.body.classList.remove('modal-open');
+  }
+
   if (isLoading) {
     return <div className="product-details-state">Загрузка товара...</div>;
   }
@@ -277,6 +289,16 @@ export default function ProductDetailsPage() {
                 src={selectedImage.fileUrl}
                 alt={product.name}
                 className="product-details-gallery__main-image"
+                onClick={openImageModal}
+                style={{ cursor: 'pointer' }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openImageModal();
+                  }
+                }}
               />
             ) : (
               <div className="product-details-gallery__placeholder">
@@ -412,6 +434,22 @@ export default function ProductDetailsPage() {
           </div>
         </div>
       </div>
+
+      {isImageModalOpen && selectedImage && (
+        <div className="image-zoom-overlay" onClick={closeImageModal}>
+          <div className="image-zoom-container" onClick={(e) => e.stopPropagation()}>
+            <button className="image-zoom-close" onClick={closeImageModal} aria-label="Закрыть">
+              &times;
+            </button>
+            <img
+              src={selectedImage.fileUrl}
+              alt={product.name}
+              className="image-zoom-full"
+              onClick={closeImageModal}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
