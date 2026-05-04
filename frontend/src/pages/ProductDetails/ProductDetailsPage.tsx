@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getFinishedProductById } from '../../api/finishedProductsApi';
 import { getCategories, type Category } from '../../api/categoriesApi';
 import {
@@ -14,6 +14,9 @@ import type { FinishedProduct, FinishedProductImage } from '../../types/finished
 import { useAuth } from '../../components/auth/AuthProvider';
 import { createPortal } from 'react-dom';
 import './ProductDetailsPage.css';
+
+const STORAGE_SCROLL_KEY = 'productsScrollPosition';
+const STORAGE_URL_KEY = 'productsPageUrl';
 
 function getInitialImage(product: FinishedProduct): FinishedProductImage | null {
   return product.images.find((x) => x.isMain) ?? product.images[0] ?? null;
@@ -46,6 +49,7 @@ function normalizeExternalUrl(value?: string | null): string {
 
 export default function ProductDetailsPage() {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const productId = id ? Number(id) : null;
@@ -273,6 +277,32 @@ export default function ProductDetailsPage() {
     }
   }
 
+  function handleBackClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+
+    const savedUrl = sessionStorage.getItem(STORAGE_URL_KEY);
+    const savedScroll = sessionStorage.getItem(STORAGE_SCROLL_KEY);
+
+    if (savedUrl && savedScroll) {
+      const scrollPosition = parseInt(savedScroll, 10);
+      
+      navigate(savedUrl);
+      
+      setTimeout(() => {
+        if (!Number.isNaN(scrollPosition)) {
+          window.scrollTo(0, scrollPosition);
+        }
+        sessionStorage.removeItem(STORAGE_URL_KEY);
+        sessionStorage.removeItem(STORAGE_SCROLL_KEY);
+      }, 100);
+    } else {
+      const targetUrl = product?.idProductCategory
+        ? `/products?categoryId=${product.idProductCategory}`
+        : '/products';
+      navigate(targetUrl);
+    }
+  }
+
   useEffect(() => {
     if (!isImageModalOpen) return;
 
@@ -308,6 +338,7 @@ export default function ProductDetailsPage() {
               : '/products'
           }
           className="product-details__back-link"
+          onClick={handleBackClick}
         >
           ← Назад к товарам
         </Link>

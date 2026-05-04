@@ -14,6 +14,14 @@ import type { FinishedProduct } from '../../types/finishedProduct';
 import { useAuth } from '../../components/auth/AuthProvider';
 import './ProductsPage.css';
 
+const STORAGE_SCROLL_KEY = 'productsScrollPosition';
+const STORAGE_URL_KEY = 'productsPageUrl';
+
+function saveNavigationState() {
+  sessionStorage.setItem(STORAGE_SCROLL_KEY, window.scrollY.toString());
+  sessionStorage.setItem(STORAGE_URL_KEY, window.location.pathname + window.location.search);
+}
+
 function getMainImage(product: FinishedProduct) {
   return product.images.find((x) => x.isMain) ?? product.images[0] ?? null;
 }
@@ -40,6 +48,25 @@ export default function ProductsPage() {
 
   const categoryIdParam = searchParams.get('categoryId');
   const selectedCategoryId = categoryIdParam ? Number(categoryIdParam) : null;
+
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem(STORAGE_SCROLL_KEY);
+    const savedUrl = sessionStorage.getItem(STORAGE_URL_KEY);
+    
+    if (savedScroll && savedUrl) {
+      const currentUrl = window.location.pathname + window.location.search;
+      if (currentUrl === savedUrl) {
+        const scrollPosition = parseInt(savedScroll, 10);
+        if (!Number.isNaN(scrollPosition)) {
+          setTimeout(() => {
+            window.scrollTo(0, scrollPosition);
+          }, 50);
+        }
+        sessionStorage.removeItem(STORAGE_SCROLL_KEY);
+        sessionStorage.removeItem(STORAGE_URL_KEY);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -307,6 +334,7 @@ export default function ProductsPage() {
                     ? 'product-card product-card--out-of-stock'
                     : 'product-card'
                 }
+                onClick={saveNavigationState}
               >
                 {mainImage ? (
                   <img
