@@ -25,7 +25,9 @@ import CartPage from "./pages/Cart/CartPage";
 import UserAddressesPage from "./pages/Profile/UserAddressesPage";
 import MyOrdersPage from "./pages/Profile/MyOrdersPage";
 import OrderDetailsPage from "./pages/Profile/OrderDetailsPage";
-import ScrollToTopButton from "./components/scrolls/ScrollToTopButton";
+import { NotificationProvider } from "./context/NotificationContext";
+import NotificationToast from "./components/NotificationToast/NotificationToast";
+import ScrollToTopButton from "./components/ScrollToTopButton/ScrollToTopButton";
 
 function AppContent() {
   const { isAuthenticated, user } = useAuth();
@@ -62,7 +64,7 @@ function AppContent() {
           <div className="nav-dropdown">
             <Link to="/categories" className="nav-link nav-link--dropdown">
               Категории
-              <span className="nav-dropdown__arrow">⌄</span>
+              <span className="nav-dropdown__arrow"></span>
             </Link>
 
             <div className="nav-dropdown__menu">
@@ -210,6 +212,7 @@ function AppContent() {
           </Route>
         </Routes>
       </main>
+      <NotificationToast />
       <ScrollToTopButton offset={400} />
     </div>
   );
@@ -218,7 +221,9 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <NotificationProvider>
+        <AppContent />
+      </NotificationProvider>
     </BrowserRouter>
   );
 }

@@ -12,6 +12,7 @@ import { ApiError } from '../../types/api';
 import type { ShoppingCart } from '../../types/cart';
 import type { FinishedProduct } from '../../types/finishedProduct';
 import { useAuth } from '../../components/auth/AuthProvider';
+import { useNotification } from '../../context/NotificationContext';
 import './ProductsPage.css';
 
 const STORAGE_SCROLL_KEY = 'productsScrollPosition';
@@ -36,6 +37,7 @@ function formatPrice(value: number): string {
 
 export default function ProductsPage() {
   const { isAuthenticated } = useAuth();
+  const { showNotification } = useNotification();
 
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<FinishedProduct[]>([]);
@@ -43,7 +45,6 @@ export default function ProductsPage() {
   const [cart, setCart] = useState<ShoppingCart | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [cartMessage, setCartMessage] = useState('');
   const [changingProductId, setChangingProductId] = useState<number | null>(null);
 
   const categoryIdParam = searchParams.get('categoryId');
@@ -158,18 +159,17 @@ export default function ProductsPage() {
     const product = products.find((x) => x.id === productId);
 
     if (!product || product.availableQuantity <= 0) {
-      setCartMessage('Товара нет в наличии');
+      showNotification('Товара нет в наличии', 'error');
       return;
     }
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
     try {
       setChangingProductId(productId);
-      setCartMessage('');
 
       const updatedCart = await addCartItem({
         idFinishedProduct: productId,
@@ -177,14 +177,14 @@ export default function ProductsPage() {
       });
 
       setCart(updatedCart);
-      setCartMessage('Товар добавлен в корзину');
+      showNotification('Товар добавлен в корзину', 'success');
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось добавить товар в корзину');
+        showNotification('Не удалось добавить товар в корзину', 'error');
       }
     } finally {
       setChangingProductId(null);
@@ -201,12 +201,12 @@ export default function ProductsPage() {
     const product = products.find((x) => x.id === productId);
 
     if (!product || product.availableQuantity <= 0) {
-      setCartMessage('Товара нет в наличии');
+      showNotification('Товара нет в наличии', 'error');
       return;
     }
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
@@ -218,13 +218,12 @@ export default function ProductsPage() {
     }
 
     if (cartItem.quantity >= product.availableQuantity) {
-      setCartMessage('В корзине уже максимальное доступное количество товара');
+      showNotification('В корзине уже максимальное доступное количество товара', 'info');
       return;
     }
 
     try {
       setChangingProductId(productId);
-      setCartMessage('');
 
       const updatedCart = await updateCartItemQuantity(cartItem.itemId, {
         quantity: cartItem.quantity + 1,
@@ -233,11 +232,11 @@ export default function ProductsPage() {
       setCart(updatedCart);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось изменить количество товара');
+        showNotification('Не удалось изменить количество товара', 'error');
       }
     } finally {
       setChangingProductId(null);
@@ -252,7 +251,7 @@ export default function ProductsPage() {
     event.stopPropagation();
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
@@ -264,7 +263,6 @@ export default function ProductsPage() {
 
     try {
       setChangingProductId(productId);
-      setCartMessage('');
 
       const updatedCart =
         cartItem.quantity <= 1
@@ -276,11 +274,11 @@ export default function ProductsPage() {
       setCart(updatedCart);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось изменить количество товара');
+        showNotification('Не удалось изменить количество товара', 'error');
       }
     } finally {
       setChangingProductId(null);
@@ -306,12 +304,6 @@ export default function ProductsPage() {
             ? `Товары категории "${selectedCategory.name}"`
             : 'Вся продукция бренда'}
         </p>
-
-        {cartMessage && (
-          <div className="products-cart-message">
-            {cartMessage}
-          </div>
-        )}
       </div>
 
       {filteredProducts.length === 0 ? (

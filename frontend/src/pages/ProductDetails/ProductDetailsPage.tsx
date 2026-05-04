@@ -13,6 +13,7 @@ import type { ShoppingCart } from '../../types/cart';
 import type { FinishedProduct, FinishedProductImage } from '../../types/finishedProduct';
 import { useAuth } from '../../components/auth/AuthProvider';
 import { createPortal } from 'react-dom';
+import { useNotification } from '../../context/NotificationContext';
 import './ProductDetailsPage.css';
 
 const STORAGE_SCROLL_KEY = 'productsScrollPosition';
@@ -49,6 +50,7 @@ function normalizeExternalUrl(value?: string | null): string {
 
 export default function ProductDetailsPage() {
   const { isAuthenticated } = useAuth();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -61,7 +63,6 @@ export default function ProductDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isChangingCart, setIsChangingCart] = useState(false);
-  const [cartMessage, setCartMessage] = useState('');
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
@@ -139,18 +140,17 @@ export default function ProductDetailsPage() {
     }
 
     if (product.availableQuantity <= 0) {
-      setCartMessage('Товара нет в наличии');
+      showNotification('Товара нет в наличии', 'error');
       return;
     }
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
     try {
       setIsChangingCart(true);
-      setCartMessage('');
 
       const updatedCart = await addCartItem({
         idFinishedProduct: product.id,
@@ -158,14 +158,14 @@ export default function ProductDetailsPage() {
       });
 
       setCart(updatedCart);
-      setCartMessage('Товар добавлен в корзину');
+      showNotification('Товар добавлен в корзину', 'success');
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось добавить товар в корзину');
+        showNotification('Не удалось добавить товар в корзину', 'error');
       }
     } finally {
       setIsChangingCart(false);
@@ -178,12 +178,12 @@ export default function ProductDetailsPage() {
     }
 
     if (product.availableQuantity <= 0) {
-      setCartMessage('Товара нет в наличии');
+      showNotification('Товара нет в наличии', 'error');
       return;
     }
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
@@ -193,13 +193,12 @@ export default function ProductDetailsPage() {
     }
 
     if (currentCartItem.quantity >= product.availableQuantity) {
-      setCartMessage('В корзине уже максимальное доступное количество товара');
+      showNotification('В корзине уже максимальное доступное количество товара', 'info');
       return;
     }
 
     try {
       setIsChangingCart(true);
-      setCartMessage('');
 
       const updatedCart = await updateCartItemQuantity(currentCartItem.id, {
         quantity: currentCartItem.quantity + 1,
@@ -208,11 +207,11 @@ export default function ProductDetailsPage() {
       setCart(updatedCart);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось изменить количество товара');
+        showNotification('Не удалось изменить количество товара', 'error');
       }
     } finally {
       setIsChangingCart(false);
@@ -225,13 +224,12 @@ export default function ProductDetailsPage() {
     }
 
     if (!isAuthenticated) {
-      setCartMessage(getAuthRequiredMessage());
+      showNotification(getAuthRequiredMessage(), 'info');
       return;
     }
 
     try {
       setIsChangingCart(true);
-      setCartMessage('');
 
       const updatedCart =
         currentCartItem.quantity <= 1
@@ -243,11 +241,11 @@ export default function ProductDetailsPage() {
       setCart(updatedCart);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setCartMessage(getAuthRequiredMessage());
+        showNotification(getAuthRequiredMessage(), 'info');
       } else if (err instanceof ApiError) {
-        setCartMessage(err.message);
+        showNotification(err.message, 'error');
       } else {
-        setCartMessage('Не удалось изменить количество товара');
+        showNotification('Не удалось изменить количество товара', 'error');
       }
     } finally {
       setIsChangingCart(false);
@@ -285,7 +283,6 @@ export default function ProductDetailsPage() {
 
     if (savedUrl && savedScroll) {
       const scrollPosition = parseInt(savedScroll, 10);
-      
       navigate(savedUrl);
       
       setTimeout(() => {
@@ -463,12 +460,6 @@ export default function ProductDetailsPage() {
             ) : null}
           </div>
 
-          {cartMessage && (
-            <div className="product-details-info__cart-message">
-              {cartMessage}
-            </div>
-          )}
-
           <div className="product-details-info__meta">
             <div className="product-details-info__meta-item">
               <span className="product-details-info__meta-label">Категория</span>
@@ -504,7 +495,7 @@ export default function ProductDetailsPage() {
                 onClick={(e) => { e.stopPropagation(); goToPrevImage(); }}
                 aria-label="Предыдущее фото"
               >
-                ‹
+                
               </button>
             )}
 
