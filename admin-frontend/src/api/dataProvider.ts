@@ -1,4 +1,4 @@
-import type { DataProvider } from "react-admin";
+import type { DataProvider, Identifier } from "react-admin";
 
 const API_URL = "/api";
 
@@ -32,6 +32,65 @@ const request = async <T>(url: string, options: RequestInit = {}): Promise<T> =>
   return response.json();
 };
 
+const hasStockValue = (value: unknown) => {
+  return value !== undefined && value !== null && value !== "";
+};
+
+const normalizeUrl = (value: unknown) => {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return null;
+  }
+
+  const hasProtocol = /^(https?|ftp):\/\//i.test(trimmedValue);
+
+  return hasProtocol ? trimmedValue : `https://${trimmedValue}`;
+};
+
+const updateFinishedProductStock = async (
+  id: Identifier,
+  availableQuantity: unknown,
+) => {
+  if (!hasStockValue(availableQuantity)) {
+    return null;
+  }
+
+  return await request<{
+    id: number;
+    quantity: number;
+    reservedQuantity: number;
+    availableQuantity: number;
+  }>(`/finished-products/${id}/stock`, {
+    method: "PUT",
+    body: JSON.stringify({
+      availableQuantity: Number(availableQuantity),
+    }),
+  });
+};
+
+const buildFinishedProductRequest = (data: Record<string, unknown>) => {
+  const {
+    id: _id,
+    images: _images,
+    availableQuantity: _availableQuantity,
+    ...requestData
+  } = data;
+
+  return {
+    ...requestData,
+    wbUrl: normalizeUrl(requestData.wbUrl),
+  };
+};
+
 export const dataProvider: DataProvider = {
   getList: async (resource) => {
     const data = await request<any[]>(`/${resource}`);
@@ -49,6 +108,31 @@ export const dataProvider: DataProvider = {
   },
 
   create: async (resource, params) => {
+    if (resource === "finished-products") {
+      const productData = buildFinishedProductRequest(params.data);
+
+      const createdProduct = await request<any>(`/${resource}`, {
+        method: "POST",
+        body: JSON.stringify(productData),
+      });
+
+      const stock = await updateFinishedProductStock(
+        createdProduct.id,
+        params.data.availableQuantity,
+      );
+
+      return {
+        data: {
+          ...createdProduct,
+          ...(stock
+            ? {
+                availableQuantity: stock.availableQuantity,
+              }
+            : {}),
+        },
+      };
+    }
+
     const data = await request<any>(`/${resource}`, {
       method: "POST",
       body: JSON.stringify(params.data),
@@ -58,6 +142,38 @@ export const dataProvider: DataProvider = {
   },
 
   update: async (resource, params) => {
+    if (resource === "finished-products") {
+      const productData = buildFinishedProductRequest(params.data);
+
+      const updatedProduct = await request<any | undefined>(
+        `/${resource}/${params.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(productData),
+        },
+      );
+
+      const stock = await updateFinishedProductStock(
+        params.id,
+        params.data.availableQuantity,
+      );
+
+      return {
+        data: {
+          ...(updatedProduct ?? {
+            ...params.previousData,
+            ...productData,
+            id: params.id,
+          }),
+          ...(stock
+            ? {
+                availableQuantity: stock.availableQuantity,
+              }
+            : {}),
+        },
+      };
+    }
+
     const data = await request<any | undefined>(`/${resource}/${params.id}`, {
       method: "PUT",
       body: JSON.stringify(params.data),

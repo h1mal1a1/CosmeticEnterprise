@@ -1,5 +1,6 @@
 import {
   Edit,
+  minValue,
   NumberInput,
   ReferenceInput,
   required,
@@ -22,6 +23,13 @@ export const FinishedProductEdit = () => (
       <TextInput source="name" label="Название" validate={required()} />
 
       <NumberInput source="price" label="Цена" validate={required()} />
+
+      <NumberInput
+        source="availableQuantity"
+        label="Количество"
+        min={0}
+        validate={[required(), minValue(0)]}
+      />
 
       <TextInput
         source="wbUrl"

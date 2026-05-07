@@ -20,7 +20,7 @@ RUN npm run build
 
 FROM nginx:1.27-alpine AS final
 
-ARG NGINX_CONF=nginx.prod.conf
+ARG NGINX_CONF=nginx.dev.conf
 
 COPY nginx/${NGINX_CONF} /etc/nginx/nginx.conf
 
