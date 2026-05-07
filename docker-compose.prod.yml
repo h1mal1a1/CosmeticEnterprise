@@ -61,7 +61,10 @@ services:
       - backend
       - minio
     ports:
+      - "80:80"
       - "443:443"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
     networks:
       - app-network
 
