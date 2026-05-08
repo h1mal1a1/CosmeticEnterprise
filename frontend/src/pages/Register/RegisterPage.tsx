@@ -90,81 +90,134 @@ export default function RegisterPage() {
   return (
     <div className="register-page">
       <div className="register-card">
-        <div className="register-card__header">
-          <h1>Регистрация</h1>
-          <p>Создайте аккаунт для оформления заказов</p>
+        <div className="register-card__brand">
+          <span className="brand-logo">VALMÉRIS</span>
+          <span className="brand-tagline">Присоединяйтесь к нам</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="register-form">
-          <label className="register-form__field">
-            <span>Логин</span>
-            <input
-              type="text"
-              placeholder="Введите логин"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-            />
-          </label>
+        <div className="register-card__content">
+          <div className="register-card__header">
+            <h1>Создать аккаунт</h1>
+            <p>Получите доступ к эксклюзивным предложениям и персональному уходу</p>
+          </div>
 
-          <label className="register-form__field">
-            <span>Email</span>
-            <input
-              type="email"
-              placeholder="example@mail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </label>
+          <form onSubmit={handleSubmit} className="register-form">
+            <div className="register-form__field">
+              <label htmlFor="username" className="register-form__label">
+                Логин
+              </label>
+              <input
+                id="username"
+                type="text"
+                className="register-form__input"
+                placeholder=" "
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+              />
+            </div>
 
-          <label className="register-form__field">
-            <span>Телефон</span>
-            <input
-              type="tel"
-              placeholder="+79991234567"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              autoComplete="tel"
-            />
-          </label>
+            <div className="register-form__field">
+              <label htmlFor="email" className="register-form__label">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                className="register-form__input"
+                placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+              />
+            </div>
 
-          <label className="register-form__field">
-            <span>Пароль</span>
-            <input
-              type="password"
-              placeholder="Введите пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-          </label>
+            <div className="register-form__field">
+              <label htmlFor="phone" className="register-form__label">
+                Телефон
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                className="register-form__input"
+                placeholder=" "
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                autoComplete="tel"
+              />
+            </div>
 
-          <label className="register-form__field">
-            <span>Повторите пароль</span>
-            <input
-              type="password"
-              placeholder="Повторите пароль"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
-            />
-          </label>
+            <div className="register-form__field">
+              <label htmlFor="password" className="register-form__label">
+                Пароль
+              </label>
+              <input
+                id="password"
+                type="password"
+                className="register-form__input"
+                placeholder=" "
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
 
-          <p className="register-form__hint">
-            Телефон указывается в международном формате: +, код страны и номер.
-          </p>
+            <div className="register-form__field">
+              <label htmlFor="confirmPassword" className="register-form__label">
+                Подтвердите пароль
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                className="register-form__input"
+                placeholder=" "
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
 
-          {error && <div className="register-error">{error}</div>}
+            <p className="register-form__hint">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Телефон указывается в международном формате: +, код страны и номер.
+            </p>
 
-          <button type="submit" disabled={!isFormValid || isLoading}>
-            {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
-          </button>
-        </form>
+            {error && (
+              <div className="register-error">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {error}
+              </div>
+            )}
 
-        <p className="register-footer">
-          Уже есть аккаунт? <Link to="/login">Войти</Link>
-        </p>
+            <button type="submit" disabled={!isFormValid || isLoading}>
+              {isLoading ? (
+                <>
+                  <span className="spinner"></span>
+                  Регистрация...
+                </>
+              ) : (
+                'Зарегистрироваться'
+              )}
+            </button>
+          </form>
+
+          <div className="register-footer">
+            <p>
+              Уже есть аккаунт?{' '}
+              <Link to="/login" className="register-footer__link">
+                Войти
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
