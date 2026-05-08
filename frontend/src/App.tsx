@@ -12,7 +12,6 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./components/auth/AuthProvider";
 import { getCategories, type Category } from "./api/categoriesApi";
 import ProductDetailsPage from "./pages/ProductDetails/ProductDetailsPage";
-import AppBreadcrumbs from "./components/navigation/AppBreadcrumbs";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminCategoriesPage from "./pages/Admin/AdminCategoriesPage";
 import AdminFinishedProductsPage from "./pages/Admin/AdminFinishedProductsPage";
@@ -126,8 +125,6 @@ function AppContent() {
           )}
         </div>
       </nav>
-
-      <AppBreadcrumbs />
 
       <main className="main-content">
         <Routes>
