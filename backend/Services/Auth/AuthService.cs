@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Text.RegularExpressions;
-using CosmeticEnterpriseBack.Authorization;
+using CosmeticEnterpriseBack.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Identity;
-using CosmeticEnterpriseBack.Data;
-using CosmeticEnterpriseBack.DTO.Auth;
-using CosmeticEnterpriseBack.Entities;
-using CosmeticEnterpriseBack.Exceptions;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+using CosmeticEnterpriseBack.Api.DTOs.Auth;
+using CosmeticEnterpriseBack.Domain.Entities;
+using CosmeticEnterpriseBack.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Services.Auth;

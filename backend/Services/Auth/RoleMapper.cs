@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Authorization;
+﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

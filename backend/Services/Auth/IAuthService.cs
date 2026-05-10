@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.DTO.Auth;
+﻿using CosmeticEnterpriseBack.Api.DTOs.Auth;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

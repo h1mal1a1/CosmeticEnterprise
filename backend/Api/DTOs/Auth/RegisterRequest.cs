@@ -1,0 +1,14 @@
+﻿using System.ComponentModel.DataAnnotations;
+namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+public class RegisterRequest
+{
+    [Required]
+    public string Username { get; set; } = null!;
+    [Required]
+    public string Password { get; set; } = null!;
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+    [Required]
+    public string Phone { get; set; } = null!;
+}

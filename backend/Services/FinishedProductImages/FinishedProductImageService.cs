@@ -1,6 +1,7 @@
-﻿using CosmeticEnterpriseBack.Data;
-using CosmeticEnterpriseBack.DTO.FinishedProductImages;
-using CosmeticEnterpriseBack.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+using CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
+using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Services.FinishedProductImages;
@@ -34,7 +35,7 @@ public class FinishedProductImageService : IFinishedProductImageService
         if (request.Files is null || request.Files.Count == 0)
             throw new InvalidOperationException("Files are required");
 
-        var entities = new List<Entities.FinishedProductImages>();
+        var entities = new List<Domain.Entities.FinishedProductImages>();
 
         var isFirstImage = !await _dbContext.FinishedProductImages
             .AnyAsync(x => x.IdFinishedProduct == finishedProductId, cancellationToken);
@@ -73,7 +74,7 @@ public class FinishedProductImageService : IFinishedProductImageService
 
             currentMaxOrder++;
 
-            var entity = new Entities.FinishedProductImages
+            var entity = new Domain.Entities.FinishedProductImages
             {
                 IdFinishedProduct = finishedProductId,
                 ObjectKey = objectKey,

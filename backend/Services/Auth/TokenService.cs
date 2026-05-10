@@ -1,9 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using CosmeticEnterpriseBack.Configuration;
-using CosmeticEnterpriseBack.Entities;
+using CosmeticEnterpriseBack.Infrastructure.Configuration;
+using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,7 +1,7 @@
-﻿using CosmeticEnterpriseBack.Data;
-using CosmeticEnterpriseBack.DTO.Cart;
-using CosmeticEnterpriseBack.Entities;
-using CosmeticEnterpriseBack.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+using CosmeticEnterpriseBack.Api.DTOs.Cart;
+using CosmeticEnterpriseBack.Domain.Entities;
+using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Services.Cart;

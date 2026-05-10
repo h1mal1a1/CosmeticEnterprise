@@ -1,6 +1,7 @@
-﻿using CosmeticEnterpriseBack.Authorization;
-using CosmeticEnterpriseBack.Exceptions;
-using CosmeticEnterpriseBack.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
+using CosmeticEnterpriseBack.Application.Exceptions;
+using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Application.Interfaces;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

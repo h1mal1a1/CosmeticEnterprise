@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using CosmeticEnterpriseBack.Entities;
+using CosmeticEnterpriseBack.Domain.Entities;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

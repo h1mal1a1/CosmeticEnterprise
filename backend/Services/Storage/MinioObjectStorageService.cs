@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using CosmeticEnterpriseBack.Configuration;
-using CosmeticEnterpriseBack.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Configuration;
+using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;

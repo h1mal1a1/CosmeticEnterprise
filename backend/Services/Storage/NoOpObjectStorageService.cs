@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 
 namespace CosmeticEnterpriseBack.Services.Storage;
 

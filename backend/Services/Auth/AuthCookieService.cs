@@ -1,5 +1,5 @@
-﻿using CosmeticEnterpriseBack.Configuration;
-using CosmeticEnterpriseBack.DTO.Auth;
+﻿using CosmeticEnterpriseBack.Infrastructure.Configuration;
+using CosmeticEnterpriseBack.Api.DTOs.Auth;
 using Microsoft.Extensions.Options;
 
 namespace CosmeticEnterpriseBack.Services.Auth;

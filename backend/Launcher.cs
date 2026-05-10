@@ -1,5 +1,5 @@
-﻿using CosmeticEnterpriseBack.Extensions;
-using CosmeticEnterpriseBack.Middleware;
+﻿using CosmeticEnterpriseBack.Infrastructure.Extensions;
+using CosmeticEnterpriseBack.Api.Middleware;
 using Minio;
 
 namespace CosmeticEnterpriseBack;
