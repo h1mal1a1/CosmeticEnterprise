@@ -9,8 +9,8 @@ public static class SwaggerExtensions
         builder.Services.AddSwaggerGen(options =>
         {
             var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
-            options.IncludeXmlComments(xmlPath);
+            // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+            // options.IncludeXmlComments(xmlPath);
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

@@ -1,6 +1,7 @@
 ﻿using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Authorization;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services;
@@ -9,7 +10,7 @@ public class CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TRespons
     : ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>
     where TEntity : class
 {
-    private readonly DbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
     private readonly IEntityReader<TEntity, TKey> _reader;
     private readonly ICreateMapper<TEntity, TCreateRequest> _createMapper;
@@ -18,7 +19,7 @@ public class CrudService<TEntity, TKey, TCreateRequest, TUpdateRequest, TRespons
     private readonly IAuthorizationService _authorizationService;
     private readonly ResourceType _resourceType;
 
-    public CrudService(DbContext dbContext, IEntityReader<TEntity, TKey> reader,
+    public CrudService(AppDbContext dbContext, IEntityReader<TEntity, TKey> reader,
         ICreateMapper<TEntity, TCreateRequest> createMapper, IUpdateMapper<TEntity, TUpdateRequest> updateMapper,
         IResponseMapper<TEntity, TResponse> responseMapper, IAuthorizationService authorizationService, 
         ResourceType resourceType)

@@ -1,5 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Domain;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Readers;
@@ -7,8 +8,8 @@ namespace CosmeticEnterpriseBack.Infrastructure.Readers;
 public class EntityReader<TEntity, TKey> : IEntityReader<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
-    private readonly DbContext _dbContext;
-    public EntityReader(DbContext dbContext) => _dbContext = dbContext;
+    private readonly AppDbContext _dbContext;
+    public EntityReader(AppDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
     {

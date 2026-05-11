@@ -1,14 +1,15 @@
 ﻿using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Readers;
 
 public class FinishedProductsReader : IEntityReader<FinishedProducts, long>
 {
-    private readonly DbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-    public FinishedProductsReader(DbContext dbContext) => _dbContext = dbContext;
+    public FinishedProductsReader(AppDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<FinishedProducts?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {

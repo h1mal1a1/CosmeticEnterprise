@@ -2,16 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services;
 
 public class CrudServiceFactory: ICrudServiceFactory
 {
-    private readonly DbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
     private readonly IAuthorizationService _authorizationService;
 
-    public CrudServiceFactory(DbContext dbContext, IServiceProvider serviceProvider,
+    public CrudServiceFactory(AppDbContext dbContext, IServiceProvider serviceProvider,
         IAuthorizationService authorizationService)
     {
         _dbContext = dbContext;
