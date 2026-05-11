@@ -13,8 +13,8 @@ using CosmeticEnterpriseBack.Mappers.UnitsOfMeasurement;
 using CosmeticEnterpriseBack.Infrastructure.Readers;
 using CosmeticEnterpriseBack.Infrastructure.Services;
 using CosmeticEnterpriseBack.Services.Order;
-using CosmeticEnterpriseBack.Services.UserAddresses;
 using CosmeticEnterpriseBack.Application.Services.Order;
+using CosmeticEnterpriseBack.Infrastructure.Services.UserAddresses;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 

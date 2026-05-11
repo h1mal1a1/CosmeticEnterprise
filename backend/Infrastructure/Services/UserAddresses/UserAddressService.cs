@@ -4,7 +4,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 
-namespace CosmeticEnterpriseBack.Services.UserAddresses;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.UserAddresses;
 
 public class UserAddressService(AppDbContext dbContext) : IUserAddressService
 {
@@ -18,9 +18,7 @@ public class UserAddressService(AppDbContext dbContext) : IUserAddressService
             .ThenByDescending(x => x.Id)
             .ToListAsync(cancellationToken);
 
-        return addresses
-            .Select(MapToResponse)
-            .ToList();
+        return [.. addresses.Select(MapToResponse)];
     }
 
     public async Task<UserAddressResponse> GetMyAddressByIdAsync(long userId, long addressId, CancellationToken cancellationToken)
