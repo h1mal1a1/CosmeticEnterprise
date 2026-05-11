@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.Auth;
 public class LoginRequest
 {
     public string Username { get; set; } = null!;

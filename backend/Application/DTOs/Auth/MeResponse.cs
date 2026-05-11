@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.Auth;
 public class MeResponse
 {
     public long IdUser { get; set; }

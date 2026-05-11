@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.Auth;
+﻿using CosmeticEnterpriseBack.Application.DTOs.Auth;
 using CosmeticEnterpriseBack.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+namespace CosmeticEnterpriseBack.Application.DTOs.Auth;
 public class UpdateProfileRequest
 {
     public string Email { get; set; } = null!;

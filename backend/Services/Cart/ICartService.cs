@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.Cart;
+﻿using CosmeticEnterpriseBack.Application.DTOs.Cart;
 
 namespace CosmeticEnterpriseBack.Services.Cart;
 

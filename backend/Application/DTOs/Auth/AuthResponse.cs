@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.Auth;
 public class AuthResponse
 {
     public string AccessToken { get; set; } = null!;

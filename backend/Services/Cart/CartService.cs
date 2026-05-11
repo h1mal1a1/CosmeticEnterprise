@@ -1,5 +1,5 @@
 ﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
-using CosmeticEnterpriseBack.Api.DTOs.Cart;
+using CosmeticEnterpriseBack.Application.DTOs.Cart;
 using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.Interfaces;

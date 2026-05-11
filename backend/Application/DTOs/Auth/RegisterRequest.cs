@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace CosmeticEnterpriseBack.Api.DTOs.Auth;
+namespace CosmeticEnterpriseBack.Application.DTOs.Auth;
 public class RegisterRequest
 {
     [Required]

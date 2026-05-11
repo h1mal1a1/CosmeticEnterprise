@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.Cart;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.Cart;
 public class ShoppingCartItemResponse
 {
     public long Id { get; set; }

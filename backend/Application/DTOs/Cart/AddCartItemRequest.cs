@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CosmeticEnterpriseBack.Api.DTOs.Cart;
+namespace CosmeticEnterpriseBack.Application.DTOs.Cart;
 
 public class AddCartItemRequest
 {

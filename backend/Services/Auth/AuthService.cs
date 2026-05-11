@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
-using CosmeticEnterpriseBack.Api.DTOs.Auth;
+using CosmeticEnterpriseBack.Application.DTOs.Auth;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
