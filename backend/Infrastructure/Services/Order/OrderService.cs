@@ -10,12 +10,13 @@ using CosmeticEnterpriseBack.Application.Validators;
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
-    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator,
-    IOrderReadService orderReadService) : IOrderService
+    IOrderReturnUrlValidator orderReturnUrlValidator, IOrderReadService orderReadService, 
+    IOrderStatusUpdateService orderStatusUpdateService) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
-    public async Task<OrderResponse> CreateOrderFromCartAsync(long userId, CreateOrderRequest request, CancellationToken cancellationToken)
+    public async Task<OrderResponse> CreateOrderFromCartAsync(long userId, CreateOrderRequest request, 
+        CancellationToken cancellationToken)
     {
         orderReturnUrlValidator.Validate(request.ReturnUrl);
 
@@ -140,52 +141,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
     public Task<OrderResponse> GetOrderByIdAsync(long orderId, CancellationToken cancellationToken) => 
         orderReadService.GetOrderByIdAsync(orderId, cancellationToken);
 
-    public async Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, CancellationToken cancellationToken)
-    {
-        var order = await dbContext.Orders
-            .Include(x => x.User)
-            .Include(x => x.UserAddress)
-            .Include(x => x.OrderItemsList)
-                .ThenInclude(x => x.FinishedProducts)
-            .FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken);
-
-        if (order is null)
-            throw new KeyNotFoundException("Order not found.");
-
-        orderStatusTransitionValidator.Validate(order, request);
-
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
-        {
-            var becomesCancelled =
-                order.OrderStatus != OrderStatus.Cancelled &&
-                request.OrderStatus == OrderStatus.Cancelled;
-
-            var becomesCompleted =
-                order.OrderStatus != OrderStatus.Completed &&
-                request.OrderStatus == OrderStatus.Completed;
-
-            if (becomesCancelled)
-                await orderStockService.ReleaseReserveAsync(order, cancellationToken);
-
-            if (becomesCompleted)
-                await orderStockService.ConsumeReservedStockAsync(order, cancellationToken);
-
-            order.OrderStatus = request.OrderStatus;
-            order.DeliveryStatus = request.DeliveryStatus;
-            order.PaymentStatus = request.PaymentStatus;
-            order.UpdatedAtUtc = DateTime.UtcNow;
-
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-
-            return orderMapper.ToResponse(order);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
-    }
+    public Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, 
+        CancellationToken cancellationToken) => orderStatusUpdateService.UpdateOrderStatusesAsync(
+            orderId, request, cancellationToken);
 }
