@@ -1,6 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Application.DTOs.Auth;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Application.Interfaces;
 
 public interface IAuthService
 {

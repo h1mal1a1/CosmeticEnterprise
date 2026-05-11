@@ -7,6 +7,7 @@ using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Domain.Enums;
+using CosmeticEnterpriseBack.Application.Interfaces;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

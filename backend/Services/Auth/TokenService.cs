@@ -5,15 +5,14 @@ using CosmeticEnterpriseBack.Infrastructure.Configuration;
 using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using CosmeticEnterpriseBack.Application.Interfaces;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 
-public class TokenService : ITokenService
+public class TokenService(IOptions<JwtSettings> jwtSettings) : ITokenService
 {
-    private readonly JwtSettings _jwtSettings;
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
-    public TokenService(IOptions<JwtSettings> jwtSettings) => _jwtSettings = jwtSettings.Value;
-    
     public string GenerateAccessToken(User user)
     {
         var claims = new List<Claim>

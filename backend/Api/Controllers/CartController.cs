@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using CosmeticEnterpriseBack.Application.DTOs.Cart;
-using CosmeticEnterpriseBack.Services.Cart;
+using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

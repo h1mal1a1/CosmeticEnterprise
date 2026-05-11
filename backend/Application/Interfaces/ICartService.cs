@@ -1,6 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Application.DTOs.Cart;
 
-namespace CosmeticEnterpriseBack.Services.Cart;
+namespace CosmeticEnterpriseBack.Application.Interfaces;
 
 public interface ICartService
 {

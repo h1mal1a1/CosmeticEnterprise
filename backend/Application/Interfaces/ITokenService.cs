@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using CosmeticEnterpriseBack.Domain.Entities;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Application.Interfaces;
 
 public interface ITokenService
 {
