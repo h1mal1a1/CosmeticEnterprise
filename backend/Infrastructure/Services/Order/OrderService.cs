@@ -10,13 +10,13 @@ using CosmeticEnterpriseBack.Application.Validators;
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
-    IOrderStatusTransitionValidator orderStatusTransitionValidator) : IOrderService
+    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
     public async Task<OrderResponse> CreateOrderFromCartAsync(long userId, CreateOrderRequest request, CancellationToken cancellationToken)
     {
-        ValidateReturnUrl(request.ReturnUrl);
+        orderReturnUrlValidator.Validate(request.ReturnUrl);
 
         var userAddress = await dbContext.UserAddresses
             .AsNoTracking()
@@ -363,17 +363,5 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
 
         if (query.PageSize > 100)
             query.PageSize = 100;
-    }
-
-    private static void ValidateReturnUrl(string? returnUrl)
-    {
-        if (string.IsNullOrWhiteSpace(returnUrl))
-            return;
-
-        if (!Uri.TryCreate(returnUrl, UriKind.Absolute, out var uri))
-            throw new ArgumentException("ReturnUrl must be an absolute URL.");
-
-        if (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp)
-            throw new ArgumentException("ReturnUrl must use http or https.");
     }
 }

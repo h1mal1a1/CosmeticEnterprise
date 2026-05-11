@@ -30,7 +30,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IUserAddressValidator, UserAddressValidator>();
         services.AddScoped<IOrderStatusTransitionValidator, OrderStatusTransitionValidator>();
-        
+        services.AddScoped<IOrderReturnUrlValidator, OrderReturnUrlValidator>();
+
         services.AddScoped<UserAddressDomainService>();
         services.AddScoped<IUserAddressMapper, UserAddressMapper>();
         services.AddScoped<IUserAddressService, UserAddressAppService>();
