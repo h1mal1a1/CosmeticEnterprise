@@ -7,8 +7,8 @@ using CosmeticEnterpriseBack.Application.Validators;
 using CosmeticEnterpriseBack.Domain.Services;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
+using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
 using CosmeticEnterpriseBack.Services.Auth;
-using CosmeticEnterpriseBack.Services.Cart;
 using CosmeticEnterpriseBack.Services.CurrentUser;
 using CosmeticEnterpriseBack.Services.FinishedProductImages;
 

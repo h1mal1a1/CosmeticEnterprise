@@ -4,7 +4,7 @@ using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.Interfaces;
 
-namespace CosmeticEnterpriseBack.Services.Cart;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Cart;
 
 public class CartService(AppDbContext dbContext, IObjectStorageService objectStorageService) : ICartService
 {
