@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Infrastructure.Interfaces;
+﻿namespace CosmeticEnterpriseBack.Application.Interfaces;
 public interface IObjectStorageService
 {
     Task<string> UploadAsync(

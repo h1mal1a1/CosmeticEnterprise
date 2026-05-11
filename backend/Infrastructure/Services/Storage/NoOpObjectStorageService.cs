@@ -1,6 +1,6 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+﻿using CosmeticEnterpriseBack.Application.Interfaces;
 
-namespace CosmeticEnterpriseBack.Services.Storage;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Storage;
 
 public class NoOpObjectStorageService : IObjectStorageService
 {

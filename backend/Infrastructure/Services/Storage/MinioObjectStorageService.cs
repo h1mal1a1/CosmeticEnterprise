@@ -1,10 +1,10 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Configuration;
-using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+﻿using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
 
-namespace CosmeticEnterpriseBack.Services.Storage;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Storage;
 
 public class MinioObjectStorageService : IObjectStorageService
 {

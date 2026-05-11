@@ -1,6 +1,6 @@
+using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Configuration;
-using CosmeticEnterpriseBack.Infrastructure.Interfaces;
-using CosmeticEnterpriseBack.Services.Storage;
+using CosmeticEnterpriseBack.Infrastructure.Services.Storage;
 using Minio;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
