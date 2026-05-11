@@ -4,7 +4,7 @@ using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.Authorization;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 
 public class AuthorizationService : IAuthorizationService
 {

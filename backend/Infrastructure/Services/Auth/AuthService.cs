@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 
 public class AuthService : IAuthService
 {

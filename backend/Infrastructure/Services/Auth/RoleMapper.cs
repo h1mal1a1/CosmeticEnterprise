@@ -1,6 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Domain.Enums;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 
 public static class RoleMapper
 {

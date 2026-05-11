@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CosmeticEnterpriseBack.Application.Interfaces;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 
 public class TokenService(IOptions<JwtSettings> jwtSettings) : ITokenService
 {
