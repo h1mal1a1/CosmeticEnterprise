@@ -29,6 +29,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ICartService, CartService>();
 
         services.AddScoped<IUserAddressValidator, UserAddressValidator>();
+        services.AddScoped<IOrderStatusTransitionValidator, OrderStatusTransitionValidator>();
+        
         services.AddScoped<UserAddressDomainService>();
         services.AddScoped<IUserAddressMapper, UserAddressMapper>();
         services.AddScoped<IUserAddressService, UserAddressAppService>();

@@ -5,10 +5,12 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
 using CosmeticEnterpriseBack.Application.Mappers;
+using CosmeticEnterpriseBack.Application.Validators;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
-public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService) : IOrderService
+public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
+    IOrderStatusTransitionValidator orderStatusTransitionValidator) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
@@ -297,7 +299,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
         if (order is null)
             throw new KeyNotFoundException("Order not found.");
 
-        ValidateStatusTransition(order, request);
+        orderStatusTransitionValidator.Validate(order, request);
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -373,42 +375,5 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
 
         if (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp)
             throw new ArgumentException("ReturnUrl must use http or https.");
-    }
-
-    private static void ValidateStatusTransition(Orders order, UpdateOrderStatusesRequest request)
-    {
-        if (order.OrderStatus == OrderStatus.Cancelled || order.OrderStatus == OrderStatus.Completed)
-        {
-            throw new InvalidOperationException(
-                "Cancelled or completed order cannot be changed.");
-        }
-
-        if (request.PaymentStatus == PaymentStatus.Paid &&
-            request.OrderStatus == OrderStatus.Created)
-        {
-            throw new InvalidOperationException(
-                "Paid order cannot remain in Created status.");
-        }
-
-        if (request.DeliveryStatus == DeliveryStatus.Delivered &&
-            request.OrderStatus != OrderStatus.Completed)
-        {
-            throw new InvalidOperationException(
-                "Delivered order must have Completed order status.");
-        }
-
-        if (request.OrderStatus == OrderStatus.Cancelled &&
-            request.DeliveryStatus != DeliveryStatus.Cancelled)
-        {
-            throw new InvalidOperationException(
-                "Cancelled order must have Cancelled delivery status.");
-        }
-
-        if (request.OrderStatus == OrderStatus.Completed &&
-            request.PaymentStatus != PaymentStatus.Paid)
-        {
-            throw new InvalidOperationException(
-                "Completed order must have Paid payment status.");
-        }
     }
 }
