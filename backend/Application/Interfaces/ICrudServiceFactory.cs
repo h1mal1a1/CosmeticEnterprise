@@ -1,8 +1,21 @@
-﻿using CosmeticEnterpriseBack.Application.Authorization;
+﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
+using CosmeticEnterpriseBack.Application.DTOs.ProductCategory;
+using CosmeticEnterpriseBack.Application.DTOs.Recipe;
+using CosmeticEnterpriseBack.Application.DTOs.UnitOfMeasurement;
+
 namespace CosmeticEnterpriseBack.Application.Interfaces;
+
 public interface ICrudServiceFactory
 {
-    ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>
-        Create<TEntity, TKey, TCreateRequest, TUpdateRequest, TResponse>(ResourceType resourceType)
-        where TEntity : class;
+    ICrudService<FinishedProductResponse, CreateFinishedProductRequest, UpdateFinishedProductRequest, long>
+        CreateFinishedProductsService();
+
+    ICrudService<ProductCategoryResponse, CreateProductCategoryRequest, UpdateProductCategoryRequest, long>
+        CreateProductCategoriesService();
+
+    ICrudService<RecipeResponse, CreateRecipeRequest, UpdateRecipeRequest, long>
+        CreateRecipesService();
+
+    ICrudService<UnitOfMeasurementResponse, CreateUnitOfMeasurementRequest, UpdateUnitOfMeasurementRequest, long>
+        CreateUnitsOfMeasurementService();
 }
