@@ -57,6 +57,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOrderDictionaryService, OrderDictionaryService>();
         services.AddScoped<IOrderQueryBuilder, OrderQueryBuilder>();
         services.AddScoped<IOrderStockService, OrderStockService>();
+        services.AddScoped<IOrderReadService, OrderReadService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserAddressService, UserAddressService>();
 

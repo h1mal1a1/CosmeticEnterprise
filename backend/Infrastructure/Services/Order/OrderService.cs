@@ -10,8 +10,8 @@ using CosmeticEnterpriseBack.Application.Validators;
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
-    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator, 
-    IOrderQueryBuilder orderQueryBuilder) : IOrderService
+    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator,
+    IOrderReadService orderReadService) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
@@ -78,7 +78,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            return await GetMyOrderByIdAsync(userId, order.Id, cancellationToken);
+            return await orderReadService.GetMyOrderByIdAsync(userId, order.Id, cancellationToken);
         }
         catch
         {
@@ -87,54 +87,10 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
         }
     }
 
-    public async Task<PagedResult<OrderListItemResponse>> GetMyOrdersAsync(long userId, GetOrdersQuery query, CancellationToken cancellationToken)
-    {
-        orderQueryBuilder.Normalize(query);
-
-        var ordersQuery = dbContext.Orders
-            .AsNoTracking()
-            .Include(x => x.User)
-            .Include(x => x.OrderItemsList)
-            .Where(x => x.IdUser == userId)
-            .AsQueryable();
-
-        ordersQuery = orderQueryBuilder.ApplyFilters(ordersQuery, query, allowUserFilter: false);
-
-        var totalCount = await ordersQuery.CountAsync(cancellationToken);
-
-        var orders = await ordersQuery
-            .OrderByDescending(x => x.CreatedAtUtc)
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<OrderListItemResponse>
-        {
-            Items = orders.Select(orderMapper.ToListItemResponse).ToList(),
-            Page = query.Page,
-            PageSize = query.PageSize,
-            TotalCount = totalCount,
-            TotalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize)
-        };
-    }
-
-    public async Task<OrderResponse> GetMyOrderByIdAsync(long userId, long orderId, CancellationToken cancellationToken)
-    {
-        var order = await dbContext.Orders
-            .AsNoTracking()
-            .Include(x => x.User)
-            .Include(x => x.UserAddress)
-            .Include(x => x.OrderItemsList)
-                .ThenInclude(x => x.FinishedProducts)
-            .FirstOrDefaultAsync(
-                x => x.Id == orderId && x.IdUser == userId,
-                cancellationToken);
-
-        if (order is null)
-            throw new KeyNotFoundException("Order not found.");
-
-        return orderMapper.ToResponse(order);
-    }
+    public Task<PagedResult<OrderListItemResponse>> GetMyOrdersAsync(long userId, GetOrdersQuery query,
+        CancellationToken cancellationToken) => orderReadService.GetMyOrdersAsync(userId, query, cancellationToken);
+    public Task<OrderResponse> GetMyOrderByIdAsync(long userId, long orderId, CancellationToken cancellationToken) => 
+        orderReadService.GetMyOrderByIdAsync(userId, orderId, cancellationToken);
 
     public async Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken)
     {
@@ -178,51 +134,11 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
         }
     }
 
-    public async Task<PagedResult<OrderListItemResponse>> GetAllOrdersAsync(GetOrdersQuery query, CancellationToken cancellationToken)
-    {
-        orderQueryBuilder.Normalize(query);
+    public Task<PagedResult<OrderListItemResponse>> GetAllOrdersAsync(GetOrdersQuery query, CancellationToken cancellationToken) =>
+        orderReadService.GetAllOrdersAsync(query, cancellationToken);
 
-        var ordersQuery = dbContext.Orders
-            .AsNoTracking()
-            .Include(x => x.User)
-            .Include(x => x.OrderItemsList)
-            .AsQueryable();
-
-        ordersQuery = orderQueryBuilder.ApplyFilters(ordersQuery, query, allowUserFilter: true);
-
-        var totalCount = await ordersQuery.CountAsync(cancellationToken);
-
-        var orders = await ordersQuery
-            .OrderByDescending(x => x.CreatedAtUtc)
-            .Skip((query.Page - 1) * query.PageSize)
-            .Take(query.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<OrderListItemResponse>
-        {
-            Items = orders.Select(orderMapper.ToListItemResponse).ToList(),
-            Page = query.Page,
-            PageSize = query.PageSize,
-            TotalCount = totalCount,
-            TotalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize)
-        };
-    }
-
-    public async Task<OrderResponse> GetOrderByIdAsync(long orderId, CancellationToken cancellationToken)
-    {
-        var order = await dbContext.Orders
-            .AsNoTracking()
-            .Include(x => x.User)
-            .Include(x => x.UserAddress)
-            .Include(x => x.OrderItemsList)
-                .ThenInclude(x => x.FinishedProducts)
-            .FirstOrDefaultAsync(x => x.Id == orderId, cancellationToken);
-
-        if (order is null)
-            throw new KeyNotFoundException("Order not found.");
-
-        return orderMapper.ToResponse(order);
-    }
+    public Task<OrderResponse> GetOrderByIdAsync(long orderId, CancellationToken cancellationToken) => 
+        orderReadService.GetOrderByIdAsync(orderId, cancellationToken);
 
     public async Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, CancellationToken cancellationToken)
     {
