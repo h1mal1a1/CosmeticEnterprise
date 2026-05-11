@@ -4,14 +4,14 @@ using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
-using CosmeticEnterpriseBack.Application.Mappers;
 using CosmeticEnterpriseBack.Application.Validators;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
-public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
+public class OrderService(AppDbContext dbContext, IOrderStockService orderStockService, 
     IOrderReturnUrlValidator orderReturnUrlValidator, IOrderReadService orderReadService, 
-    IOrderStatusUpdateService orderStatusUpdateService) : IOrderService
+    IOrderStatusUpdateService orderStatusUpdateService, IOrderCancellationService orderCancellationService) 
+    : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
@@ -93,47 +93,8 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
     public Task<OrderResponse> GetMyOrderByIdAsync(long userId, long orderId, CancellationToken cancellationToken) => 
         orderReadService.GetMyOrderByIdAsync(userId, orderId, cancellationToken);
 
-    public async Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken)
-    {
-        var order = await dbContext.Orders
-            .Include(x => x.User)
-            .Include(x => x.UserAddress)
-            .Include(x => x.OrderItemsList)
-                .ThenInclude(x => x.FinishedProducts)
-            .FirstOrDefaultAsync(
-                x => x.Id == orderId && x.IdUser == userId,
-                cancellationToken);
-
-        if (order is null)
-            throw new KeyNotFoundException("Order not found.");
-
-        if (order.OrderStatus == OrderStatus.Cancelled)
-            return orderMapper.ToResponse(order);
-
-        if (order.OrderStatus == OrderStatus.Completed)
-            throw new InvalidOperationException("Completed order cannot be cancelled.");
-
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
-        {
-            await orderStockService.ReleaseReserveAsync(order, cancellationToken);
-
-            order.OrderStatus = OrderStatus.Cancelled;
-            order.DeliveryStatus = DeliveryStatus.Cancelled;
-            order.UpdatedAtUtc = DateTime.UtcNow;
-
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-
-            return orderMapper.ToResponse(order);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
-    }
+    public Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken) => 
+        orderCancellationService.CancelMyOrderAsync(userId, orderId, cancellationToken);
 
     public Task<PagedResult<OrderListItemResponse>> GetAllOrdersAsync(GetOrdersQuery query, CancellationToken cancellationToken) =>
         orderReadService.GetAllOrdersAsync(query, cancellationToken);
