@@ -1,6 +1,6 @@
 ﻿using CosmeticEnterpriseBack.Application.DTOs.Auth;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Api.Services.Auth;
 
 public interface IAuthCookieService
 {

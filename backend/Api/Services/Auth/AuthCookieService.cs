@@ -3,7 +3,7 @@ using CosmeticEnterpriseBack.Application.DTOs.Auth;
 using Microsoft.Extensions.Options;
 using CosmeticEnterpriseBack.Application.Constants;
 
-namespace CosmeticEnterpriseBack.Services.Auth;
+namespace CosmeticEnterpriseBack.Api.Services.Auth;
 
 public class AuthCookieService : IAuthCookieService
 {

@@ -11,7 +11,6 @@ using CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
 using CosmeticEnterpriseBack.Infrastructure.Services.CurrentUser;
 using CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
-using CosmeticEnterpriseBack.Services.Auth;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 
@@ -21,7 +20,6 @@ public static class ApplicationServiceExtensions
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IAuthCookieService, AuthCookieService>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();

@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Extensions;
+﻿using CosmeticEnterpriseBack.Api.Extensions;
+using CosmeticEnterpriseBack.Infrastructure.Extensions;
 using CosmeticEnterpriseBack.Api.Middleware;
 using Minio;
 
@@ -14,7 +15,10 @@ public static class Launcher
         builder.AddCors();
         builder.AddMinio();
         builder.AddAuthenticationAndAuthorization();
+
         builder.Services.AddApplicationServices();
+        builder.Services.AddApiServices();
+
         builder.AddSwagger();
 
         builder.Services.AddEndpointsApiExplorer();
@@ -24,6 +28,7 @@ public static class Launcher
 
         app.ApplyMigrations();
         await app.ApplySeedDataAsync();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

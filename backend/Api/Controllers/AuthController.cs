@@ -1,9 +1,9 @@
 ﻿using CosmeticEnterpriseBack.Application.DTOs.Auth;
-using CosmeticEnterpriseBack.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.Constants;
+using CosmeticEnterpriseBack.Api.Services.Auth;
 
 namespace CosmeticEnterpriseBack.Api.Controllers;
 
@@ -12,10 +12,8 @@ namespace CosmeticEnterpriseBack.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/auth")]
-public class AuthController(
-    IAuthService authService,
-    IAuthCookieService authCookieService,
-    ICurrentUserService currentUser) : ControllerBase
+public class AuthController(IAuthService authService, IAuthCookieService authCookieService, ICurrentUserService currentUser) 
+: ControllerBase
 {
     private readonly IAuthService _authService = authService;
     private readonly IAuthCookieService _authCookieService = authCookieService;
