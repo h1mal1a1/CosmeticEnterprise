@@ -5,7 +5,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
-namespace CosmeticEnterpriseBack.Services.Order;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 public class OrderService(AppDbContext dbContext) : IOrderService
 {

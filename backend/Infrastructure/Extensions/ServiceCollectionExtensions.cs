@@ -12,9 +12,9 @@ using CosmeticEnterpriseBack.Infrastructure.Mappers.UnitOfMeasurement;
 using CosmeticEnterpriseBack.Mappers.UnitsOfMeasurement;
 using CosmeticEnterpriseBack.Infrastructure.Readers;
 using CosmeticEnterpriseBack.Infrastructure.Services;
-using CosmeticEnterpriseBack.Services.Order;
 using CosmeticEnterpriseBack.Application.Services.Order;
 using CosmeticEnterpriseBack.Infrastructure.Services.UserAddresses;
+using CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 
