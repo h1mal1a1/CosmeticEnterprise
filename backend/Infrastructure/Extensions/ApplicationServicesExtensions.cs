@@ -9,8 +9,8 @@ using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
 using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
 using CosmeticEnterpriseBack.Infrastructure.Services.CurrentUser;
+using CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
 using CosmeticEnterpriseBack.Services.Auth;
-using CosmeticEnterpriseBack.Services.FinishedProductImages;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 

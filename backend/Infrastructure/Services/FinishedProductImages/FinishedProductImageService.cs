@@ -3,7 +3,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 
-namespace CosmeticEnterpriseBack.Services.FinishedProductImages;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
 
 public class FinishedProductImageService : IFinishedProductImageService
 {
