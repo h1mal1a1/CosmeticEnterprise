@@ -3,6 +3,7 @@ using CosmeticEnterpriseBack.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.Constants;
 
 namespace CosmeticEnterpriseBack.Api.Controllers;
 

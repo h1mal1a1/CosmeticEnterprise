@@ -3,16 +3,13 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Domain.Enums;
 
-namespace CosmeticEnterpriseBack.Services.CurrentUser;
+namespace CosmeticEnterpriseBack.Infrastructure.Services.CurrentUser;
 
-public class CurrentUserService : ICurrentUserService
+public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
     public bool IsAuthenticated => User?.Identity?.IsAuthenticated ?? false;
-
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor) => _httpContextAccessor = httpContextAccessor;
-    
 
     public long? UserId
     {

@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Services.Auth;
+﻿namespace CosmeticEnterpriseBack.Application.Constants;
 
 public static class AuthCookieNames
 {

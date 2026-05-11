@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using CosmeticEnterpriseBack.Infrastructure.Configuration;
-using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Application.Constants;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 
