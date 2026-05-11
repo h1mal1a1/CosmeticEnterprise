@@ -1,10 +1,9 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
-using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Domain.Enums;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 

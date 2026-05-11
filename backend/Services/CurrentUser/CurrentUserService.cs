@@ -1,8 +1,7 @@
-﻿
-using System.Security.Claims;
-using CosmeticEnterpriseBack.Infrastructure.Authorization;
+﻿using System.Security.Claims;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Services.Auth;
+using CosmeticEnterpriseBack.Domain.Enums;
 
 namespace CosmeticEnterpriseBack.Services.CurrentUser;
 

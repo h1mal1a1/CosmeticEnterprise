@@ -1,4 +1,6 @@
-﻿namespace CosmeticEnterpriseBack.Infrastructure.Authorization;
+﻿using CosmeticEnterpriseBack.Domain.Enums;
+
+namespace CosmeticEnterpriseBack.Infrastructure.Authorization;
 
 public class RolePermissionMatrix
 {

@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Infrastructure.Authorization;
+﻿namespace CosmeticEnterpriseBack.Domain.Enums;
 
 public enum UserRole
 {
