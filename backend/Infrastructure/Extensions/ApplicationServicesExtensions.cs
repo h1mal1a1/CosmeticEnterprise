@@ -1,4 +1,8 @@
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.Mappers;
+using CosmeticEnterpriseBack.Application.Services;
+using CosmeticEnterpriseBack.Application.Validators;
+using CosmeticEnterpriseBack.Domain.Services;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Services.Auth;
 using CosmeticEnterpriseBack.Services.Cart;
@@ -9,19 +13,24 @@ namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 
 public static class ApplicationServiceExtensions 
 {
-    public static void AddApplicationServices(this WebApplicationBuilder builder)
+    public static void AddApplicationServices(this IServiceCollection services)
     {
-        builder.Services.AddScoped<IAuthService, AuthService>();
-        builder.Services.AddScoped<ITokenService, TokenService>();
-        builder.Services.AddScoped<IAuthCookieService, AuthCookieService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthCookieService, AuthCookieService>();
 
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
 
-        builder.Services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();
-        builder.Services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();
+        services.AddScoped<ICartService, CartService>();
 
-        builder.Services.AddCrudServices();
+        services.AddScoped<IUserAddressValidator, UserAddressValidator>();
+        services.AddScoped<UserAddressDomainService>();
+        services.AddScoped<IUserAddressMapper,UserAddressMapper>();
+        services.AddScoped<IUserAddressService, UserAddressAppService>();
+
+        services.AddCrudServices();
     }
 }

@@ -14,7 +14,7 @@ public static class Launcher
         builder.AddCors();
         builder.AddMinio();
         builder.AddAuthenticationAndAuthorization();
-        builder.AddApplicationServices();
+        builder.Services.AddApplicationServices();
         builder.AddSwagger();
 
         builder.Services.AddEndpointsApiExplorer();
