@@ -5,19 +5,12 @@ using CosmeticEnterpriseBack.Application.Authorization;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services;
 
-public class CrudServiceFactory: ICrudServiceFactory
+public class CrudServiceFactory(AppDbContext dbContext, IServiceProvider serviceProvider,
+    IAuthorizationService authorizationService) : ICrudServiceFactory
 {
-    private readonly AppDbContext _dbContext;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IAuthorizationService _authorizationService;
-
-    public CrudServiceFactory(AppDbContext dbContext, IServiceProvider serviceProvider,
-        IAuthorizationService authorizationService)
-    {
-        _dbContext = dbContext;
-        _serviceProvider = serviceProvider;
-        _authorizationService = authorizationService;
-    }
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IAuthorizationService _authorizationService = authorizationService;
 
     public ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>
         Create<TEntity, TKey, TCreateRequest, TUpdateRequest, TResponse>(ResourceType resourceType)

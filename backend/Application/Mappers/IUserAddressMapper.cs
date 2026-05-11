@@ -1,4 +1,4 @@
-using CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
+using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 using CosmeticEnterpriseBack.Domain.Entities;
 
 namespace CosmeticEnterpriseBack.Application.Mappers;

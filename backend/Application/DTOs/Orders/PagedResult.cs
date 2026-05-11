@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.Orders;
+namespace CosmeticEnterpriseBack.Application.DTOs.Orders;
 public class PagedResult<T>
 {
     public IReadOnlyCollection<T> Items { get; set; } = [];

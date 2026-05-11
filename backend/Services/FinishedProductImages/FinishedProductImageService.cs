@@ -1,8 +1,7 @@
 ﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
-using CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
-using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 
 namespace CosmeticEnterpriseBack.Services.FinishedProductImages;
 

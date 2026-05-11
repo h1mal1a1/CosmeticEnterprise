@@ -1,4 +1,4 @@
-using CosmeticEnterpriseBack.Api.DTOs.Orders;
+using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
 namespace CosmeticEnterpriseBack.Application.Interfaces;
 

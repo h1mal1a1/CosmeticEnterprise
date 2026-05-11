@@ -1,7 +1,7 @@
-using CosmeticEnterpriseBack.Api.DTOs.Common;
-using CosmeticEnterpriseBack.Api.DTOs.Orders;
+using CosmeticEnterpriseBack.Application.DTOs.Common;
 using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
 namespace CosmeticEnterpriseBack.Services.Order;
 

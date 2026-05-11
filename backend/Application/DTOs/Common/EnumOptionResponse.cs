@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.Common;
+namespace CosmeticEnterpriseBack.Application.DTOs.Common;
 
 public class EnumOptionResponse
 {

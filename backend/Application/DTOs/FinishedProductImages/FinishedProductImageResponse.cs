@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 public class FinishedProductImageResponse
 {
     public long Id { get; set; }

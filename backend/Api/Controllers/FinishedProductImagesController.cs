@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
+﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

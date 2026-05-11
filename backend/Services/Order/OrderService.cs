@@ -1,9 +1,9 @@
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
-using CosmeticEnterpriseBack.Api.DTOs.Orders;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
 namespace CosmeticEnterpriseBack.Services.Order;
 

@@ -1,4 +1,4 @@
-using CosmeticEnterpriseBack.Api.DTOs.Orders;
+using CosmeticEnterpriseBack.Application.DTOs.Orders;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

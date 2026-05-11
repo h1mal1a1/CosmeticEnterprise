@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
+using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

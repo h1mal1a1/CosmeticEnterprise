@@ -1,5 +1,5 @@
 using CosmeticEnterpriseBack.Domain.Enums;
-namespace CosmeticEnterpriseBack.Api.DTOs.Orders;
+namespace CosmeticEnterpriseBack.Application.DTOs.Orders;
 public class CreateOrderRequest
 {
     public long IdUserAddress { get; set; }

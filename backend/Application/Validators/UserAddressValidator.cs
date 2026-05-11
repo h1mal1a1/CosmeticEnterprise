@@ -1,4 +1,4 @@
-using CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
+using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 
 namespace CosmeticEnterpriseBack.Application.Validators;
 

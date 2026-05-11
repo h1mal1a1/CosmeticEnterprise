@@ -1,8 +1,8 @@
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
-using CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 
 namespace CosmeticEnterpriseBack.Services.UserAddresses;
 

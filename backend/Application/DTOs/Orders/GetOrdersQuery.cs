@@ -1,5 +1,5 @@
 using CosmeticEnterpriseBack.Domain.Enums;
-namespace CosmeticEnterpriseBack.Api.DTOs.Orders;
+namespace CosmeticEnterpriseBack.Application.DTOs.Orders;
 public class GetOrdersQuery
 {
     public int Page { get; set; } = 1;

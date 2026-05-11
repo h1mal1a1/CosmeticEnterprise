@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
+﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 
 namespace CosmeticEnterpriseBack.Application.Interfaces;
 

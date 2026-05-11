@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.Orders;
+namespace CosmeticEnterpriseBack.Application.DTOs.Orders;
 public class OrderItemResponse
 {
     public long Id { get; set; }

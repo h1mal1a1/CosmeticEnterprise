@@ -1,10 +1,10 @@
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.Mappers;
 using CosmeticEnterpriseBack.Application.Validators;
-using CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Domain.Interfaces;
 using CosmeticEnterpriseBack.Domain.Services;
+using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 
 namespace CosmeticEnterpriseBack.Application.Services;
 

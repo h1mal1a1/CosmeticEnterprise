@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
+namespace CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 public class UpdateUserAddressRequest
 {
     public string RecipientName { get; set; } = string.Empty;

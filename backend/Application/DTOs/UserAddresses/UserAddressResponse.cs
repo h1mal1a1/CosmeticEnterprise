@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.UserAddresses;
+namespace CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 public class UserAddressResponse
 {
     public long Id { get; set; }

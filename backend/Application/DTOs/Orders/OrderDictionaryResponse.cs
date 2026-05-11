@@ -1,5 +1,6 @@
-using CosmeticEnterpriseBack.Api.DTOs.Common;
-namespace CosmeticEnterpriseBack.Api.DTOs.Orders;
+using CosmeticEnterpriseBack.Application.DTOs.Common;
+
+namespace CosmeticEnterpriseBack.Application.DTOs.Orders;
 public class OrderDictionariesResponse
 {
     public IReadOnlyCollection<EnumOptionResponse> OrderStatuses { get; set; } = [];
