@@ -1,4 +1,5 @@
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.Models.Orders;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
@@ -104,4 +105,81 @@ public class OrderStockService(AppDbContext dbContext) : IOrderStockService
             }
         }
     }
+
+    public async Task<OrderStockReservationResult> ReserveCartItemsAsync(
+    IReadOnlyCollection<ShoppingCartItem> cartItems,
+    CancellationToken cancellationToken)
+{
+    var cartItemProductIds = cartItems
+        .Select(x => x.IdFinishedProduct)
+        .Distinct()
+        .ToList();
+
+    var products = await dbContext.FinishedProducts
+        .Where(x => cartItemProductIds.Contains(x.Id))
+        .ToDictionaryAsync(x => x.Id, cancellationToken);
+
+    var leftovers = await dbContext.LeftoversInWarehouses
+        .Where(x => cartItemProductIds.Contains(x.IdFinishedProduct))
+        .ToListAsync(cancellationToken);
+
+    decimal totalAmount = 0m;
+    var orderItems = new List<OrderItems>();
+
+    foreach (var cartItem in cartItems)
+    {
+        if (!products.TryGetValue(cartItem.IdFinishedProduct, out var product))
+            throw new KeyNotFoundException(
+                $"Finished product with id {cartItem.IdFinishedProduct} not found.");
+
+        var productLeftovers = leftovers
+            .Where(x => x.IdFinishedProduct == cartItem.IdFinishedProduct)
+            .OrderBy(x => x.Id)
+            .ToList();
+
+        var availableQuantity = productLeftovers.Sum(x => x.Quantity - x.ReservedQuantity);
+
+        if (availableQuantity < cartItem.Quantity)
+        {
+            throw new InvalidOperationException(
+                $"Not enough stock for product '{product.Name}'. Available: {availableQuantity}, requested: {cartItem.Quantity}.");
+        }
+
+        var quantityToReserve = cartItem.Quantity;
+
+        foreach (var leftover in productLeftovers)
+        {
+            var freeQuantity = leftover.Quantity - leftover.ReservedQuantity;
+
+            if (freeQuantity <= 0)
+                continue;
+
+            var reserveFromCurrent = Math.Min(freeQuantity, quantityToReserve);
+            leftover.ReservedQuantity += reserveFromCurrent;
+            quantityToReserve -= reserveFromCurrent;
+
+            if (quantityToReserve == 0)
+                break;
+        }
+
+        var unitPrice = product.Price;
+        var lineTotal = unitPrice * cartItem.Quantity;
+
+        totalAmount += lineTotal;
+
+        orderItems.Add(new OrderItems
+        {
+            IdFinishedProduct = cartItem.IdFinishedProduct,
+            Quantity = cartItem.Quantity,
+            UnitPrice = unitPrice,
+            LineTotal = lineTotal
+        });
+    }
+
+    return new OrderStockReservationResult
+    {
+        TotalAmount = totalAmount,
+        OrderItems = orderItems
+    };
+}
 }

@@ -42,77 +42,13 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
         if (cart is null || cart.Items.Count == 0)
             throw new InvalidOperationException("Shopping cart is empty.");
 
-        var cartItemProductIds = cart.Items
-            .Select(x => x.IdFinishedProduct)
-            .Distinct()
-            .ToList();
-
-        var products = await dbContext.FinishedProducts
-            .Where(x => cartItemProductIds.Contains(x.Id))
-            .ToDictionaryAsync(x => x.Id, cancellationToken);
-
-        var leftovers = await dbContext.LeftoversInWarehouses
-            .Where(x => cartItemProductIds.Contains(x.IdFinishedProduct))
-            .ToListAsync(cancellationToken);
-
         var now = DateTime.UtcNow;
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            decimal totalAmount = 0m;
-            var orderItems = new List<OrderItems>();
-
-            foreach (var cartItem in cart.Items)
-            {
-                if (!products.TryGetValue(cartItem.IdFinishedProduct, out var product))
-                    throw new KeyNotFoundException(
-                        $"Finished product with id {cartItem.IdFinishedProduct} not found.");
-
-                var productLeftovers = leftovers
-                    .Where(x => x.IdFinishedProduct == cartItem.IdFinishedProduct)
-                    .OrderBy(x => x.Id)
-                    .ToList();
-
-                var availableQuantity = productLeftovers.Sum(x => x.Quantity - x.ReservedQuantity);
-
-                if (availableQuantity < cartItem.Quantity)
-                {
-                    throw new InvalidOperationException(
-                        $"Not enough stock for product '{product.Name}'. Available: {availableQuantity}, requested: {cartItem.Quantity}.");
-                }
-
-                var quantityToReserve = cartItem.Quantity;
-
-                foreach (var leftover in productLeftovers)
-                {
-                    var freeQuantity = leftover.Quantity - leftover.ReservedQuantity;
-
-                    if (freeQuantity <= 0)
-                        continue;
-
-                    var reserveFromCurrent = Math.Min(freeQuantity, quantityToReserve);
-                    leftover.ReservedQuantity += reserveFromCurrent;
-                    quantityToReserve -= reserveFromCurrent;
-
-                    if (quantityToReserve == 0)
-                        break;
-                }
-
-                var unitPrice = product.Price;
-                var lineTotal = unitPrice * cartItem.Quantity;
-
-                totalAmount += lineTotal;
-
-                orderItems.Add(new OrderItems
-                {
-                    IdFinishedProduct = cartItem.IdFinishedProduct,
-                    Quantity = cartItem.Quantity,
-                    UnitPrice = unitPrice,
-                    LineTotal = lineTotal
-                });
-            }
+            var reservation = await orderStockService.ReserveCartItemsAsync([.. cart.Items], cancellationToken);
 
             var orderStatus = OrderStatus.Created;
 
@@ -126,12 +62,12 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
                 PaymentType = request.PaymentType,
                 PaymentMethod = request.PaymentMethod,
                 PaymentStatus = PaymentStatus.Pending,
-                TotalAmount = totalAmount,
+                TotalAmount = reservation.TotalAmount,
                 DeliveryPrice = 0m,
                 Comment = request.Comment,
                 CreatedAtUtc = now,
                 UpdatedAtUtc = now,
-                OrderItemsList = orderItems
+                OrderItemsList = [.. reservation.OrderItems]
             };
 
             dbContext.Orders.Add(order);
