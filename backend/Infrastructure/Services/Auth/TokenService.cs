@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using CosmeticEnterpriseBack.Infrastructure.Configuration;
 using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.Configuration;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 

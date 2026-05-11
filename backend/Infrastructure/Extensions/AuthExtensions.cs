@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using CosmeticEnterpriseBack.Infrastructure.Configuration;
 using CosmeticEnterpriseBack.Application.Constants;
+using CosmeticEnterpriseBack.Application.Configuration;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 

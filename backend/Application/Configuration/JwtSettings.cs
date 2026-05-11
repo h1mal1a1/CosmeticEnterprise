@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Infrastructure.Configuration;
+﻿namespace CosmeticEnterpriseBack.Application.Configuration;
 
 public class JwtSettings
 {
