@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Domain.Enums;
+﻿using CosmeticEnterpriseBack.Application.Authorization;
+using CosmeticEnterpriseBack.Domain.Enums;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Authorization;
 

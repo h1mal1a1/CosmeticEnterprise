@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Application.Interfaces;
+﻿using CosmeticEnterpriseBack.Application.Authorization;
+using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Authorization;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;

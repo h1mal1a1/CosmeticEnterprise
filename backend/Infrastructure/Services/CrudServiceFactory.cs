@@ -1,8 +1,7 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
-using Microsoft.EntityFrameworkCore;
-using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+﻿using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+using CosmeticEnterpriseBack.Application.Authorization;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services;
 

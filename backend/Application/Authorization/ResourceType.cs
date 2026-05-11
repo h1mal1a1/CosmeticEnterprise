@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Infrastructure.Authorization;
+﻿namespace CosmeticEnterpriseBack.Application.Authorization;
 
 public enum ResourceType
 {

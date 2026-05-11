@@ -1,11 +1,11 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
-using CosmeticEnterpriseBack.Api.Controllers.Base;
+﻿using CosmeticEnterpriseBack.Api.Controllers.Base;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CosmeticEnterpriseBack.Application.Authorization;
 
 namespace CosmeticEnterpriseBack.Api.Controllers;
 

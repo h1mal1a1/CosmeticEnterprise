@@ -2,6 +2,7 @@
 using CosmeticEnterpriseBack.Application.Exceptions;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Application.Authorization;
 
 namespace CosmeticEnterpriseBack.Services.Auth;
 

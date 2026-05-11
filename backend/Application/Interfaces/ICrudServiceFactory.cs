@@ -1,7 +1,5 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
-
+﻿using CosmeticEnterpriseBack.Application.Authorization;
 namespace CosmeticEnterpriseBack.Application.Interfaces;
-
 public interface ICrudServiceFactory
 {
     ICrudService<TResponse, TCreateRequest, TUpdateRequest, TKey>

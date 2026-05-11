@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Authorization;
+﻿using CosmeticEnterpriseBack.Application.Authorization;
+using CosmeticEnterpriseBack.Infrastructure.Authorization;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Interfaces;
 
