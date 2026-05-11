@@ -60,6 +60,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOrderReadService, OrderReadService>();
         services.AddScoped<IOrderStatusUpdateService, OrderStatusUpdateService>();
         services.AddScoped<IOrderCancellationService, OrderCancellationService>();
+        services.AddScoped<IOrderCreationService, OrderCreationService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserAddressService, UserAddressService>();
 
