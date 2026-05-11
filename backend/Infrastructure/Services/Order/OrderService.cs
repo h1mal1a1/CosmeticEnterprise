@@ -4,10 +4,11 @@ using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
+using CosmeticEnterpriseBack.Application.Mappers;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
-public class OrderService(AppDbContext dbContext) : IOrderService
+public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
@@ -170,7 +171,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         return new PagedResult<OrderListItemResponse>
         {
-            Items = orders.Select(MapToListItemResponse).ToList(),
+            Items = orders.Select(orderMapper.ToListItemResponse).ToList(),
             Page = query.Page,
             PageSize = query.PageSize,
             TotalCount = totalCount,
@@ -193,7 +194,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         if (order is null)
             throw new KeyNotFoundException("Order not found.");
 
-        return MapToResponse(order);
+        return orderMapper.ToResponse(order);
     }
 
     public async Task<OrderResponse> CancelMyOrderAsync(long userId, long orderId, CancellationToken cancellationToken)
@@ -211,7 +212,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             throw new KeyNotFoundException("Order not found.");
 
         if (order.OrderStatus == OrderStatus.Cancelled)
-            return MapToResponse(order);
+            return orderMapper.ToResponse(order);
 
         if (order.OrderStatus == OrderStatus.Completed)
             throw new InvalidOperationException("Completed order cannot be cancelled.");
@@ -229,7 +230,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            return MapToResponse(order);
+            return orderMapper.ToResponse(order);
         }
         catch
         {
@@ -260,7 +261,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         return new PagedResult<OrderListItemResponse>
         {
-            Items = orders.Select(MapToListItemResponse).ToList(),
+            Items = orders.Select(orderMapper.ToListItemResponse).ToList(),
             Page = query.Page,
             PageSize = query.PageSize,
             TotalCount = totalCount,
@@ -281,7 +282,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         if (order is null)
             throw new KeyNotFoundException("Order not found.");
 
-        return MapToResponse(order);
+        return orderMapper.ToResponse(order);
     }
 
     public async Task<OrderResponse> UpdateOrderStatusesAsync(long orderId, UpdateOrderStatusesRequest request, CancellationToken cancellationToken)
@@ -324,7 +325,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            return MapToResponse(order);
+            return orderMapper.ToResponse(order);
         }
         catch
         {
@@ -458,82 +459,6 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         if (query.PageSize > 100)
             query.PageSize = 100;
-    }
-
-    private static OrderListItemResponse MapToListItemResponse(Orders order)
-    {
-        return new OrderListItemResponse
-        {
-            Id = order.Id,
-            IdUser = order.IdUser,
-            Username = order.User.Username,
-            IdUserAddress = order.IdUserAddress,
-            IdSalesChannel = order.IdSalesChannel,
-            OrderStatus = order.OrderStatus,
-            DeliveryStatus = order.DeliveryStatus,
-            PaymentType = order.PaymentType,
-            PaymentMethod = order.PaymentMethod,
-            PaymentStatus = order.PaymentStatus,
-            TotalAmount = order.TotalAmount,
-            DeliveryPrice = order.DeliveryPrice,
-            TotalItemsQuantity = order.OrderItemsList.Sum(x => x.Quantity),
-            CreatedAtUtc = order.CreatedAtUtc,
-            UpdatedAtUtc = order.UpdatedAtUtc
-        };
-    }
-
-    private static OrderResponse MapToResponse(Orders order)
-    {
-        return new OrderResponse
-        {
-            Id = order.Id,
-            IdUser = order.IdUser,
-            Username = order.User.Username,
-            IdUserAddress = order.IdUserAddress,
-            IdSalesChannel = order.IdSalesChannel,
-            DeliveryAddress = FormatAddress(order.UserAddress),
-            OrderStatus = order.OrderStatus,
-            DeliveryStatus = order.DeliveryStatus,
-            PaymentType = order.PaymentType,
-            PaymentMethod = order.PaymentMethod,
-            PaymentStatus = order.PaymentStatus,
-            TotalAmount = order.TotalAmount,
-            DeliveryPrice = order.DeliveryPrice,
-            Comment = order.Comment,
-            CreatedAtUtc = order.CreatedAtUtc,
-            UpdatedAtUtc = order.UpdatedAtUtc,
-            Items = order.OrderItemsList
-                .OrderBy(x => x.Id)
-                .Select(x => new OrderItemResponse
-                {
-                    Id = x.Id,
-                    IdFinishedProduct = x.IdFinishedProduct,
-                    ProductName = x.FinishedProducts.Name,
-                    Quantity = x.Quantity,
-                    UnitPrice = x.UnitPrice,
-                    LineTotal = x.LineTotal
-                })
-                .ToList()
-        };
-    }
-
-    private static string FormatAddress(UserAddress address)
-    {
-        var parts = new List<string>
-        {
-            address.Country,
-            address.City,
-            address.Street,
-            address.House
-        };
-
-        if (!string.IsNullOrWhiteSpace(address.Apartment))
-            parts.Add($"кв./офис {address.Apartment}");
-
-        if (!string.IsNullOrWhiteSpace(address.PostalCode))
-            parts.Add($"индекс {address.PostalCode}");
-
-        return string.Join(", ", parts.Where(x => !string.IsNullOrWhiteSpace(x)));
     }
 
     private static void ValidateReturnUrl(string? returnUrl)

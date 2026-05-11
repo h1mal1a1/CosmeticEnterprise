@@ -15,6 +15,7 @@ using CosmeticEnterpriseBack.Infrastructure.Services;
 using CosmeticEnterpriseBack.Application.Services.Order;
 using CosmeticEnterpriseBack.Infrastructure.Services.UserAddresses;
 using CosmeticEnterpriseBack.Infrastructure.Services.Order;
+using CosmeticEnterpriseBack.Application.Mappers;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
 
@@ -53,6 +54,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped(typeof(IEntityReader<,>), typeof(EntityReader<,>));
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderMapper, OrderMapper>();
         services.AddScoped<IOrderDictionaryService, OrderDictionaryService>();
         services.AddScoped<IUserAddressService, UserAddressService>();
 
