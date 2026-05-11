@@ -3,7 +3,7 @@ using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
-namespace CosmeticEnterpriseBack.Services.Order;
+namespace CosmeticEnterpriseBack.Application.Services.Order;
 
 public class OrderDictionaryService : IOrderDictionaryService
 {
