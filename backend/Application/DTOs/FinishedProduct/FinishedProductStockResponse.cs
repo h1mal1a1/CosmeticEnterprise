@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
+namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
 public class FinishedProductStockResponse
 {
     public long Id { get; set; }
