@@ -53,9 +53,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCrudServices(this IServiceCollection services)
     {
         services.AddScoped(typeof(IEntityReader<,>), typeof(EntityReader<,>));
-        services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IOrderMapper, OrderMapper>();
         services.AddScoped<IOrderDictionaryService, OrderDictionaryService>();
+        services.AddScoped<IOrderStockService, OrderStockService>();
+        services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserAddressService, UserAddressService>();
 
         AddFP(services);
