@@ -1,7 +1,7 @@
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.DTOs.Orders;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
+namespace CosmeticEnterpriseBack.Application.Services.Order;
 
 public class OrderService(IOrderCreationService orderCreationService, IOrderReadService orderReadService,
     IOrderCancellationService orderCancellationService, IOrderStatusUpdateService orderStatusUpdateService) 
