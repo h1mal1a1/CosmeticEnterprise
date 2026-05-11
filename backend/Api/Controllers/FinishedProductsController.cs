@@ -1,5 +1,4 @@
 ﻿using CosmeticEnterpriseBack.Api.Controllers.Base;
-using CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
 using CosmeticEnterpriseBack.Application.Authorization;
 using CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
 using CosmeticEnterpriseBack.Application.Interfaces;

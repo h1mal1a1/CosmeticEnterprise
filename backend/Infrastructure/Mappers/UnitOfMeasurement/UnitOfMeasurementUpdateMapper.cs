@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.UnitOfMeasurement;
+﻿using CosmeticEnterpriseBack.Application.DTOs.UnitOfMeasurement;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 
 namespace CosmeticEnterpriseBack.Mappers.UnitsOfMeasurement;

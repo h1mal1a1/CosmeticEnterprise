@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.Recipe;
+﻿using CosmeticEnterpriseBack.Application.DTOs.Recipe;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 

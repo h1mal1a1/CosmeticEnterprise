@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
+namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
 public class UpdateFinishedProductRequest
 {
     [Required]

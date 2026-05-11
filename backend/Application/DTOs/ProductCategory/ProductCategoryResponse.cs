@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.ProductCategory;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.ProductCategory;
 public class ProductCategoryResponse
 {
     public long Id { get; set; }

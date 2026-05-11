@@ -1,5 +1,5 @@
 ﻿using CosmeticEnterpriseBack.Api.Controllers.Base;
-using CosmeticEnterpriseBack.Api.DTOs.Recipe;
+using CosmeticEnterpriseBack.Application.DTOs.Recipe;
 using CosmeticEnterpriseBack.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

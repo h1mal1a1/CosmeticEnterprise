@@ -1,5 +1,5 @@
 ﻿using CosmeticEnterpriseBack.Api.Controllers.Base;
-using CosmeticEnterpriseBack.Api.DTOs.UnitOfMeasurement;
+using CosmeticEnterpriseBack.Application.DTOs.UnitOfMeasurement;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.UnitOfMeasurement;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.UnitOfMeasurement;
 
 public class CreateUnitOfMeasurementRequest
 {

@@ -1,4 +1,4 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.ProductCategory;
+﻿using CosmeticEnterpriseBack.Application.DTOs.ProductCategory;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 

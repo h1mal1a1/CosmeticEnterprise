@@ -1,7 +1,7 @@
-﻿using CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
-using CosmeticEnterpriseBack.Api.DTOs.ProductCategory;
-using CosmeticEnterpriseBack.Api.DTOs.Recipe;
-using CosmeticEnterpriseBack.Api.DTOs.UnitOfMeasurement;
+﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
+using CosmeticEnterpriseBack.Application.DTOs.ProductCategory;
+using CosmeticEnterpriseBack.Application.DTOs.Recipe;
+using CosmeticEnterpriseBack.Application.DTOs.UnitOfMeasurement;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Application.Interfaces;

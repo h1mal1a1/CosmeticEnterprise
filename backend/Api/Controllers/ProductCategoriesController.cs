@@ -1,9 +1,9 @@
 ﻿using CosmeticEnterpriseBack.Api.Controllers.Base;
-using CosmeticEnterpriseBack.Api.DTOs.ProductCategory;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CosmeticEnterpriseBack.Application.Authorization;
+using CosmeticEnterpriseBack.Application.DTOs.ProductCategory;
 
 namespace CosmeticEnterpriseBack.Api.Controllers;
 

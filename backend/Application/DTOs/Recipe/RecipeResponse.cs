@@ -1,4 +1,4 @@
-﻿namespace CosmeticEnterpriseBack.Api.DTOs.Recipe;
+﻿namespace CosmeticEnterpriseBack.Application.DTOs.Recipe;
 public class RecipeResponse
 {
     public long Id { get; set; }

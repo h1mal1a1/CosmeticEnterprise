@@ -1,5 +1,5 @@
 ﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
-namespace CosmeticEnterpriseBack.Api.DTOs.FinishedProduct;
+namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
 public class FinishedProductResponse
 {
     public long Id { get; set; }
