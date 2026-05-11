@@ -55,6 +55,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IEntityReader<,>), typeof(EntityReader<,>));
         services.AddScoped<IOrderMapper, OrderMapper>();
         services.AddScoped<IOrderDictionaryService, OrderDictionaryService>();
+        services.AddScoped<IOrderQueryBuilder, OrderQueryBuilder>();
         services.AddScoped<IOrderStockService, OrderStockService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserAddressService, UserAddressService>();

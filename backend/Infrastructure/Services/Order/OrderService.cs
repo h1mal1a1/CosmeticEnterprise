@@ -10,7 +10,8 @@ using CosmeticEnterpriseBack.Application.Validators;
 namespace CosmeticEnterpriseBack.Infrastructure.Services.Order;
 
 public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrderStockService orderStockService,
-    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator) : IOrderService
+    IOrderStatusTransitionValidator orderStatusTransitionValidator, IOrderReturnUrlValidator orderReturnUrlValidator, 
+    IOrderQueryBuilder orderQueryBuilder) : IOrderService
 {
     private const string WebsiteSalesChannelName = "Website";
 
@@ -152,7 +153,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
 
     public async Task<PagedResult<OrderListItemResponse>> GetMyOrdersAsync(long userId, GetOrdersQuery query, CancellationToken cancellationToken)
     {
-        NormalizeQuery(query);
+        orderQueryBuilder.Normalize(query);
 
         var ordersQuery = dbContext.Orders
             .AsNoTracking()
@@ -161,7 +162,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
             .Where(x => x.IdUser == userId)
             .AsQueryable();
 
-        ordersQuery = ApplyFilters(ordersQuery, query, allowUserFilter: false);
+        ordersQuery = orderQueryBuilder.ApplyFilters(ordersQuery, query, allowUserFilter: false);
 
         var totalCount = await ordersQuery.CountAsync(cancellationToken);
 
@@ -243,7 +244,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
 
     public async Task<PagedResult<OrderListItemResponse>> GetAllOrdersAsync(GetOrdersQuery query, CancellationToken cancellationToken)
     {
-        NormalizeQuery(query);
+        orderQueryBuilder.Normalize(query);
 
         var ordersQuery = dbContext.Orders
             .AsNoTracking()
@@ -251,7 +252,7 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
             .Include(x => x.OrderItemsList)
             .AsQueryable();
 
-        ordersQuery = ApplyFilters(ordersQuery, query, allowUserFilter: true);
+        ordersQuery = orderQueryBuilder.ApplyFilters(ordersQuery, query, allowUserFilter: true);
 
         var totalCount = await ordersQuery.CountAsync(cancellationToken);
 
@@ -334,34 +335,5 @@ public class OrderService(AppDbContext dbContext, IOrderMapper orderMapper, IOrd
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
-    }
-
-    private static IQueryable<Orders> ApplyFilters(IQueryable<Orders> queryable, GetOrdersQuery query, bool allowUserFilter)
-    {
-        if (query.OrderStatus.HasValue)
-            queryable = queryable.Where(x => x.OrderStatus == query.OrderStatus.Value);
-
-        if (query.DeliveryStatus.HasValue)
-            queryable = queryable.Where(x => x.DeliveryStatus == query.DeliveryStatus.Value);
-
-        if (query.PaymentStatus.HasValue)
-            queryable = queryable.Where(x => x.PaymentStatus == query.PaymentStatus.Value);
-
-        if (allowUserFilter && query.IdUser.HasValue)
-            queryable = queryable.Where(x => x.IdUser == query.IdUser.Value);
-
-        return queryable;
-    }
-
-    private static void NormalizeQuery(GetOrdersQuery query)
-    {
-        if (query.Page <= 0)
-            query.Page = 1;
-
-        if (query.PageSize <= 0)
-            query.PageSize = 20;
-
-        if (query.PageSize > 100)
-            query.PageSize = 100;
     }
 }
