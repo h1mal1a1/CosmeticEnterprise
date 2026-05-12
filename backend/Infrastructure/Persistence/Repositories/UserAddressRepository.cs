@@ -2,7 +2,6 @@ using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Domain.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
 
@@ -70,6 +69,6 @@ public class UserAddressRepository(AppDbContext db) : IUserAddressRepository
     public Task SaveChangesAsync(CancellationToken ct = default) => db.SaveChangesAsync(ct);
 
     /// <inheritdoc cref="IUserAddressRepository.BeginTransactionAsync"/>
-    public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default) =>
+    public Task BeginTransactionAsync(CancellationToken ct = default) =>
         db.Database.BeginTransactionAsync(ct);
 }

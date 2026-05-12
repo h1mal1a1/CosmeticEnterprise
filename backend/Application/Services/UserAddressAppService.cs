@@ -8,12 +8,10 @@ using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 
 namespace CosmeticEnterpriseBack.Application.Services;
 
-public class UserAddressAppService(
-    IUserAddressRepository repository,
-    IUnitOfWork unitOfWork,
-    IUserAddressValidator validator,
-    IUserAddressMapper mapper,
-    UserAddressDomainService domainService) : IUserAddressService
+public class UserAddressAppService(IUserAddressRepository repository,
+    IUnitOfWork unitOfWork, IUserAddressValidator validator,
+    IUserAddressMapper mapper, UserAddressDomainService domainService) 
+    : IUserAddressService
 {
     public async Task<IReadOnlyCollection<UserAddressResponse>> GetMyAddressesAsync(long userId, CancellationToken cancellationToken)
     {
@@ -35,7 +33,7 @@ public class UserAddressAppService(
         var existingAddresses = await repository.GetByUserIdAsync(userId, cancellationToken);
         var now = DateTime.UtcNow;
 
-        await using var tx = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             var address = new UserAddress
@@ -80,7 +78,7 @@ public class UserAddressAppService(
         var existingAddresses = await repository.GetByUserIdAsync(userId, cancellationToken);
         var now = DateTime.UtcNow;
 
-        await using var tx = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             address.RecipientName = request.RecipientName.Trim();
@@ -122,7 +120,7 @@ public class UserAddressAppService(
             .Where(a => a.Id != addressId)
             .ToList();
 
-        await using var tx = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             await repository.RemoveAsync(address, cancellationToken);
@@ -147,7 +145,7 @@ public class UserAddressAppService(
         if (address.IsDefault) return mapper.ToResponse(address);
 
         var now = DateTime.UtcNow;
-        await using var tx = await unitOfWork.BeginTransactionAsync(cancellationToken);
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             await repository.SetDefaultFalseForUserAsync(userId, now, cancellationToken);

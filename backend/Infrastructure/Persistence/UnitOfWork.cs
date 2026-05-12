@@ -8,10 +8,9 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default)
+    public async Task BeginTransactionAsync(CancellationToken ct = default)
     {
         _transaction = await context.Database.BeginTransactionAsync(ct);
-        return _transaction;
     }
 
     public async Task CommitAsync(CancellationToken ct = default)

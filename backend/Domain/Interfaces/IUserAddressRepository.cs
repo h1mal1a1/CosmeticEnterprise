@@ -1,5 +1,4 @@
 using CosmeticEnterpriseBack.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CosmeticEnterpriseBack.Domain.Interfaces;
 
@@ -68,5 +67,5 @@ public interface IUserAddressRepository
     /// <summary>
     /// Открывает транзакцию БД. Нужна для атомарного выполнения нескольких операций (например: снять дефолт → добавить новый → сохранить).
     /// </summary>
-    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct);
+    Task BeginTransactionAsync(CancellationToken ct);
 }

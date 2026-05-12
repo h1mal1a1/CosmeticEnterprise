@@ -29,4 +29,12 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="Domain\CosmeticEnterpriseBack.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Domain\**\*.cs" />
+    </ItemGroup>
+
 </Project>
