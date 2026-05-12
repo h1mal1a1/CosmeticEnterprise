@@ -1,7 +1,7 @@
-﻿using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 using CosmeticEnterpriseBack.Application.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
 
@@ -48,7 +48,7 @@ public class FinishedProductImageService : IFinishedProductImageService
 
         foreach (var file in request.Files)
         {
-            if (file is null || file.Length == 0)
+            if (file.Length == 0)
                 continue;
 
             if (!AllowedContentTypes.Contains(file.ContentType))
@@ -62,10 +62,8 @@ public class FinishedProductImageService : IFinishedProductImageService
             var extension = GetExtension(file.ContentType);
             var objectKey = $"products/{finishedProductId}/{Guid.NewGuid():N}{extension}";
 
-            await using var stream = file.OpenReadStream();
-
             await _objectStorageService.UploadAsync(
-                stream,
+                file.FileStream,
                 objectKey,
                 file.ContentType,
                 file.Length,

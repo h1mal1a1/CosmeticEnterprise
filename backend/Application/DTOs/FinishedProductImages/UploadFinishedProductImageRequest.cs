@@ -1,5 +1,6 @@
 ﻿namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
+
 public class UploadFinishedProductImageRequest
 {
-    public List<IFormFile> Files { get; set; } = [];
+    public IReadOnlyCollection<UploadFinishedProductImageFileRequest> Files { get; init; } = [];
 }

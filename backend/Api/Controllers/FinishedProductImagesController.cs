@@ -1,4 +1,5 @@
-﻿using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
+﻿using CosmeticEnterpriseBack.Api.DTOs.FinishedProductImages;
+using CosmeticEnterpriseBack.Application.DTOs.FinishedProductImages;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +15,53 @@ public class FinishedProductImagesController(IFinishedProductImageService finish
 
     [HttpPost]
     [Consumes("multipart/form-data")]
-    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> Upload([FromRoute] long finishedProductId,
-        [FromForm] UploadFinishedProductImageRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> Upload(
+        [FromRoute] long finishedProductId,
+        [FromForm] UploadFinishedProductImageFormRequest request,
+        CancellationToken cancellationToken)
     {
-        var result = await _finishedProductImageService.UploadAsync(
-            finishedProductId,
-            request,
-            cancellationToken);
+        var openedStreams = new List<Stream>();
 
-        return Ok(result);
+        try
+        {
+            var applicationRequest = new UploadFinishedProductImageRequest
+            {
+                Files = request.Files
+                    .Select(file =>
+                    {
+                        var stream = file.OpenReadStream();
+                        openedStreams.Add(stream);
+
+                        return new UploadFinishedProductImageFileRequest
+                        {
+                            FileStream = stream,
+                            FileName = file.FileName,
+                            ContentType = file.ContentType,
+                            Length = file.Length
+                        };
+                    })
+                    .ToList()
+            };
+
+            var result = await _finishedProductImageService.UploadAsync(
+                finishedProductId,
+                applicationRequest,
+                cancellationToken);
+
+            return Ok(result);
+        }
+        finally
+        {
+            foreach (var stream in openedStreams)
+                stream.Dispose();
+        }
     }
 
     [HttpPatch("{imageId:long}/main")]
-    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> SetMain([FromRoute] long finishedProductId,
-        [FromRoute] long imageId, CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<FinishedProductImageResponse>>> SetMain(
+        [FromRoute] long finishedProductId,
+        [FromRoute] long imageId,
+        CancellationToken cancellationToken)
     {
         var result = await _finishedProductImageService.SetMainAsync(
             finishedProductId,
@@ -38,7 +72,10 @@ public class FinishedProductImagesController(IFinishedProductImageService finish
     }
 
     [HttpDelete("{imageId:long}")]
-    public async Task<IActionResult> Delete([FromRoute] long finishedProductId, [FromRoute] long imageId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(
+        [FromRoute] long finishedProductId,
+        [FromRoute] long imageId,
+        CancellationToken cancellationToken)
     {
         await _finishedProductImageService.DeleteAsync(
             finishedProductId,

@@ -31,10 +31,12 @@
 
     <ItemGroup>
       <ProjectReference Include="Domain\CosmeticEnterpriseBack.Domain.csproj" />
+      <ProjectReference Include="Application\CosmeticEnterpriseBack.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Compile Remove="Domain\**\*.cs" />
+        <Compile Remove="Application\**\*.cs" />
     </ItemGroup>
 
 </Project>
