@@ -2,7 +2,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Application.Mappers;
 using CosmeticEnterpriseBack.Application.Validators;
 using CosmeticEnterpriseBack.Domain.Entities;
-using CosmeticEnterpriseBack.Domain.Interfaces;
+using CosmeticEnterpriseBack.Application.Interfaces.Persistence;
 using CosmeticEnterpriseBack.Domain.Services;
 using CosmeticEnterpriseBack.Application.DTOs.UserAddresses;
 

@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Domain.Interfaces;
+namespace CosmeticEnterpriseBack.Application.Interfaces.Persistence;
 
 public interface IUnitOfWork
 {

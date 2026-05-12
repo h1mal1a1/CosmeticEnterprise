@@ -1,5 +1,5 @@
 using CosmeticEnterpriseBack.Domain.Entities;
-using CosmeticEnterpriseBack.Domain.Interfaces;
+using CosmeticEnterpriseBack.Application.Interfaces.Persistence;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 

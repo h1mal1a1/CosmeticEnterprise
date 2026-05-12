@@ -1,6 +1,6 @@
 using CosmeticEnterpriseBack.Domain.Entities;
 
-namespace CosmeticEnterpriseBack.Domain.Interfaces;
+namespace CosmeticEnterpriseBack.Application.Interfaces.Persistence;
 
 /// <summary>
 /// Контракт доступа к адресам пользователей.
