@@ -6,6 +6,7 @@ using CosmeticEnterpriseBack.Application.UseCases.FinishedProducts.UpdateStock;
 using CosmeticEnterpriseBack.Application.Validators;
 using CosmeticEnterpriseBack.Domain.Services;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
+using CosmeticEnterpriseBack.Infrastructure.Persistence;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
 using CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
@@ -35,6 +36,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<UserAddressDomainService>();
         services.AddScoped<IUserAddressMapper, UserAddressMapper>();
         services.AddScoped<IUserAddressService, UserAddressAppService>();
+        services.AddScoped<IUserAddressRepository, UserAddressRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IUpdateFinishedProductStockUseCase, UpdateFinishedProductStockUseCase>();
         services.AddScoped<IFinishedProductStockRepository, FinishedProductStockRepository>();
