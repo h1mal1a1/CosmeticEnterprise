@@ -15,21 +15,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="photos\**\*.*">
+        <Content Include="..\photos\**\*.*">
+            <Link>photos\%(RecursiveDir)%(Filename)%(Extension)</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="Application\CosmeticEnterpriseBack.Application.csproj" />
-        <ProjectReference Include="Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Remove="Domain\**\*.cs" />
-        <Compile Remove="Application\**\*.cs" />
-        <Compile Remove="Infrastructure\**\*.cs" />
+        <ProjectReference Include="..\Domain\CosmeticEnterpriseBack.Domain.csproj" />
+        <ProjectReference Include="..\Application\CosmeticEnterpriseBack.Application.csproj" />
+        <ProjectReference Include="..\Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
