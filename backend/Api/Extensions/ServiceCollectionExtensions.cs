@@ -17,7 +17,7 @@ using CosmeticEnterpriseBack.Infrastructure.Services.UserAddresses;
 using CosmeticEnterpriseBack.Infrastructure.Services.Order;
 using CosmeticEnterpriseBack.Application.Mappers;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {

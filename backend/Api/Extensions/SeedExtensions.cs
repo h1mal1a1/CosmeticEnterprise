@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Domain.Enums;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class SeedExtensions
 {

@@ -10,10 +10,9 @@ using CosmeticEnterpriseBack.Infrastructure.Persistence;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
 using CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
-using CosmeticEnterpriseBack.Infrastructure.Services.CurrentUser;
 using CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class ApplicationServiceExtensions 
 {
@@ -22,8 +21,6 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenService, TokenService>();
 
-        services.AddHttpContextAccessor();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
 
         services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();

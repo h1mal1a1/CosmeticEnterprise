@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Doma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Application", "Application\CosmeticEnterpriseBack.Application.csproj", "{D1B57904-93F1-4BA7-A75C-38938054A37B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Infrastructure", "Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj", "{D4C44F89-9091-4C3C-9A79-1083983E79E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{D1B57904-93F1-4BA7-A75C-38938054A37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1B57904-93F1-4BA7-A75C-38938054A37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1B57904-93F1-4BA7-A75C-38938054A37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

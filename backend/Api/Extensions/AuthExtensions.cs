@@ -5,7 +5,7 @@ using System.Text;
 using CosmeticEnterpriseBack.Application.Constants;
 using CosmeticEnterpriseBack.Application.Configuration;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class AuthExtensions 
 {

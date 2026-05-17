@@ -1,4 +1,4 @@
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class CorsExtensions 
 {

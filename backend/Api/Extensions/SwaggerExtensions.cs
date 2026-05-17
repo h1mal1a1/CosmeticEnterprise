@@ -1,6 +1,6 @@
 using Microsoft.OpenApi.Models;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class SwaggerExtensions
 {

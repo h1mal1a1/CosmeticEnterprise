@@ -1,5 +1,4 @@
 ﻿using CosmeticEnterpriseBack.Api.Extensions;
-using CosmeticEnterpriseBack.Infrastructure.Extensions;
 using CosmeticEnterpriseBack.Api.Middleware;
 using Minio;
 

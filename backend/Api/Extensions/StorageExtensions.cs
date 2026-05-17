@@ -3,7 +3,7 @@ using CosmeticEnterpriseBack.Infrastructure.Configuration;
 using CosmeticEnterpriseBack.Infrastructure.Services.Storage;
 using Minio;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Extensions;
+namespace CosmeticEnterpriseBack.Api.Extensions;
 
 public static class StorageExtensions 
 {

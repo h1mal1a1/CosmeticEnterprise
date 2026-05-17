@@ -7,6 +7,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Domain.Entities;
 using CosmeticEnterpriseBack.Infrastructure.Interfaces;
 using CosmeticEnterpriseBack.Infrastructure.Persistence.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CosmeticEnterpriseBack.Infrastructure.Services;
 

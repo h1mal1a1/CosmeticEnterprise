@@ -3,7 +3,7 @@ using CosmeticEnterpriseBack.Application.Interfaces;
 using CosmeticEnterpriseBack.Domain.Enums;
 using CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 
-namespace CosmeticEnterpriseBack.Infrastructure.Services.CurrentUser;
+namespace CosmeticEnterpriseBack.Api.Services.CurrentUser;
 
 public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
