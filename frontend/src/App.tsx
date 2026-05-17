@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css";
 import HomePage from "./pages/Home/HomePage";
@@ -12,14 +12,6 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./components/auth/AuthProvider";
 import { getCategories, type Category } from "./api/categoriesApi";
 import ProductDetailsPage from "./pages/ProductDetails/ProductDetailsPage";
-import AdminLayout from "./pages/Admin/AdminLayout";
-import AdminCategoriesPage from "./pages/Admin/AdminCategoriesPage";
-import AdminFinishedProductsPage from "./pages/Admin/AdminFinishedProductsPage";
-import AdminRecipesPage from "./pages/Admin/AdminRecipesPage";
-import AdminUnitsOfMeasurementPage from "./pages/Admin/AdminUnitsOfMeasurementPage";
-import AdminFinishedProductImagesPage from "./pages/Admin/AdminFinishedProductImagesPage";
-import AdminOrdersPage from "./pages/Admin/AdminOrdersPage";
-import AdminOrderDetailsPage from "./pages/Admin/AdminOrderDetailsPage";
 import CartPage from "./pages/Cart/CartPage";
 import UserAddressesPage from "./pages/Profile/UserAddressesPage";
 import MyOrdersPage from "./pages/Profile/MyOrdersPage";
@@ -29,10 +21,8 @@ import NotificationToast from "./components/NotificationToast/NotificationToast"
 import ScrollToTopButton from "./components/ScrollToTopButton/ScrollToTopButton";
 
 function AppContent() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
-
-  const isAdmin = user?.roleName?.toLowerCase() === "admin";
 
   useEffect(() => {
     async function loadCategories() {
@@ -108,12 +98,6 @@ function AppContent() {
             </Link>
           )}
 
-          {isAuthenticated && isAdmin && (
-            <Link to="/admin/categories" className="nav-link nav-link--accent">
-              Панель управления
-            </Link>
-          )}
-
           {isAuthenticated ? (
             <Link to="/profile" className="nav-link nav-link--button">
               Личный кабинет
@@ -180,35 +164,9 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
-
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                {isAdmin ? <AdminLayout /> : <Navigate to="/" replace />}
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="categories" replace />} />
-            <Route path="categories" element={<AdminCategoriesPage />} />
-            <Route path="recipes" element={<AdminRecipesPage />} />
-            <Route
-              path="units-of-measurement"
-              element={<AdminUnitsOfMeasurementPage />}
-            />
-            <Route
-              path="finished-products"
-              element={<AdminFinishedProductsPage />}
-            />
-            <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="orders/:id" element={<AdminOrderDetailsPage />} />
-            <Route
-              path="finished-products/:id/images"
-              element={<AdminFinishedProductImagesPage />}
-            />
-          </Route>
         </Routes>
       </main>
+
       <NotificationToast />
       <ScrollToTopButton offset={400} />
     </div>

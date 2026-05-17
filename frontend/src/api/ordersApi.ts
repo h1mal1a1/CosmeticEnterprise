@@ -5,7 +5,6 @@ import type {
   OrderResponse,
   OrderListItemResponse,
   PagedResult,
-  UpdateOrderStatusesRequest,
 } from "../types/orders";
 
 function buildOrdersQueryString(query: GetOrdersQuery = {}): string {
@@ -61,27 +60,5 @@ export function getMyOrderById(id: number): Promise<OrderResponse> {
 export function cancelMyOrder(id: number): Promise<OrderResponse> {
   return apiRequest<OrderResponse>(`/api/orders/${id}/cancel`, {
     method: "POST",
-  });
-}
-
-export function getAdminOrders(
-  query: GetOrdersQuery = {},
-): Promise<PagedResult<OrderListItemResponse>> {
-  return apiRequest<PagedResult<OrderListItemResponse>>(
-    `/api/orders/admin/all${buildOrdersQueryString(query)}`,
-  );
-}
-
-export function getAdminOrderById(id: number): Promise<OrderResponse> {
-  return apiRequest<OrderResponse>(`/api/orders/admin/${id}`);
-}
-
-export function updateAdminOrderStatuses(
-  id: number,
-  request: UpdateOrderStatusesRequest,
-): Promise<OrderResponse> {
-  return apiRequest<OrderResponse>(`/api/orders/admin/${id}/statuses`, {
-    method: "PUT",
-    body: request,
   });
 }
