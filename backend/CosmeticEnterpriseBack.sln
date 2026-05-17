@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack", "CosmeticEnterpriseBack.csproj", "{1C4CCA97-695E-421A-AC3E-623713CF70F3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9027A3B-A7CC-43AF-B3AB-2044D2850E56}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
@@ -14,16 +12,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Appl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Infrastructure", "Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj", "{D4C44F89-9091-4C3C-9A79-1083983E79E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmeticEnterpriseBack.Api", "CosmeticEnterpriseBack.Api.csproj", "{00146F79-D04C-43F4-AE99-283D6103DC43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1C4CCA97-695E-421A-AC3E-623713CF70F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C4CCA97-695E-421A-AC3E-623713CF70F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C4CCA97-695E-421A-AC3E-623713CF70F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C4CCA97-695E-421A-AC3E-623713CF70F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D077E608-B8FE-4014-89D1-339515A8CA3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D077E608-B8FE-4014-89D1-339515A8CA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D077E608-B8FE-4014-89D1-339515A8CA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,5 +32,9 @@ Global
 		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4C44F89-9091-4C3C-9A79-1083983E79E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00146F79-D04C-43F4-AE99-283D6103DC43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00146F79-D04C-43F4-AE99-283D6103DC43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00146F79-D04C-43F4-AE99-283D6103DC43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00146F79-D04C-43F4-AE99-283D6103DC43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
