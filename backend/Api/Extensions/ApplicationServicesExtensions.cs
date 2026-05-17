@@ -11,6 +11,7 @@ using CosmeticEnterpriseBack.Infrastructure.Persistence.Repositories;
 using CosmeticEnterpriseBack.Infrastructure.Services.Auth;
 using CosmeticEnterpriseBack.Infrastructure.Services.Cart;
 using CosmeticEnterpriseBack.Infrastructure.Services.FinishedProductImages;
+using CosmeticEnterpriseBack.Infrastructure.Services.Users;
 
 namespace CosmeticEnterpriseBack.Api.Extensions;
 
@@ -25,6 +26,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IFinishedProductImageService, FinishedProductImageService>();
         services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IUserManagementService, UserManagementService>();
+        services.AddScoped<IUserMapper, UserMapper>();
 
         services.AddScoped<IUserAddressValidator, UserAddressValidator>();
         services.AddScoped<IOrderStatusTransitionValidator, OrderStatusTransitionValidator>();

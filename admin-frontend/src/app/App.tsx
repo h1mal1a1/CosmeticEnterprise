@@ -31,11 +31,16 @@ import {
   UnitList,
 } from "../resources/units";
 
+import {
+  UserEdit,
+  UserList,
+} from "../resources/users";
+
 function Dashboard() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Админка CosmeticEnterprise</h1>
-      <p>Управление справочниками, продукцией, изображениями и заказами.</p>
+      <p>Управление справочниками, продукцией, изображениями, заказами и пользователями.</p>
     </div>
   );
 }
@@ -78,6 +83,13 @@ function App() {
         list={FinishedProductList}
         edit={FinishedProductEdit}
         create={FinishedProductCreate}
+      />
+
+      <Resource
+        name="users"
+        options={{ label: "Пользователи" }}
+        list={UserList}
+        edit={UserEdit}
       />
 
       <Resource name="orders" options={{ label: "Заказы" }} list={OrdersPage} />
