@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="Domain\CosmeticEnterpriseBack.Domain.csproj" />
         <ProjectReference Include="Application\CosmeticEnterpriseBack.Application.csproj" />
         <ProjectReference Include="Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj" />
     </ItemGroup>
