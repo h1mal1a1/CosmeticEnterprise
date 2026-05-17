@@ -9,16 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.25" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Minio" Version="7.0.0" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
@@ -30,9 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="Domain\CosmeticEnterpriseBack.Domain.csproj" />
-      <ProjectReference Include="Application\CosmeticEnterpriseBack.Application.csproj" />
-      <ProjectReference Include="Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj" />
+        <ProjectReference Include="Domain\CosmeticEnterpriseBack.Domain.csproj" />
+        <ProjectReference Include="Application\CosmeticEnterpriseBack.Application.csproj" />
+        <ProjectReference Include="Infrastructure\CosmeticEnterpriseBack.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
