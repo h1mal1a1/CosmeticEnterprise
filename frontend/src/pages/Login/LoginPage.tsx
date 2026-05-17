@@ -8,19 +8,19 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
-  const [username, setUsername] = useState('');
+  const [loginIdentifier, setLoginIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const isFormValid = username.trim() !== '' && password.trim() !== '';
+  const isFormValid = loginIdentifier.trim() !== '' && password.trim() !== '';
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!isFormValid) {
-      setError('Введите логин и пароль');
+      setError('Введите логин, email или телефон и пароль');
       return;
     }
 
@@ -29,14 +29,14 @@ export default function LoginPage() {
       setIsLoading(true);
 
       await login({
-        username: username.trim(),
+        username: loginIdentifier.trim(),
         password,
       });
 
       await refreshUser();
       navigate('/profile');
     } catch {
-      setError('Не удалось выполнить вход. Проверьте логин и пароль.');
+      setError('Не удалось выполнить вход. Проверьте логин, email, телефон и пароль.');
     } finally {
       setIsLoading(false);
     }
@@ -58,16 +58,16 @@ export default function LoginPage() {
 
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="login-form__group">
-              <label htmlFor="username" className="login-form__label">
-                Логин
+              <label htmlFor="loginIdentifier" className="login-form__label">
+                Логин или email или номер телефона
               </label>
               <input
-                id="username"
+                id="loginIdentifier"
                 type="text"
                 className="login-form__input"
                 placeholder=" "
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={loginIdentifier}
+                onChange={(e) => setLoginIdentifier(e.target.value)}
                 autoComplete="username"
               />
             </div>

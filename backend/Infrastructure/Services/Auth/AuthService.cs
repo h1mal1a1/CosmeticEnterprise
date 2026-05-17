@@ -57,11 +57,16 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
+        var loginIdentifier = request.Username.Trim();
+
         var user = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Username == request.Username);
+            .FirstOrDefaultAsync(x =>
+                x.Username == loginIdentifier ||
+                x.Email == loginIdentifier ||
+                x.Phone == loginIdentifier);
 
         if (user == null)
-            throw new UnauthorizedException("Invalid username or password");
+            throw new UnauthorizedException("Invalid login or password");
 
         if (!user.IsActive)
             throw new UnauthorizedException("User is inactive");
@@ -70,7 +75,7 @@ public class AuthService : IAuthService
             _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
-            throw new UnauthorizedException("Invalid username or password");
+            throw new UnauthorizedException("Invalid login or password");
 
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken(user);
