@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./ProfilePage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { updateProfile } from "../../api/authApi";
+import { getUserAddresses } from "../../api/userAddressesApi";
 import { useAuth } from "../../components/auth/AuthProvider";
 
 type FormState = {
@@ -21,12 +22,42 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
 
   useEffect(() => {
     setForm({
       email: user?.email ?? "",
       phone: user?.phone ?? "",
     });
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAddressModalVisible(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    async function checkDeliveryAddresses() {
+      try {
+        const addresses = await getUserAddresses();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setIsAddressModalVisible(addresses.length === 0);
+      } catch (err) {
+        console.error("Не удалось проверить адреса доставки", err);
+      }
+    }
+
+    void checkDeliveryAddresses();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   async function handleLogout() {
@@ -48,6 +79,11 @@ export default function ProfilePage() {
     setError("");
     setSuccessMessage("");
     setIsEditing(false);
+  }
+
+  function handleGoToAddresses() {
+    setIsAddressModalVisible(false);
+    navigate("/profile/addresses");
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -223,6 +259,44 @@ export default function ProfilePage() {
           Выйти
         </button>
       </div>
+
+      {isAddressModalVisible && (
+        <div className="profile-address-modal-overlay" role="presentation">
+          <div
+            className="profile-address-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-address-modal-title"
+          >
+            <h2 id="profile-address-modal-title">
+              Добавьте адрес доставки
+            </h2>
+
+            <p>
+              У вас пока нет адреса доставки. Без адреса оформить заказ будет
+              нельзя, поэтому лучше добавить его заранее.
+            </p>
+
+            <div className="profile-address-modal__actions">
+              <button
+                type="button"
+                className="profile-address-modal__secondary-button"
+                onClick={() => setIsAddressModalVisible(false)}
+              >
+                Позже
+              </button>
+
+              <button
+                type="button"
+                className="profile-address-modal__primary-button"
+                onClick={handleGoToAddresses}
+              >
+                Указать адрес
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

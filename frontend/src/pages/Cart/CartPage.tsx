@@ -8,10 +8,7 @@ import type {
   PaymentMethod,
   PaymentType,
 } from "../../types/orders";
-import type {
-  CreateUserAddressRequest,
-  UserAddress,
-} from "../../types/userAddress";
+import type { UserAddress } from "../../types/userAddress";
 import {
   clearCart,
   getCart,
@@ -20,37 +17,8 @@ import {
 } from "../../api/cartApi";
 import { getOrderDictionaries } from "../../api/orderDictionariesApi";
 import { checkout } from "../../api/ordersApi";
-import {
-  createUserAddress,
-  getUserAddresses,
-} from "../../api/userAddressesApi";
+import { getUserAddresses } from "../../api/userAddressesApi";
 import "./CartPage.css";
-
-type AddressFormState = {
-  recipientName: string;
-  phone: string;
-  country: string;
-  city: string;
-  street: string;
-  house: string;
-  apartment: string;
-  postalCode: string;
-  comment: string;
-  isDefault: boolean;
-};
-
-const initialAddressForm: AddressFormState = {
-  recipientName: "",
-  phone: "",
-  country: "",
-  city: "",
-  street: "",
-  house: "",
-  apartment: "",
-  postalCode: "",
-  comment: "",
-  isDefault: false,
-};
 
 const PAYMENT_TYPE_IMMEDIATE: PaymentType = 1;
 const PAYMENT_TYPE_POSTPAID: PaymentType = 2;
@@ -78,23 +46,6 @@ function formatAddress(address: UserAddress): string {
     .join(" • ");
 }
 
-function mapAddressFormToRequest(
-  form: AddressFormState,
-): CreateUserAddressRequest {
-  return {
-    recipientName: form.recipientName.trim(),
-    phone: form.phone.trim(),
-    country: form.country.trim(),
-    city: form.city.trim(),
-    street: form.street.trim(),
-    house: form.house.trim(),
-    apartment: form.apartment.trim() || null,
-    postalCode: form.postalCode.trim() || null,
-    comment: form.comment.trim() || null,
-    isDefault: form.isDefault,
-  };
-}
-
 export default function CartPage() {
   const navigate = useNavigate();
 
@@ -111,16 +62,14 @@ export default function CartPage() {
   );
   const [comment, setComment] = useState("");
 
-  const [showAddressForm, setShowAddressForm] = useState(false);
-  const [addressForm, setAddressForm] =
-    useState<AddressFormState>(initialAddressForm);
+  const [isAddressRequiredModalVisible, setIsAddressRequiredModalVisible] =
+    useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingItemId, setUpdatingItemId] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
-  const [isCreatingAddress, setIsCreatingAddress] = useState(false);
 
   const paymentTypeOptions = useMemo(
     () => dictionaries?.paymentTypes ?? [],
@@ -245,39 +194,6 @@ export default function CartPage() {
     }
   }
 
-  async function handleCreateAddress(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    try {
-      setIsCreatingAddress(true);
-      setError(null);
-
-      const createdAddress = await createUserAddress(
-        mapAddressFormToRequest(addressForm),
-      );
-
-      setAddresses((prev) => {
-        const next = createdAddress.isDefault
-          ? prev.map((x) => ({ ...x, isDefault: false }))
-          : prev.slice();
-
-        return [createdAddress, ...next];
-      });
-
-      setSelectedAddressId(createdAddress.id);
-      setAddressForm(initialAddressForm);
-      setShowAddressForm(false);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("Не удалось создать адрес");
-      }
-    } finally {
-      setIsCreatingAddress(false);
-    }
-  }
-
   function handlePaymentTypeChange(value: PaymentType) {
     setPaymentType(value);
 
@@ -294,6 +210,11 @@ export default function CartPage() {
     }
   }
 
+  function handleGoToAddressPage() {
+    setIsAddressRequiredModalVisible(false);
+    navigate("/profile/addresses");
+  }
+
   async function handleCheckout() {
     if (!cart || cart.items.length === 0) {
       setError("Корзина пуста");
@@ -301,6 +222,12 @@ export default function CartPage() {
     }
 
     if (!selectedAddressId) {
+      if (addresses.length === 0) {
+        setError(null);
+        setIsAddressRequiredModalVisible(true);
+        return;
+      }
+
       setError("Выберите адрес доставки");
       return;
     }
@@ -504,204 +431,53 @@ export default function CartPage() {
             <h2 className="cart-summary__title">Оформление заказа</h2>
 
             <div className="cart-summary__section">
-              <div className="cart-summary__section-header">
-                <label className="cart-summary__label" htmlFor="address-select">
-                  Адрес доставки
-                </label>
-
-                <button
-                  type="button"
-                  className="cart-summary__link-button"
-                  onClick={() => setShowAddressForm((prev) => !prev)}
-                >
-                  {showAddressForm ? "Скрыть форму" : "Новый адрес"}
-                </button>
-              </div>
+              <label className="cart-summary__label" htmlFor="address-select">
+                Адрес доставки
+              </label>
 
               {addresses.length > 0 ? (
-                <select
-                  id="address-select"
-                  className="cart-summary__select"
-                  value={selectedAddressId ?? ""}
-                  onChange={(e) => setSelectedAddressId(Number(e.target.value))}
-                >
-                  {addresses.map((address) => (
-                    <option key={address.id} value={address.id}>
-                      {formatAddress(address)}
-                      {address.isDefault ? " (по умолчанию)" : ""}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <p className="cart-summary__hint">
-                  У вас пока нет адресов. Добавьте новый адрес ниже.
-                </p>
-              )}
+                <>
+                  <select
+                    id="address-select"
+                    className="cart-summary__select"
+                    value={selectedAddressId ?? ""}
+                    onChange={(e) => setSelectedAddressId(Number(e.target.value))}
+                  >
+                    {addresses.map((address) => (
+                      <option key={address.id} value={address.id}>
+                        {formatAddress(address)}
+                        {address.isDefault ? " (по умолчанию)" : ""}
+                      </option>
+                    ))}
+                  </select>
 
-              {addresses.length > 0 && (
-                <p className="cart-summary__hint cart-summary__hint--compact">
-                  Управлять всеми адресами можно в{" "}
-                  <Link to="/profile/addresses" className="cart-summary__inline-link">
-                    профиле
+                  <p className="cart-summary__hint cart-summary__hint--compact">
+                    Добавить или изменить адрес можно в{" "}
+                    <Link
+                      to="/profile/addresses"
+                      className="cart-summary__inline-link"
+                    >
+                      личном кабинете
+                    </Link>
+                    .
+                  </p>
+                </>
+              ) : (
+                <div className="cart-summary__address-warning">
+                  <p>
+                    У вас пока нет адреса доставки. Без него оформить заказ
+                    нельзя.
+                  </p>
+
+                  <Link
+                    to="/profile/addresses"
+                    className="cart-summary__address-button"
+                  >
+                    Добавить адрес доставки
                   </Link>
-                  .
-                </p>
+                </div>
               )}
             </div>
-
-            {showAddressForm && (
-              <form className="cart-address-form" onSubmit={handleCreateAddress}>
-                <h3 className="cart-address-form__title">Новый адрес</h3>
-
-                <label className="cart-address-form__field">
-                  <span>Получатель</span>
-                  <input
-                    value={addressForm.recipientName}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        recipientName: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Телефон</span>
-                  <input
-                    value={addressForm.phone}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        phone: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Страна</span>
-                  <input
-                    value={addressForm.country}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        country: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Город</span>
-                  <input
-                    value={addressForm.city}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        city: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Улица</span>
-                  <input
-                    value={addressForm.street}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        street: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Дом</span>
-                  <input
-                    value={addressForm.house}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        house: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Квартира / офис</span>
-                  <input
-                    value={addressForm.apartment}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        apartment: e.target.value,
-                      }))
-                    }
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Почтовый индекс</span>
-                  <input
-                    value={addressForm.postalCode}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        postalCode: e.target.value,
-                      }))
-                    }
-                  />
-                </label>
-
-                <label className="cart-address-form__field">
-                  <span>Комментарий</span>
-                  <textarea
-                    rows={3}
-                    value={addressForm.comment}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        comment: e.target.value,
-                      }))
-                    }
-                  />
-                </label>
-
-                <label className="cart-address-form__checkbox">
-                  <input
-                    type="checkbox"
-                    checked={addressForm.isDefault}
-                    onChange={(e) =>
-                      setAddressForm((prev) => ({
-                        ...prev,
-                        isDefault: e.target.checked,
-                      }))
-                    }
-                  />
-                  <span>Сделать адресом по умолчанию</span>
-                </label>
-
-                <div className="cart-address-form__actions">
-                  <button
-                    type="submit"
-                    className="cart-address-form__submit-button"
-                    disabled={isCreatingAddress}
-                  >
-                    {isCreatingAddress ? "Сохранение..." : "Сохранить адрес"}
-                  </button>
-                </div>
-              </form>
-            )}
 
             <div className="cart-summary__section">
               <label className="cart-summary__label" htmlFor="payment-type">
@@ -771,16 +547,47 @@ export default function CartPage() {
               type="button"
               className="cart-summary__checkout-button"
               onClick={() => void handleCheckout()}
-              disabled={
-                isCheckoutLoading ||
-                addresses.length === 0 ||
-                !selectedAddressId ||
-                hasStockProblems
-              }
+              disabled={isCheckoutLoading || hasStockProblems}
             >
               {isCheckoutLoading ? "Оформляем..." : "Оформить заказ"}
             </button>
           </aside>
+        </div>
+      )}
+
+      {isAddressRequiredModalVisible && (
+        <div className="cart-address-modal-overlay" role="presentation">
+          <div
+            className="cart-address-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cart-address-modal-title"
+          >
+            <h2 id="cart-address-modal-title">Нужен адрес доставки</h2>
+
+            <p>
+              Чтобы оформить заказ, сначала добавьте адрес доставки в личном
+              кабинете. После этого вернитесь в корзину и продолжите оформление.
+            </p>
+
+            <div className="cart-address-modal__actions">
+              <button
+                type="button"
+                className="cart-address-modal__secondary-button"
+                onClick={() => setIsAddressRequiredModalVisible(false)}
+              >
+                Остаться в корзине
+              </button>
+
+              <button
+                type="button"
+                className="cart-address-modal__primary-button"
+                onClick={handleGoToAddressPage}
+              >
+                Добавить адрес
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>
