@@ -73,6 +73,10 @@ namespace CosmeticEnterpriseBack.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
                     b.Property<long>("IdProductCategory")
                         .HasColumnType("bigint")
                         .HasColumnName("id_product_category");

@@ -37,7 +37,13 @@ export const FinishedProductEdit = () => (
         parse={emptyToNull}
         fullWidth
       />
-
+      <TextInput
+        source="description"
+        label="Описание товара"
+        multiline
+        minRows={5}
+        fullWidth
+      />
       <ReferenceInput
         source="idProductCategory"
         reference="product-categories"

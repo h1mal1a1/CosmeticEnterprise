@@ -20,6 +20,11 @@ public class FinishedProductsConfigure : IEntityTypeConfiguration<FinishedProduc
             .HasColumnName("name")
             .IsRequired();
 
+        builder.Property(x => x.Description)
+            .HasColumnName("description")
+            .HasColumnType("text")
+            .IsRequired(false);
+
         builder.Property(x => x.Price)
             .HasColumnName("price")
             .HasPrecision(18, 2)

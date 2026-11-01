@@ -15,6 +15,7 @@ export type FinishedProduct = {
     idUnitsOfMeasurement: number;
     availableQuantity: number;
     images: FinishedProductImage[];
+    description?: string | null;
 };
 
 export type CreateFinishedProductRequest = {
@@ -24,6 +25,7 @@ export type CreateFinishedProductRequest = {
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;
+    description?: string | null;
 };
 
 export type UpdateFinishedProductRequest = {
@@ -33,4 +35,5 @@ export type UpdateFinishedProductRequest = {
     idRecipe: number;
     idProductCategory: number;
     idUnitsOfMeasurement: number;
+    description?: string | null;
 };
