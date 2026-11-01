@@ -85,9 +85,9 @@ export function setMainFinishedProductImage(
   imageId: number,
 ): Promise<FinishedProductImage[]> {
   return request<FinishedProductImage[]>(
-    `/finished-products/${finishedProductId}/images/${imageId}/set-main`,
+    `/finished-products/${finishedProductId}/images/${imageId}/main`,
     {
-      method: "PUT",
+      method: "PATCH",
     },
   );
 }
