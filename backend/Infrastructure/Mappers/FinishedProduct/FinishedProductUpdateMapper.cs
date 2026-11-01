@@ -9,6 +9,7 @@ public class FinishedProductUpdateMapper :
     public void Map(UpdateFinishedProductRequest req, Domain.Entities.FinishedProducts entity)
     {
         entity.Name = req.Name.Trim();
+        entity.Description = string.IsNullOrWhiteSpace(req.Description) ? null : req.Description.Trim();
         entity.Price = req.Price;
         entity.IdRecipe = req.IdRecipe;
         entity.IdProductCategory = req.IdProductCategory;

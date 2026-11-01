@@ -12,6 +12,7 @@ public class FinishedProductCreateMapper :
         return new FinishedProducts
         {
             Name = request.Name.Trim(),
+            Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
             Price = request.Price,
             IdRecipe = request.IdRecipe,
             IdProductCategory = request.IdProductCategory,

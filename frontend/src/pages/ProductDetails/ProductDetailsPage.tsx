@@ -124,9 +124,9 @@ export default function ProductDetailsPage() {
   const isOutOfStock = product ? product.availableQuantity <= 0 : false;
   const wbUrl = normalizeExternalUrl(product?.wbUrl);
 
-  const sortedImages = useMemo(() => 
+  const sortedImages = useMemo(() =>
     product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : []
-  , [product]);
+    , [product]);
 
   const currentIndex = sortedImages.findIndex(img => img.id === selectedImage?.id);
 
@@ -235,8 +235,8 @@ export default function ProductDetailsPage() {
         currentCartItem.quantity <= 1
           ? await removeCartItem(currentCartItem.id)
           : await updateCartItemQuantity(currentCartItem.id, {
-              quantity: currentCartItem.quantity - 1,
-            });
+            quantity: currentCartItem.quantity - 1,
+          });
 
       setCart(updatedCart);
     } catch (err) {
@@ -284,7 +284,7 @@ export default function ProductDetailsPage() {
     if (savedUrl && savedScroll) {
       const scrollPosition = parseInt(savedScroll, 10);
       navigate(savedUrl);
-      
+
       setTimeout(() => {
         if (!Number.isNaN(scrollPosition)) {
           window.scrollTo(0, scrollPosition);
@@ -478,9 +478,8 @@ export default function ProductDetailsPage() {
 
           <div className="product-details-info__description">
             <h2>О товаре</h2>
-            <p>
-              Здесь будет подробное описание товара, его свойства,
-              преимущества и рекомендации по использованию.
+            <p style={{ whiteSpace: "pre-line" }}>
+              {product.description?.trim() || "Описание товара пока не добавлено."}
             </p>
           </div>
         </div>
@@ -490,12 +489,12 @@ export default function ProductDetailsPage() {
         <div className="image-zoom-overlay" onClick={closeImageModal}>
           <div className="image-zoom-container" onClick={(e) => e.stopPropagation()}>
             {currentIndex > 0 && (
-              <button 
+              <button
                 className="image-zoom-arrow image-zoom-arrow--left"
                 onClick={(e) => { e.stopPropagation(); goToPrevImage(); }}
                 aria-label="Предыдущее фото"
               >
-                
+
               </button>
             )}
 
@@ -507,7 +506,7 @@ export default function ProductDetailsPage() {
             />
 
             {currentIndex < sortedImages.length - 1 && (
-              <button 
+              <button
                 className="image-zoom-arrow image-zoom-arrow--right"
                 onClick={(e) => { e.stopPropagation(); goToNextImage(); }}
                 aria-label="Следующее фото"

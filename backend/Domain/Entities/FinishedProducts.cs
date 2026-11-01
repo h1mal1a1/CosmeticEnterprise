@@ -9,6 +9,7 @@ public class FinishedProducts : IEntity<long>
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public string? WbUrl { get; set; }
+    public string? Description { get; set; }
     public long IdRecipe { get; set; }
     public Recipes Recipe { get; set; } = null!;
     public long IdProductCategory { get; set; }

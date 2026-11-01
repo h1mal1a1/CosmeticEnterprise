@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace CosmeticEnterpriseBack.Application.DTOs.FinishedProduct;
+
 public class CreateFinishedProductRequest
 {
     [Required]
@@ -12,7 +13,8 @@ public class CreateFinishedProductRequest
     [StringLength(1000)]
     [Url]
     public string? WbUrl { get; set; }
-
+    [StringLength(5000)]
+    public string? Description { get; set; }
     public long IdRecipe { get; set; }
 
     public long IdProductCategory { get; set; }
