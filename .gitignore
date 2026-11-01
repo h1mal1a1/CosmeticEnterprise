@@ -18,3 +18,6 @@ CosmeticEnterprise.code-workspace
 .env.backend.dev
 .env.db
 .env.minio
+# Local source code export tools
+/backend/scan-cs.ps1
+/backend/code.txt
